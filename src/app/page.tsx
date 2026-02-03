@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { NewsFeed } from '@/components/NewsFeed';
 import { WeeklyDeepDive } from '@/components/WeeklyDeepDive';
+import { TrendingBar } from '@/components/TrendingBar';
 import { LoginModal } from '@/components/LoginModal';
 import { useAuth } from '@/lib/auth-context';
 
@@ -123,25 +124,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* Trending Bar */}
-      <div className="border-b border-gray-200 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-4 text-sm">
-            <span className="font-semibold text-gray-700 whitespace-nowrap">🔥 TRENDING:</span>
-            <div className="flex gap-4 overflow-x-auto">
-              <span className="text-gray-600 whitespace-nowrap">GPT-5 launch</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-gray-600 whitespace-nowrap">Zillow AI pricing</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-gray-600 whitespace-nowrap">Virtual staging 2.0</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-gray-600 whitespace-nowrap">AI lead scoring</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-gray-600 whitespace-nowrap">NAR AI report</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Trending Bar — powered by Grok */}
+      <TrendingBar />
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4 py-6">

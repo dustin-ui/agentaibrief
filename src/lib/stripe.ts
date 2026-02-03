@@ -1,10 +1,19 @@
 import Stripe from 'stripe';
 
-// Initialize Stripe client (server-side only)
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-05-28.basil',
-  typescript: true,
-});
+// Lazy-initialize Stripe client (server-side only)
+// Returns null if STRIPE_SECRET_KEY is not set
+let _stripe: Stripe | null = null;
+
+export function getStripe(): Stripe | null {
+  if (!process.env.STRIPE_SECRET_KEY) return null;
+  if (!_stripe) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2026-01-28.clover',
+      typescript: true,
+    });
+  }
+  return _stripe;
+}
 
 // Price IDs — replace placeholders with real Stripe price IDs in .env
 export const PRICE_IDS = {
