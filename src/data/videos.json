@@ -1,0 +1,57 @@
+[
+  {
+    "slug": "ai-listing-photos-masterclass",
+    "title": "AI Listing Photos Masterclass — Virtual Staging That Actually Sells",
+    "description": "Deep dive into the latest AI virtual staging tools and how top-producing agents are using them to sell homes 40% faster. We cover room-by-room techniques, pricing strategies, and the tools that give you photorealistic results in under 60 seconds.",
+    "date": "2026-02-07",
+    "duration": "52:18",
+    "thumbnail": "/thumbnails/ai-listing-photos.svg",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "tier": "inner-circle",
+    "tags": ["virtual staging", "AI photos", "listings", "marketing"]
+  },
+  {
+    "slug": "market-update-feb-2026",
+    "title": "February 2026 Market Update — Agent Briefing",
+    "description": "Weekly market analysis covering inventory trends, interest rate forecasts, and emerging micro-markets in the DC Metro area. Plus: how AI-powered pricing tools are changing the comp analysis game.",
+    "date": "2026-02-03",
+    "duration": "45:22",
+    "thumbnail": "/thumbnails/market-update-feb.svg",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "tier": "inner-circle",
+    "tags": ["market update", "DC metro", "pricing", "analytics"]
+  },
+  {
+    "slug": "chatgpt-for-real-estate-agents",
+    "title": "ChatGPT Prompts That Close Deals — Live Workshop Replay",
+    "description": "Dustin walks through his exact ChatGPT prompts for listing descriptions, buyer consultations, market reports, and social media content. Includes downloadable prompt templates and live Q&A with Inner Circle members.",
+    "date": "2026-01-27",
+    "duration": "1:08:45",
+    "thumbnail": "/thumbnails/chatgpt-workshop.svg",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "tier": "inner-circle",
+    "tags": ["ChatGPT", "prompts", "workshop", "content creation"]
+  },
+  {
+    "slug": "scaling-with-ai-dustin-fox-story",
+    "title": "From Solo Agent to $277M — How AI Scaled My Team",
+    "description": "Dustin Fox shares the full story of how he leveraged AI tools to grow from a solo agent to leading a 36-person team doing $277 million in volume. Key inflection points, tools that mattered most, and the mistakes to avoid.",
+    "date": "2026-01-20",
+    "duration": "38:56",
+    "thumbnail": "/thumbnails/scaling-story.svg",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "tier": "inner-circle",
+    "tags": ["scaling", "team building", "case study", "Dustin Fox"]
+  },
+  {
+    "slug": "ai-lead-follow-up-automation",
+    "title": "AI Lead Follow-Up That Converts — Systems & Scripts",
+    "description": "Stop losing leads to slow follow-up. This session covers AI-powered lead nurture sequences, voice AI for instant callbacks, and the exact automation stack that helped the Fox Homes team achieve a 67% engagement rate.",
+    "date": "2026-01-13",
+    "duration": "41:30",
+    "thumbnail": "/thumbnails/lead-followup.svg",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "tier": "inner-circle",
+    "tags": ["leads", "follow-up", "automation", "voice AI"]
+  }
+]

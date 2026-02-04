@@ -41,13 +41,24 @@ export default function Home() {
       <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Agent<span className="text-blue-600">AI</span>Brief
-              </h1>
-              <p className="text-sm text-gray-500">
-                AI news for real estate pros • Updated hourly
-              </p>
+            <div className="flex items-center gap-6">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Agent<span className="text-blue-600">AI</span>Brief
+                </h1>
+                <p className="text-sm text-gray-500">
+                  AI news for real estate pros • Updated hourly
+                </p>
+              </div>
+              <nav className="hidden md:flex items-center gap-4">
+                <a href="/videos" className="text-sm text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                  </svg>
+                  Video Library
+                </a>
+              </nav>
             </div>
             <div className="flex items-center gap-3">
               {isLoggedIn ? (
