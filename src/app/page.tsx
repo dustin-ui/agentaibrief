@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { NewsFeed } from '@/components/NewsFeed';
 import { WeeklyDeepDive } from '@/components/WeeklyDeepDive';
+import { AIToolsSection } from '@/components/AIToolsSection';
 import { TrendingBar } from '@/components/TrendingBar';
 import { LoginModal } from '@/components/LoginModal';
 import { useAuth } from '@/lib/auth-context';
@@ -10,6 +11,29 @@ import { useAuth } from '@/lib/auth-context';
 export default function Home() {
   const { user, isLoggedIn, isPro, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
+  const [subEmail, setSubEmail] = useState('');
+  const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  async function handleEmailSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!subEmail) return;
+    setSubStatus('loading');
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: subEmail, tier: 'free' }),
+      });
+      if (res.ok) {
+        setSubStatus('success');
+        setSubEmail('');
+      } else {
+        setSubStatus('error');
+      }
+    } catch {
+      setSubStatus('error');
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -79,6 +103,12 @@ export default function Home() {
               >
                 Start with Pro — $19/mo
               </a>
+              <a 
+                href="/demo"
+                className="inline-flex items-center justify-center px-6 py-2.5 border border-white/40 text-white font-medium rounded-lg hover:bg-white/10 transition-colors text-sm"
+              >
+                📋 See a Sample Briefing
+              </a>
               <div className="flex items-center gap-2 text-blue-200 text-sm">
                 <span>💡</span>
                 <span>Use code <span className="font-bold text-white bg-blue-500/50 px-2 py-0.5 rounded">LAUNCH25</span> for 25% off</span>
@@ -132,6 +162,9 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Column */}
           <div className="lg:col-span-3">
+            {/* AI Tools Directory */}
+            <AIToolsSection isPremium={isPro} />
+
             {/* Weekly Deep Dive */}
             <WeeklyDeepDive isPremium={isPro} />
 
@@ -148,16 +181,35 @@ export default function Home() {
                 <p className="text-sm text-blue-700 mb-3">
                   Top AI stories + agent angles delivered to your inbox every morning.
                 </p>
-                <input 
-                  type="email" 
-                  placeholder="Enter your email"
-                  className="w-full px-3 py-2 border border-blue-300 rounded mb-2 text-sm"
-                />
-                <button className="w-full px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700">
-                  Subscribe — $19/mo
-                </button>
+                {subStatus === 'success' ? (
+                  <div className="text-center py-2">
+                    <p className="text-green-700 font-semibold text-sm">✅ You&apos;re in!</p>
+                    <p className="text-green-600 text-xs mt-1">Check your inbox for a welcome email.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleEmailSubscribe}>
+                    <input 
+                      type="email" 
+                      placeholder="Enter your email"
+                      value={subEmail}
+                      onChange={e => setSubEmail(e.target.value)}
+                      required
+                      className="w-full px-3 py-2 border border-blue-300 rounded mb-2 text-sm"
+                    />
+                    <button 
+                      type="submit"
+                      disabled={subStatus === 'loading'}
+                      className="w-full px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {subStatus === 'loading' ? 'Subscribing...' : 'Subscribe — Free Daily Brief'}
+                    </button>
+                    {subStatus === 'error' && (
+                      <p className="text-xs text-red-500 mt-2 text-center">Something went wrong. Try again.</p>
+                    )}
+                  </form>
+                )}
                 <p className="text-xs text-blue-500 mt-2 text-center">
-                  Use code <span className="font-bold">LAUNCH25</span> for 25% off
+                  Use code <span className="font-bold">LAUNCH25</span> for 25% off Pro
                 </p>
               </div>
             )}

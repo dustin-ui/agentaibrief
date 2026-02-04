@@ -12,7 +12,7 @@ export interface TrendingData {
 }
 
 const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
-const MODEL = 'grok-3-mini-fast';
+const MODEL = 'grok-3-mini';
 
 const SYSTEM_PROMPT = `You are a trend analyst. Return ONLY valid JSON, no markdown fences, no commentary.`;
 

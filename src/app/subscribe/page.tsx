@@ -3,9 +3,21 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
+const PRICE_MAP = {
+  pro: {
+    monthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY || 'price_1SwwYyLl6JNvAnqf4tAL2wed',
+    annual: process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL || 'price_1SwwYyLl6JNvAnqfJVD8gxlk',
+  },
+  'inner-circle': {
+    monthly: process.env.NEXT_PUBLIC_STRIPE_IC_MONTHLY || 'price_1SwwYzLl6JNvAnqfnGZjkj4W',
+    annual: process.env.NEXT_PUBLIC_STRIPE_IC_ANNUAL || 'price_1SwwYzLl6JNvAnqfq3AwzB3i',
+  },
+};
+
 const tiers = [
   {
     name: 'Pro',
+    tier: 'pro' as const,
     monthlyPrice: 19,
     annualPrice: 190,
     period: '/month',
@@ -29,6 +41,7 @@ const tiers = [
   },
   {
     name: 'Inner Circle',
+    tier: 'inner-circle' as const,
     monthlyPrice: 99,
     annualPrice: 990,
     period: '/month',
@@ -56,6 +69,27 @@ const testimonials: any[] = []; // Real testimonials coming soon
 
 export default function SubscribePage() {
   const [isAnnual, setIsAnnual] = useState(true);
+  const [loading, setLoading] = useState<string | null>(null);
+
+  async function handleCheckout(tierKey: 'pro' | 'inner-circle') {
+    const priceId = PRICE_MAP[tierKey][isAnnual ? 'annual' : 'monthly'];
+    setLoading(tierKey);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+    } finally {
+      setLoading(null);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -231,9 +265,11 @@ export default function SubscribePage() {
                 </ul>
 
                 <button
-                  className={`w-full py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 cursor-pointer ${tier.ctaStyle}`}
+                  onClick={() => handleCheckout(tier.tier)}
+                  disabled={loading === tier.tier}
+                  className={`w-full py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 cursor-pointer disabled:opacity-50 ${tier.ctaStyle}`}
                 >
-                  {tier.cta}
+                  {loading === tier.tier ? 'Redirecting...' : tier.cta}
                 </button>
               </div>
             ))}
@@ -350,11 +386,19 @@ export default function SubscribePage() {
             The team lead behind $277M in volume is sharing exactly how AI got him there.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors">
-              Get Pro — ${isAnnual ? '190/yr' : '19/mo'}
+            <button 
+              onClick={() => handleCheckout('pro')}
+              disabled={!!loading}
+              className="px-8 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50"
+            >
+              {loading === 'pro' ? 'Redirecting...' : `Get Pro — $${isAnnual ? '190/yr' : '19/mo'}`}
             </button>
-            <button className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-400 transition-colors border border-blue-400">
-              Join Inner Circle — ${isAnnual ? '990/yr' : '99/mo'}
+            <button 
+              onClick={() => handleCheckout('inner-circle')}
+              disabled={!!loading}
+              className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-400 transition-colors border border-blue-400 disabled:opacity-50"
+            >
+              {loading === 'inner-circle' ? 'Redirecting...' : `Join Inner Circle — $${isAnnual ? '990/yr' : '99/mo'}`}
             </button>
           </div>
           <p className="text-blue-200 text-sm mt-4">

@@ -87,7 +87,7 @@ export function TrendingBar() {
             {doubled.map((topic, i) => (
               <span
                 key={`${topic}-${i}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-orange-500/20 text-sm text-gray-300 hover:text-orange-400 hover:border-orange-500/40 transition-colors cursor-default"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-orange-500/20 text-sm text-gray-600 hover:text-orange-600 hover:border-orange-500/40 transition-colors cursor-default"
               >
                 <span className="text-orange-400 text-xs">●</span>
                 {topic}

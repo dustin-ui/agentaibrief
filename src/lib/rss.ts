@@ -3,9 +3,10 @@ import { AI_NEWS_FEEDS, NewsItem } from './feeds';
 import { createHash } from 'crypto';
 
 const parser = new Parser({
-  timeout: 10000,
+  timeout: 15000,
   headers: {
-    'User-Agent': 'AgentAIBrief/1.0',
+    'User-Agent': 'Mozilla/5.0 (compatible; AgentAIBrief/1.0; +https://agentaibrief.com)',
+    'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml',
   },
 });
 
@@ -24,13 +25,18 @@ function calculateBaseTrendingScore(item: any, source: string): number {
     'TechCrunch AI': 25,
     'The Verge AI': 25,
     'OpenAI Blog': 30,
-    'Anthropic News': 30,
     'MIT Tech Review AI': 28,
     'VentureBeat AI': 22,
     'Wired AI': 23,
     'Google AI Blog': 30,
-    'Inman': 15,
-    'HousingWire': 15,
+    'ZDNet AI': 20,
+    'HousingWire': 18,
+    'The Real Deal': 18,
+    'RealTrends': 16,
+    'The Information AI': 24,
+    'The Register AI': 18,
+    'Bloomberg Tech': 26,
+    'Ars Technica AI': 22,
   };
   const authorityScore = authorityScores[source] || 15;
   
