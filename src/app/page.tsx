@@ -198,9 +198,10 @@ export default function Home() {
                     <p className="text-green-600 text-xs mt-1">Check your inbox for a welcome email.</p>
                   </div>
                 ) : (
-                  <form onSubmit={handleEmailSubscribe}>
+                  <form method="POST" action="/api/subscribe" onSubmit={handleEmailSubscribe}>
                     <input 
                       type="email" 
+                      name="email"
                       placeholder="Enter your email"
                       value={subEmail}
                       onChange={e => setSubEmail(e.target.value)}
