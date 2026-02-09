@@ -6,6 +6,8 @@ import { WeeklyDeepDive } from '@/components/WeeklyDeepDive';
 import { AIToolsSection } from '@/components/AIToolsSection';
 import { TrendingBar } from '@/components/TrendingBar';
 import { LoginModal } from '@/components/LoginModal';
+import { MobileNav } from '@/components/MobileNav';
+import { StickySubscribeBar } from '@/components/StickySubscribeBar';
 import { useAuth } from '@/lib/auth-context';
 
 export default function Home() {
@@ -69,6 +71,7 @@ export default function Home() {
               </nav>
             </div>
             <div className="flex items-center gap-3">
+              <MobileNav />
               {isLoggedIn ? (
                 <>
                   <span className="text-sm text-gray-600 hidden sm:inline">
@@ -107,7 +110,7 @@ export default function Home() {
 
       {/* Hero Banner — only for guests */}
       {!isLoggedIn && (
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <div data-hero className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
           <div className="max-w-5xl mx-auto px-4 py-10">
             <div className="max-w-2xl">
               <p className="text-blue-200 text-sm font-medium mb-2">✨ Join 2,400+ agents staying ahead of AI</p>
@@ -336,14 +339,21 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-gray-50 mt-12">
         <div className="max-w-5xl mx-auto px-4 py-6">
-          <p className="text-sm text-gray-500 text-center">
-            © 2026 AgentAIBrief.com • Built for real estate professionals
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-gray-500">
+            <span>© 2026 AgentAIBrief.com</span>
+            <span className="hidden sm:inline">•</span>
+            <a href="/privacy" className="hover:text-gray-700">Privacy Policy</a>
+            <span className="hidden sm:inline">•</span>
+            <a href="/terms" className="hover:text-gray-700">Terms of Service</a>
+            <span className="hidden sm:inline">•</span>
+            <a href="/preferences" className="hover:text-gray-700">Manage Preferences</a>
+          </div>
         </div>
       </footer>
 
       {/* Login Modal */}
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+      <StickySubscribeBar />
     </div>
   );
 }

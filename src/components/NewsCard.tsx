@@ -2,6 +2,7 @@
 
 import { formatDistanceToNow } from 'date-fns';
 import { TrendingBadge } from './TrendingBadge';
+import { ShareButtons } from './ShareButtons';
 
 interface NewsCardProps {
   id: string;
@@ -39,7 +40,7 @@ export function NewsCard({
   };
 
   return (
-    <article className="border-b border-gray-200 py-4 hover:bg-gray-50 transition-colors">
+    <article className="group border-b border-gray-200 py-4 hover:bg-gray-50 transition-colors">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           {/* Trending + Category Row */}
@@ -86,6 +87,11 @@ export function NewsCard({
             </div>
           )}
           
+          {/* Share Buttons */}
+          <div className="mt-2">
+            <ShareButtons title={title} url={link} />
+          </div>
+
           {/* Locked Content Placeholder */}
           {!agentAngle && !isPremium && (
             <div className="mt-3 p-3 bg-gray-100 rounded-lg border border-dashed border-gray-300">
