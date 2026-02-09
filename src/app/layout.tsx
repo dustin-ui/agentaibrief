@@ -82,6 +82,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <script defer data-domain="agentaibrief.com" src="https://plausible.io/js/script.js"></script>
       </head>
       <body className={inter.className}>
         <Providers>{children}</Providers>

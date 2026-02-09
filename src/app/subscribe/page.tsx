@@ -16,6 +16,30 @@ const PRICE_MAP = {
 
 const tiers = [
   {
+    name: 'Free',
+    tier: 'free' as const,
+    monthlyPrice: 0,
+    annualPrice: 0,
+    period: '',
+    annualPeriod: '',
+    annualSavings: '',
+    description: 'Stay informed with the basics — no credit card required.',
+    cta: 'Start Free',
+    ctaStyle: 'border-2 border-gray-300 text-gray-700 hover:bg-gray-50',
+    highlighted: false,
+    features: [
+      { text: 'Daily headline digest', included: true },
+      { text: 'AI-curated news feed', included: true },
+      { text: 'Breaking news alerts', included: false },
+      { text: 'Agent Angle on every story', included: false },
+      { text: 'Implementation tips & workflows', included: false },
+      { text: 'Tool reviews & video tutorials', included: false },
+      { text: 'Private group with Dustin Fox', included: false },
+      { text: 'Live Q&A sessions', included: false },
+      { text: 'Ask anything, anytime', included: false },
+    ],
+  },
+  {
     name: 'Pro',
     tier: 'pro' as const,
     monthlyPrice: 19,
@@ -71,7 +95,11 @@ export default function SubscribePage() {
   const [isAnnual, setIsAnnual] = useState(true);
   const [loading, setLoading] = useState<string | null>(null);
 
-  async function handleCheckout(tierKey: 'pro' | 'inner-circle') {
+  async function handleCheckout(tierKey: 'free' | 'pro' | 'inner-circle') {
+    if (tierKey === 'free') {
+      document.getElementById('free-signup')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
     const priceId = PRICE_MAP[tierKey][isAnnual ? 'annual' : 'monthly'];
     setLoading(tierKey);
     try {
@@ -168,8 +196,8 @@ export default function SubscribePage() {
 
       {/* Pricing Grid */}
       <section className="py-12">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {tiers.map((tier) => (
               <div
                 key={tier.name}
@@ -193,18 +221,24 @@ export default function SubscribePage() {
                   </h3>
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-extrabold text-gray-900">
-                      ${isAnnual ? tier.annualPrice : tier.monthlyPrice}
+                      {tier.tier === 'free' ? '$0' : `$${isAnnual ? tier.annualPrice : tier.monthlyPrice}`}
                     </span>
                     <span className="text-gray-500 text-sm">
-                      {isAnnual ? tier.annualPeriod : tier.period}
+                      {tier.tier === 'free' ? '' : isAnnual ? tier.annualPeriod : tier.period}
                     </span>
                   </div>
-                  {isAnnual && (
-                    <p className="text-sm text-green-600 font-medium mt-1">
-                      {tier.annualSavings} vs monthly
-                    </p>
-                  )}
-                  {!isAnnual && (
+                  {tier.tier === 'free' ? (
+                    <p className="text-sm text-green-600 font-medium mt-1">Free forever</p>
+                  ) : isAnnual ? (
+                    <>
+                      <p className="text-sm text-green-600 font-medium mt-1">
+                        {tier.annualSavings} vs monthly
+                      </p>
+                      <p className="text-sm text-blue-600 font-medium">
+                        That&apos;s just ${tier.tier === 'pro' ? '15.83' : '82.50'}/mo
+                      </p>
+                    </>
+                  ) : (
                     <p className="text-sm text-gray-400 mt-1">
                       or ${tier.annualPrice}/year (save {tier.annualSavings.replace('Save ', '')})
                     </p>
@@ -265,7 +299,7 @@ export default function SubscribePage() {
                 </ul>
 
                 <button
-                  onClick={() => handleCheckout(tier.tier)}
+                  onClick={() => handleCheckout(tier.tier as 'free' | 'pro' | 'inner-circle')}
                   disabled={loading === tier.tier}
                   className={`w-full py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 cursor-pointer disabled:opacity-50 ${tier.ctaStyle}`}
                 >
@@ -273,6 +307,37 @@ export default function SubscribePage() {
                 </button>
               </div>
             ))}
+          </div>
+
+          {/* Money-Back Guarantee Badge */}
+          <div className="flex justify-center mt-10">
+            <div className="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-full px-6 py-3">
+              <svg className="w-6 h-6 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+              <span className="text-green-800 font-semibold text-sm">
+                30-Day Money-Back Guarantee — No Questions Asked
+              </span>
+            </div>
+          </div>
+
+          {/* Free Signup */}
+          <div id="free-signup" className="max-w-md mx-auto mt-12">
+            <form action="/api/subscribe" method="POST" className="flex gap-2">
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email for the free digest"
+                required
+                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-blue-600 text-white font-semibold text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Start Free
+              </button>
+            </form>
           </div>
         </div>
       </section>
@@ -357,6 +422,10 @@ export default function SubscribePage() {
               {
                 q: 'What if I\'m not tech-savvy?',
                 a: "That's exactly who this is for. We translate complex AI developments into plain English with step-by-step implementation tips. If you can send an email, you can follow our guides.",
+              },
+              {
+                q: "What if I'm not satisfied? Is there a guarantee?",
+                a: "Yes — we offer a 30-day money-back guarantee, no questions asked. If AgentAIBrief isn't delivering value in your first month, just email us and we'll refund you in full. Zero risk.",
               },
               {
                 q: 'Is the annual plan worth it?',
