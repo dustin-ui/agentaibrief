@@ -66,6 +66,9 @@ export default function Home() {
                 <a href="/prompts" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Prompts</a>
                 <a href="/contract-analyzer" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Contract Analyzer</a>
                 <a href="/videos" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Video Library</a>
+                {isPro && (
+                  <a href="/pro-dashboard" className="text-sm text-gray-600 hover:text-gray-900 font-medium">SEO Reports</a>
+                )}
               </nav>
             </div>
             <div className="flex items-center gap-3">
@@ -303,6 +306,11 @@ export default function Home() {
               <p className="text-sm text-blue-700 mb-2">
                 Everything in Pro + direct access to Dustin Fox for coaching & strategy.
               </p>
+              <ul className="text-sm text-blue-700 mb-2 space-y-1">
+                <li>📊 <strong>Weekly SEO Performance Report</strong></li>
+                <li>🤖 AI Search Visibility Score</li>
+                <li>🔑 Top Keywords & Rankings</li>
+              </ul>
               <p className="text-xs text-amber-600 font-semibold mb-3">⚡ Limited seats available</p>
               <a 
                 href="/subscribe" 
