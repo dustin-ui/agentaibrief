@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addSubscriber, isConfigured } from '@/lib/constant-contact';
+import { getOrCreateReferral } from '@/lib/referral';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
@@ -20,7 +21,7 @@ async function saveToFallbackDB(email: string, tier: string, firstName?: string)
   }
 }
 
-async function parseBody(request: NextRequest): Promise<{ email: string; firstName?: string; tier?: string }> {
+async function parseBody(request: NextRequest): Promise<{ email: string; firstName?: string; tier?: string; ref?: string }> {
   const contentType = request.headers.get('content-type') || '';
   if (contentType.includes('application/json')) {
     return await request.json();
@@ -31,12 +32,13 @@ async function parseBody(request: NextRequest): Promise<{ email: string; firstNa
     email: formData.get('email') as string || '',
     firstName: formData.get('firstName') as string || undefined,
     tier: formData.get('tier') as string || 'free',
+    ref: formData.get('ref') as string || undefined,
   };
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, firstName, tier } = await parseBody(request);
+    const { email, firstName, tier, ref } = await parseBody(request);
 
     if (!email || !email.includes('@')) {
       // If form submission, redirect back
@@ -50,6 +52,9 @@ export async function POST(request: NextRequest) {
     // Always save to fallback DB first so no emails are lost
     await saveToFallbackDB(email, tier || 'free', firstName);
 
+    // Create/track referral
+    const referral = await getOrCreateReferral(email, ref || undefined);
+
     // Check if CC is configured
     const configured = await isConfigured();
     if (!configured) {
@@ -62,6 +67,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'Subscribed! (email service connecting soon)',
         fallback: true,
+        referralCode: referral.code,
       });
     }
 
@@ -77,6 +83,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'Subscribed!',
         fallback: true,
+        referralCode: referral.code,
       });
     }
 
@@ -96,6 +103,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: result.action === 'created' ? 'Welcome to AgentAIBrief!' : 'Subscription updated!',
       action: result.action,
+      referralCode: referral.code,
     });
   } catch (error) {
     console.error('Subscribe error:', error);

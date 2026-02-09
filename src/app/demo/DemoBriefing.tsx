@@ -30,108 +30,108 @@ const BRIEFING_DATE = format(today, 'EEEE, MMMM d, yyyy');
 const SAMPLE_BRIEFING: BriefingItem[] = [
   {
     id: 'demo-1',
-    title: 'OpenAI Launches Operator Agent That Can Browse the Web and Complete Tasks Autonomously',
-    source: 'TechCrunch AI',
-    link: 'https://techcrunch.com/ai/',
-    category: 'company',
+    title: 'Short-Term Rentals Are Breaking the Appraisal Playbook — Lenders Can\'t Afford to Ignore It',
+    source: 'HousingWire',
+    link: 'https://www.housingwire.com/articles/short-term-rentals-are-breaking-the-appraisal-playbook-lenders-cant-afford-to-ignore-it/',
+    category: 'realestate',
     publishedAt: new Date(Date.now() - 2 * 3600000).toISOString(),
     summary:
-      'OpenAI released Operator, an AI agent that can use a web browser to complete multi-step tasks like booking appointments, filling out forms, and researching products — all with natural language instructions.',
+      'STR income doesn\'t behave like traditional rental income, yet lenders still evaluate it using tools designed for long-term leases. As DSCR lending grows and investors get more sophisticated, the old appraisal playbook — built on stable market rent assumptions — is breaking down when faced with dynamic pricing, seasonality, and occupancy fluctuations.',
     agentAngle:
-      "This changes your workflow overnight. Imagine telling an AI agent: 'Research the last 10 sales in Fairfax County over $1M, compile them in a spreadsheet, and draft a market update email.' Operator can chain those steps together. Agents who learn to delegate to AI agents will reclaim 5-10 hours per week — time they can spend on client relationships instead of data entry.",
+      "If you have investor clients buying STR properties (and in the DC metro, that\'s a growing segment), this is critical intel. Appraisals on STR-focused properties are coming in wrong because appraisers are using long-term rental comps. That means your investor clients could be getting denied for loans — or worse, overpaying — based on flawed income assumptions. The agents who understand DSCR lending and can guide clients to STR-savvy lenders will own this niche.",
     implementationTip:
-      'Start with one repetitive task you do weekly — like pulling comp data or researching HOA docs. Write out the exact steps as if training an assistant. Then try giving those instructions to Operator. You\'ll be shocked how much it handles.',
-    trendingScore: 97,
+      'Build a short list of 2-3 lenders in your market who specialize in DSCR loans for short-term rentals. Ask them: "How do you underwrite STR income vs. traditional rentals?" Then create a one-page guide for your investor clients explaining the difference. This positions you as the go-to agent for investment properties.',
+    trendingScore: 95,
   },
   {
     id: 'demo-2',
-    title: 'Zillow Expands AI-Powered "Listing Showcase" to All Markets — Virtual Staging Included',
-    source: 'HousingWire',
-    link: 'https://www.housingwire.com/',
-    category: 'realestate',
-    publishedAt: new Date(Date.now() - 4 * 3600000).toISOString(),
-    summary:
-      'Zillow\'s premium Listing Showcase now includes AI virtual staging, interactive floor plans, and room-by-room photo organization. Listings with Showcase get 69% more page views and 74% more saves.',
-    agentAngle:
-      "This is Zillow telling you: AI-enhanced listings are the new standard, not the exception. Those stats aren't subtle — 69% more views means significantly more buyer leads per listing. Agents who aren't using virtual staging and AI-enhanced photos are literally leaving eyeballs (and leads) on the table. The competitive advantage of early adoption is narrowing fast.",
-    implementationTip:
-      'Contact your Zillow rep about Listing Showcase availability in your market. In the meantime, start using AI staging tools like Apply Design AI ($0.20/image) on every vacant listing. A/B test one listing with traditional photos vs. AI-staged — track the view and save counts.',
-    trendingScore: 94,
-  },
-  {
-    id: 'demo-3',
-    title: 'Google Gemini 2.5 Pro Launches with Native Document Analysis — Contract Review in Seconds',
-    source: 'Google AI Blog',
-    link: 'https://blog.google/technology/ai/',
+    title: 'Anthropic Says Claude Will Remain Ad-Free, Unlike ChatGPT',
+    source: 'The Verge AI',
+    link: 'https://www.theverge.com/ai-artificial-intelligence',
     category: 'company',
-    publishedAt: new Date(Date.now() - 5 * 3600000).toISOString(),
+    publishedAt: new Date(Date.now() - 3 * 3600000).toISOString(),
     summary:
-      'Gemini 2.5 Pro can natively read and analyze PDFs up to 2,000 pages with near-perfect accuracy. Early testing shows it can extract key terms from real estate contracts, flag unusual clauses, and summarize HOA documents in under 30 seconds.',
+      'Anthropic has announced that Claude, its AI assistant, will remain ad-free — drawing a sharp contrast with OpenAI\'s ChatGPT, which has begun exploring advertising as a revenue stream. The announcement comes as AI assistants become daily-use tools for professionals across industries.',
     agentAngle:
-      "This is the document review game-changer we've been waiting for. Upload a 200-page HOA document and get a 1-page summary of every rule your buyer needs to know — plus red flags about upcoming assessments, litigation, or rule changes. The agent who delivers this level of due diligence in a same-day turnaround becomes indispensable to their clients.",
+      "This matters more than you think. If you\'re using AI to draft client emails, analyze contracts, or write listing descriptions, you want a tool that works for YOU — not one that\'s subtly steering you toward advertisers. ChatGPT with ads means your \"AI assistant\" might start recommending specific lenders, title companies, or services that paid for placement. Claude staying ad-free means your AI outputs stay neutral and client-focused.",
     implementationTip:
-      'Go to gemini.google.com right now. Upload an inspection report from your last closing. Ask: "Summarize the top 5 issues by severity and estimated repair cost." Then try it with an HOA document: "What are the key restrictions, upcoming assessments, and any pending litigation?" Save your best prompts as templates.',
+      'If you haven\'t tried Claude yet, go to claude.ai and test it against ChatGPT on a real task: paste a property description and ask both to "rewrite this to maximize buyer engagement." Compare the outputs. Then try uploading an HOA document and asking for a summary. Having two AI tools in your belt means you always have a backup — and can pick the best output.',
     trendingScore: 92,
   },
   {
-    id: 'demo-4',
-    title: 'NAR Technology Survey: AI-Using Agents Now Earn 31% Higher GCI Than Non-Users',
-    source: 'RealTrends',
-    link: 'https://www.realtrends.com/',
-    category: 'realestate',
-    publishedAt: new Date(Date.now() - 7 * 3600000).toISOString(),
+    id: 'demo-3',
+    title: 'Software Stocks Slide Again as AI Threats Rattle Investors',
+    source: 'Bloomberg Tech',
+    link: 'https://www.bloomberg.com/technology',
+    category: 'tech',
+    publishedAt: new Date(Date.now() - 5 * 3600000).toISOString(),
     summary:
-      'The latest NAR tech survey reveals that agents regularly incorporating AI tools into their workflow closed 23% more transactions and earned 31% higher GCI in 2025. The gap has widened from 12% in 2024.',
+      'Software makers, advertising agencies, and investment firms were caught in another wave of selling as investors worried about AI disruption threatening traditional business models. The sell-off reflects growing consensus that AI agents will replace significant portions of white-collar workflows.',
     agentAngle:
-      "This is the stat you print out and tape to your monitor. A 31% GCI difference isn't incremental — it's transformational. For an agent earning $150K, that's an extra $46,500/year. The gap is accelerating too, from 12% to 31% in just one year. Agents who haven't started adopting AI aren't just missing out — they're falling behind at an increasing rate.",
+      "Wall Street is betting that AI will replace traditional software — and traditional service providers. Real estate isn\'t immune. The agents getting replaced aren\'t the ones using AI; they\'re the ones who ARE the software — meaning agents whose only value is access to listings or basic transaction coordination. If a client can get that from an AI tool, what\'s left? Your irreplaceable value is local expertise, negotiation skill, and relationship trust. Double down on those.",
     implementationTip:
-      'Share this stat in your next team meeting. Then do a team audit: which AI tools are your top producers using? Pick ONE tool to adopt as a team this month. The easiest starting points: AI listing descriptions (Claude/ChatGPT), AI-staged photos, or an AI follow-up tool.',
+      'Ask yourself: "What do I do that AI literally cannot?" Write down 3 things. Those are your competitive moat. Now ask: "What do I spend time on that AI COULD do?" Those are your automation targets. The goal: spend less time on what AI can handle, more time on what only you can deliver.',
     trendingScore: 89,
   },
   {
-    id: 'demo-5',
-    title: 'Microsoft Copilot Gets Real Estate Plugin — Auto-Generate CMAs From MLS Data',
-    source: 'The Verge AI',
-    link: 'https://www.theverge.com/ai-artificial-intelligence',
+    id: 'demo-4',
+    title: 'Amazon Launches AI-Enhanced Alexa for Prime Subscribers in US',
+    source: 'Bloomberg Tech',
+    link: 'https://www.bloomberg.com/technology',
     category: 'tech',
-    publishedAt: new Date(Date.now() - 9 * 3600000).toISOString(),
+    publishedAt: new Date(Date.now() - 4 * 3600000).toISOString(),
     summary:
-      'Microsoft\'s Copilot now integrates with major MLS systems through a new real estate plugin. Agents using Microsoft 365 can auto-pull comps and generate branded CMA reports in Word and PowerPoint.',
+      'Amazon is rolling out its upgraded Alexa in the US, offering the AI-enhanced digital assistant to paid Prime subscribers. The new Alexa features conversational AI, smart home integration improvements, and the ability to handle complex multi-step requests.',
     agentAngle:
-      "If your brokerage already pays for Microsoft 365 (and most do), you just got a free CMA generator. The real play here is speed: what used to take 45 minutes of pulling comps and formatting a presentation now takes 3 minutes. But here's the edge — the agents who supplement AI-generated CMAs with hyperlocal insights (street-level knowledge, upcoming developments, school boundary changes) will stand out from agents who just hit 'generate.'",
+      "Smart home just got a major upgrade — and your buyers care. The new Alexa can handle complex routines like \"set the house to away mode\" (locks doors, adjusts thermostat, arms security, turns off lights) in one command. For listing presentations, mentioning smart home compatibility is increasingly a selling point. For buyer tours, pointing out Alexa/smart home readiness adds perceived value. And for your own productivity: \"Alexa, add a showing at 123 Main St at 3pm\" just got way more reliable.",
     implementationTip:
-      'Check if your brokerage has Microsoft 365 with Copilot access. If so, try generating a CMA for your next listing appointment. Then add 3-5 hyperlocal insights the AI missed — this "AI + human expertise" combo is what wins the listing.',
-    trendingScore: 86,
+      'Add "smart home ready" or "smart home equipped" to your listing descriptions where applicable. During showings, demo the smart features if the home has them. For your own use: set up Alexa routines for your workday — morning market brief, calendar review, and commute traffic check. Small efficiencies compound.',
+    trendingScore: 87,
+  },
+  {
+    id: 'demo-5',
+    title: 'Fibr AI Raises New Round as Agents Turn Static Websites Into Personalized Experiences',
+    source: 'TechCrunch AI',
+    link: 'https://techcrunch.com/ai/',
+    category: 'tech',
+    publishedAt: new Date(Date.now() - 6 * 3600000).toISOString(),
+    summary:
+      'Fibr AI replaces marketing agency– and engineering-heavy website personalization with autonomous systems designed for enterprise marketers. The platform lets businesses show different content to different visitors based on their intent, source, and behavior — without touching code.',
+    agentAngle:
+      "Your real estate website shows the same page to every visitor — whether they\'re a first-time buyer from Zillow, a luxury seller from Google, or a relocating family from Facebook. That\'s leaving conversions on the table. AI personalization means a seller clicking your Google ad sees testimonials, sold stats, and a \"What\'s my home worth?\" CTA — while a buyer from Instagram sees neighborhood guides and new listings. Same site, different experience, way more leads.",
+    implementationTip:
+      'You don\'t need Fibr AI specifically — but test the concept. Create 2 different landing pages: one for sellers (home value focus) and one for buyers (search focus). Run your next ad campaign with each audience going to their specific page. Compare conversion rates against your generic homepage. Even this basic segmentation typically lifts conversions 30-50%.',
+    trendingScore: 85,
   },
   {
     id: 'demo-6',
-    title: 'AI Voice Agents Hit 67% Lead Engagement Rate for After-Hours Calls',
-    source: 'VentureBeat AI',
-    link: 'https://venturebeat.com/ai/',
+    title: 'Sen. Warren Presses Google on What Gemini\'s Built-In Checkout Means for Consumers',
+    source: 'The Verge AI',
+    link: 'https://www.theverge.com/ai-artificial-intelligence',
     category: 'tech',
-    publishedAt: new Date(Date.now() - 12 * 3600000).toISOString(),
+    publishedAt: new Date(Date.now() - 8 * 3600000).toISOString(),
     summary:
-      'Several top-producing teams are using AI voice agents as first-response systems for after-hours leads. Data from 50,000+ interactions shows a 67% engagement rate compared to 12% for traditional voicemail.',
+      'Sen. Elizabeth Warren is pressing Google for details on plans to build checkout directly into Gemini AI, raising questions about data privacy, competition, and whether AI recommendations will favor Google\'s paying partners over the best options for consumers.',
     agentAngle:
-      "Speed to lead is everything — and AI just made it 24/7. A 67% engagement rate vs. 12% for voicemail means you're converting 5x more after-hours leads. Think about how many 9pm inquiry calls go to voicemail right now. Every one of those is a potential client who calls the next agent on the list. AI voice agents don't sleep, don't take days off, and don't have bad days.",
+      "Pay attention to this trend: AI assistants are becoming the new front door for consumer decisions. If Google Gemini can recommend a lender, a home inspector, or even a real estate agent — and complete the transaction without the user ever visiting your website — the SEO game changes entirely. Your digital presence needs to be optimized not just for Google Search, but for AI assistants that might recommend (or skip) you based on your online reputation and data footprint.",
     implementationTip:
-      "Set up a simple after-hours flow this week: missed call → AI voice agent responds with 3 qualifying questions (timeline, price range, preferred area) → books a callback for the next morning. Start with Structurely or Ylopo's AI voice tools. Test it by calling your own line at 10pm.",
+      'Make sure your Google Business Profile is fully optimized with current reviews, photos, and service descriptions. AI assistants pull from structured data. Update your website\'s schema markup for LocalBusiness and RealEstateAgent types. The agents who show up in AI recommendations will be the ones with the richest, most structured online presence.',
     trendingScore: 82,
   },
   {
     id: 'demo-7',
-    title: 'Stanford Study: AI-Written Property Descriptions Get 34% More Clicks Than Human-Written',
-    source: 'MIT Tech Review AI',
-    link: 'https://www.technologyreview.com/',
-    category: 'research',
-    publishedAt: new Date(Date.now() - 15 * 3600000).toISOString(),
+    title: 'Microsoft\'s Deal With OpenAI Now Viewed as a Risk, Not Reward',
+    source: 'Bloomberg Tech',
+    link: 'https://www.bloomberg.com/technology',
+    category: 'tech',
+    publishedAt: new Date(Date.now() - 7 * 3600000).toISOString(),
     summary:
-      'Researchers analyzed 2.3 million property listings and found that AI-optimized descriptions — trained on click-through data — consistently outperform human-written descriptions in generating buyer engagement.',
+      'The Microsoft-OpenAI partnership, once applauded by Wall Street, is now facing skepticism as investors question the massive capital expenditure required and whether the AI investment will translate to proportional returns.',
     agentAngle:
-      "Your listing descriptions are costing you clicks, and the data proves it. AI doesn't just write faster — it writes what buyers actually respond to, optimized across millions of data points. The ego hit is real (nobody wants to hear a machine writes better copy), but the numbers don't lie: 34% more clicks = more showings = faster sales = happier sellers.",
+      "Here\'s the meta-lesson for agents: even Big Tech isn\'t sure AI investments will pay off at scale. But that uncertainty is exactly why NOW is the time to experiment cheaply. While corporations pour billions into AI infrastructure, you can test AI tools for $0-20/month and find what works for YOUR business before the market settles. The agents experimenting today will have a 2-year head start when AI tools become industry standard — and they\'ll have figured out what actually moves the needle vs. what\'s hype.",
     implementationTip:
-      "Take your last 3 listing descriptions. Paste each into Claude or ChatGPT with this prompt: 'Rewrite this property description to maximize click-through rate. Focus on the lifestyle the buyer gets, not just features. Keep it under 250 words.' Compare the output to your original. You'll see the difference immediately.",
-    trendingScore: 78,
+      'Set an \"AI experiment budget\" of $50/month. Each month, try one new AI tool for your business. This month: test an AI listing description writer. Next month: try AI-powered lead follow-up. Track which ones actually save time or generate leads. Cancel what doesn\'t work. By year-end, you\'ll have a proven AI toolkit while competitors are still deciding whether to start.',
+    trendingScore: 79,
   },
 ];
 

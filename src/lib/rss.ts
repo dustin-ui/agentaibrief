@@ -14,34 +14,52 @@ function generateId(title: string, link: string): string {
   return createHash('md5').update(`${title}${link}`).digest('hex').slice(0, 12);
 }
 
-function calculateBaseTrendingScore(item: any, source: string): number {
-  // Base score from recency (0-50 points)
+// Max age: articles older than this are filtered out entirely
+const MAX_AGE_HOURS = 72; // 3 days
+
+function getArticleAgeHours(item: any): number {
   const pubDate = new Date(item.pubDate || item.isoDate || Date.now());
-  const hoursAgo = (Date.now() - pubDate.getTime()) / (1000 * 60 * 60);
-  const recencyScore = Math.max(0, 50 - hoursAgo * 2);
+  return (Date.now() - pubDate.getTime()) / (1000 * 60 * 60);
+}
+
+function calculateBaseTrendingScore(item: any, source: string): number {
+  const hoursAgo = getArticleAgeHours(item);
   
-  // Source authority bonus (0-30 points)
+  // Hard filter: skip anything older than MAX_AGE_HOURS
+  if (hoursAgo > MAX_AGE_HOURS) return -1;
+  
+  // Recency score (0-60 points) — steeper decay
+  // Fresh (<6h) = 48-60 pts, same day (<24h) = 12-48 pts, older = 0-12 pts
+  const recencyScore = Math.max(0, 60 - hoursAgo * 2.5);
+  
+  // Source authority bonus (0-25 points)
   const authorityScores: Record<string, number> = {
-    'TechCrunch AI': 25,
-    'The Verge AI': 25,
-    'OpenAI Blog': 30,
-    'MIT Tech Review AI': 28,
-    'VentureBeat AI': 22,
-    'Wired AI': 23,
-    'Google AI Blog': 30,
-    'ZDNet AI': 20,
-    'HousingWire': 18,
+    'TechCrunch AI': 22,
+    'The Verge AI': 22,
+    'OpenAI Blog': 25,
+    'MIT Tech Review AI': 23,
+    'VentureBeat AI': 18,
+    'Wired AI': 20,
+    'Google AI Blog': 25,
+    'ZDNet AI': 16,
+    'HousingWire': 20,
     'The Real Deal': 18,
     'RealTrends': 16,
-    'The Information AI': 24,
-    'The Register AI': 18,
-    'Bloomberg Tech': 26,
-    'Ars Technica AI': 22,
+    'The Information AI': 22,
+    'The Register AI': 15,
+    'Bloomberg Tech': 22,
+    'Ars Technica AI': 18,
   };
-  const authorityScore = authorityScores[source] || 15;
+  const authorityScore = authorityScores[source] || 12;
   
-  // Random variance for now (will be replaced by actual signals)
-  const variance = Math.random() * 20;
+  // Small deterministic variance based on title hash (consistent, not random)
+  let hash = 0;
+  const title = item.title || '';
+  for (let i = 0; i < title.length; i++) {
+    hash = ((hash << 5) - hash) + title.charCodeAt(i);
+    hash |= 0;
+  }
+  const variance = Math.abs(hash % 15);
   
   return Math.min(100, Math.round(recencyScore + authorityScore + variance));
 }
@@ -76,8 +94,11 @@ export async function fetchAllFeeds(): Promise<NewsItem[]> {
     }
   });
   
+  // Filter out articles older than MAX_AGE_HOURS (scored as -1)
+  const freshItems = allItems.filter(item => item.trendingScore >= 0);
+  
   // Sort by trending score, then by date
-  return allItems.sort((a, b) => {
+  return freshItems.sort((a, b) => {
     if (b.trendingScore !== a.trendingScore) {
       return b.trendingScore - a.trendingScore;
     }

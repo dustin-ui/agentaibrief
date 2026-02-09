@@ -13,6 +13,12 @@ export default function Home() {
   const [showLogin, setShowLogin] = useState(false);
   const [subEmail, setSubEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+
+  // Capture ?ref= param from URL
+  const refCode = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('ref')
+    : null;
 
   async function handleEmailSubscribe(e: React.FormEvent) {
     e.preventDefault();
@@ -22,10 +28,12 @@ export default function Home() {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: subEmail, tier: 'free' }),
+        body: JSON.stringify({ email: subEmail, tier: 'free', ref: refCode || undefined }),
       });
       if (res.ok) {
+        const data = await res.json();
         setSubStatus('success');
+        setReferralCode(data.referralCode || null);
         setSubEmail('');
       } else {
         setSubStatus('error');
@@ -100,29 +108,66 @@ export default function Home() {
       {/* Hero Banner — only for guests */}
       {!isLoggedIn && (
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-          <div className="max-w-5xl mx-auto px-4 py-8">
-            <h2 className="text-xl font-semibold mb-2">
-              🏠 AI news that actually matters for your real estate business
-            </h2>
-            <p className="text-blue-100 mb-4">
-              We read all the AI news so you don&apos;t have to — and tell you exactly how to use it to sell more homes.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-              <a 
-                href="/subscribe"
-                className="inline-flex items-center justify-center px-6 py-2.5 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors text-sm"
-              >
-                Start with Pro — $19/mo
-              </a>
-              <a 
-                href="/demo"
-                className="inline-flex items-center justify-center px-6 py-2.5 border border-white/40 text-white font-medium rounded-lg hover:bg-white/10 transition-colors text-sm"
-              >
-                📋 See a Sample Briefing
-              </a>
-              <div className="flex items-center gap-2 text-blue-200 text-sm">
-                <span>💡</span>
-                <span>Use code <span className="font-bold text-white bg-blue-500/50 px-2 py-0.5 rounded">LAUNCH25</span> for 25% off</span>
+          <div className="max-w-5xl mx-auto px-4 py-10">
+            <div className="max-w-2xl">
+              <p className="text-blue-200 text-sm font-medium mb-2">✨ Join 2,400+ agents staying ahead of AI</p>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                AI is changing real estate. Are you keeping up?
+              </h2>
+              <p className="text-blue-100 mb-6 text-lg">
+                Get the top AI stories + exactly how to use them to win more listings, close faster, and deliver better client experiences. Free daily briefing.
+              </p>
+              
+              {/* Email Capture — THE primary CTA */}
+              {subStatus === 'success' ? (
+                <div className="bg-white/10 backdrop-blur rounded-lg p-4 max-w-md">
+                  <p className="text-white font-semibold">✅ You&apos;re in! Check your inbox.</p>
+                  <p className="text-blue-200 text-sm mt-1">Your first briefing arrives tomorrow morning.</p>
+                  {referralCode && (
+                    <a href="/referral" className="inline-block mt-2 text-sm text-white underline hover:text-blue-200">
+                      🎁 Share &amp; earn rewards →
+                    </a>
+                  )}
+                </div>
+              ) : (
+                <form onSubmit={handleEmailSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-lg">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={subEmail}
+                    onChange={e => setSubEmail(e.target.value)}
+                    required
+                    className="flex-1 px-4 py-3 rounded-lg text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  />
+                  <button
+                    type="submit"
+                    disabled={subStatus === 'loading'}
+                    className="px-6 py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-blue-50 transition-colors text-sm whitespace-nowrap disabled:opacity-50"
+                  >
+                    {subStatus === 'loading' ? 'Subscribing...' : 'Get Free Daily Briefing →'}
+                  </button>
+                </form>
+              )}
+              {subStatus === 'error' && (
+                <p className="text-red-200 text-sm mt-2">Something went wrong. Try again.</p>
+              )}
+              
+              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center mt-4">
+                <p className="text-blue-200 text-xs">No spam. Unsubscribe anytime.</p>
+                <span className="hidden sm:inline text-blue-400">•</span>
+                <a 
+                  href="/demo"
+                  className="text-white text-xs font-medium underline underline-offset-2 hover:text-blue-100"
+                >
+                  📋 See a sample briefing first
+                </a>
+                <span className="hidden sm:inline text-blue-400">•</span>
+                <a 
+                  href="/subscribe"
+                  className="text-white text-xs font-medium underline underline-offset-2 hover:text-blue-100"
+                >
+                  Want Pro features? $19/mo →
+                </a>
               </div>
             </div>
           </div>
@@ -152,8 +197,8 @@ export default function Home() {
                   <p className="text-gray-400 text-xs">5-Star Reviews</p>
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-blue-400">36</p>
-                  <p className="text-gray-400 text-xs">Agent Team</p>
+                  <p className="text-xl font-bold text-blue-400">Top 5</p>
+                  <p className="text-gray-400 text-xs">DC Metro Volume</p>
                 </div>
               </div>
               <div className="hidden sm:block w-px h-8 bg-gray-700" />
@@ -196,6 +241,11 @@ export default function Home() {
                   <div className="text-center py-2">
                     <p className="text-green-700 font-semibold text-sm">✅ You&apos;re in!</p>
                     <p className="text-green-600 text-xs mt-1">Check your inbox for a welcome email.</p>
+                    {referralCode && (
+                      <a href="/referral" className="inline-block mt-1 text-xs text-blue-600 underline">
+                        🎁 Share &amp; earn rewards →
+                      </a>
+                    )}
                   </div>
                 ) : (
                   <form method="POST" action="/api/subscribe" onSubmit={handleEmailSubscribe}>

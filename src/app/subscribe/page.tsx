@@ -5,12 +5,12 @@ import { useState } from 'react';
 
 const PRICE_MAP = {
   pro: {
-    monthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY || 'price_1SwwYyLl6JNvAnqf4tAL2wed',
-    annual: process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL || 'price_1SwwYyLl6JNvAnqfJVD8gxlk',
+    monthly: 'price_1SyOXcLkSTdcJUwxORq7h7AT',
+    annual: 'price_1SyOXcLkSTdcJUwxWJSqmkMS',
   },
   'inner-circle': {
-    monthly: process.env.NEXT_PUBLIC_STRIPE_IC_MONTHLY || 'price_1SwwYzLl6JNvAnqfnGZjkj4W',
-    annual: process.env.NEXT_PUBLIC_STRIPE_IC_ANNUAL || 'price_1SwwYzLl6JNvAnqfq3AwzB3i',
+    monthly: 'price_1SyOXdLkSTdcJUwxyayQCT1g',
+    annual: 'price_1SyOXdLkSTdcJUwxgWzEF9OZ',
   },
 };
 
@@ -56,7 +56,7 @@ const tiers = [
     features: [
       { text: 'Everything in Pro', included: true },
       { text: 'Private group with Dustin Fox', included: true },
-      { text: 'Weekly live Q&A sessions', included: true },
+      { text: 'Twice-monthly live Q&A sessions', included: true },
       { text: 'Ask anything, anytime', included: true },
       { text: 'AI implementation coaching', included: true },
       { text: 'Real estate strategy sessions', included: true },
@@ -295,7 +295,7 @@ export default function SubscribePage() {
                   <h4 className="text-xl font-bold mb-1">Dustin Fox</h4>
                   <p className="text-gray-300 text-sm mb-4">Team Lead, Fox Homes • DC Metro Market</p>
                   <p className="text-gray-200 text-sm leading-relaxed max-w-xl">
-                    &ldquo;I went from solo agent to leading a 36-agent team doing $277 million in volume. AI didn&apos;t just help — it was the multiplier. This brief is everything I wish I had when I started adopting AI in my business.&rdquo;
+                    &ldquo;I went from solo agent to leading the Fox Homes Team doing $277 million in volume. AI didn&apos;t just help — it was the multiplier. This brief is everything I wish I had when I started adopting AI in my business.&rdquo;
                   </p>
                 </div>
               </div>
@@ -306,8 +306,8 @@ export default function SubscribePage() {
                 <p className="text-xs text-gray-500 mt-1">2025 Sales Volume</p>
               </div>
               <div className="p-6 text-center">
-                <p className="text-2xl font-bold text-blue-600">36</p>
-                <p className="text-xs text-gray-500 mt-1">Agent Team</p>
+                <p className="text-2xl font-bold text-blue-600">Top 5</p>
+                <p className="text-xs text-gray-500 mt-1">DC Metro Volume Team</p>
               </div>
               <div className="p-6 text-center">
                 <p className="text-2xl font-bold text-blue-600">2,102</p>
@@ -325,7 +325,7 @@ export default function SubscribePage() {
             <p className="text-gray-600 leading-relaxed">
               Most AI newsletters are written by tech people who&apos;ve never held an open house. 
               AgentAIBrief is different — it&apos;s built by a team lead who uses AI every day to 
-              generate leads, create content, analyze markets, and coach a 36-agent team. 
+              generate leads, create content, analyze markets, and coach a Fox Homes Team. 
               Every angle, every tip comes from real experience.
             </p>
           </div>
@@ -350,7 +350,7 @@ export default function SubscribePage() {
               },
               {
                 q: 'What do I get with the Inner Circle?',
-                a: "Everything in Pro, plus direct access to Dustin Fox — the team lead behind a 36-agent, $277M operation in the DC metro market. He's been implementing AI in real estate since day one and has 2,102 five-star Google reviews to show for it. Ask him anything about AI tools, marketing, scaling your team, or growing your business. Weekly live Q&A sessions and first access to new resources included.",
+                a: "Everything in Pro, plus direct access to Dustin Fox — the team lead behind a $277M operation in the DC metro market. He's been implementing AI in real estate since day one and has 2,102 five-star Google reviews to show for it. Ask him anything about AI tools, marketing, scaling your team, or growing your business. Twice-monthly live Q&A sessions and first access to new resources included.",
               },
               {
                 q: 'Can I cancel anytime?',
