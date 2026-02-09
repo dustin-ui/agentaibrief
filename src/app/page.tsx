@@ -68,6 +68,9 @@ export default function Home() {
                   </svg>
                   Video Library
                 </a>
+                <a href="/about" className="text-sm text-gray-600 hover:text-gray-900 font-medium">
+                  About
+                </a>
               </nav>
             </div>
             <div className="flex items-center gap-3">
