@@ -64,6 +64,7 @@ export default function Home() {
                 <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Blog</a>
                 <a href="/tools" className="text-sm text-gray-600 hover:text-gray-900 font-medium">AI Tools</a>
                 <a href="/prompts" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Prompts</a>
+                <a href="/contract-analyzer" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Contract Analyzer</a>
                 <a href="/videos" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Video Library</a>
               </nav>
             </div>
