@@ -1,47 +1,84 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const SEMRUSH_API_KEY = process.env.SEMRUSH_API_KEY || 'a3fc492f4f3f6d6066f46f457f2bf02b';
+const SEMRUSH_BASE = 'https://api.semrush.com/';
+const SEMRUSH_BACKLINKS = 'https://api.semrush.com/analytics/v1/';
+
+function parseSemrushCSV(text: string): Record<string, string>[] {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(';');
+  return lines.slice(1).map(line => {
+    const values = line.split(';');
+    const obj: Record<string, string> = {};
+    headers.forEach((h, i) => { obj[h.trim()] = (values[i] || '').trim(); });
+    return obj;
+  });
+}
+
+async function fetchSemrush(url: string): Promise<string> {
+  const res = await fetch(url, { next: { revalidate: 3600 } });
+  const text = await res.text();
+  if (text.startsWith('ERROR')) throw new Error(`SemRush API error: ${text}`);
+  return text;
+}
+
 export async function GET(request: NextRequest) {
   const domain = request.nextUrl.searchParams.get('domain') || 'foxessellfaster.com';
 
-  // Mock data — will wire up real SemRush scraping later
-  const report = {
-    domain,
-    reportDate: new Date().toISOString(),
-    authorityScore: 42,
-    organicTraffic: 8743,
-    trafficChange: 12.4,
-    organicKeywords: 1847,
-    keywordsChange: 8.2,
-    backlinks: 3291,
-    backlinksChange: 5.1,
-    aiVisibilityScore: 67,
-    aiMentions: 23,
-    topKeywords: [
-      { keyword: 'homes for sale northern virginia', position: 3, traffic: 1240, volume: 4400, change: 1 },
-      { keyword: 'fox homes team', position: 1, traffic: 890, volume: 1200, change: 0 },
-      { keyword: 'best realtor dc metro', position: 7, traffic: 620, volume: 2900, change: 2 },
-      { keyword: 'fairfax county real estate', position: 5, traffic: 580, volume: 1800, change: -1 },
-      { keyword: 'sell my house fast virginia', position: 4, traffic: 510, volume: 3200, change: 3 },
-      { keyword: 'arlington va homes', position: 8, traffic: 440, volume: 1600, change: -2 },
-      { keyword: 'loudoun county realtor', position: 6, traffic: 390, volume: 1100, change: 1 },
-      { keyword: 'tysons corner real estate agent', position: 2, traffic: 350, volume: 880, change: 0 },
-      { keyword: 'nova real estate market 2026', position: 9, traffic: 280, volume: 720, change: 4 },
-      { keyword: 'first time home buyer virginia', position: 11, traffic: 210, volume: 2100, change: -3 },
-    ],
-    trafficChannels: {
-      direct: 22,
-      ai: 18,
-      organic: 47,
-      referral: 13,
-    },
-    weeklyHistory: [
-      { week: '2026-01-05', authorityScore: 38, organicTraffic: 7200, organicKeywords: 1620 },
-      { week: '2026-01-12', authorityScore: 39, organicTraffic: 7450, organicKeywords: 1680 },
-      { week: '2026-01-19', authorityScore: 40, organicTraffic: 7890, organicKeywords: 1720 },
-      { week: '2026-01-26', authorityScore: 41, organicTraffic: 8100, organicKeywords: 1780 },
-      { week: '2026-02-02', authorityScore: 42, organicTraffic: 8743, organicKeywords: 1847 },
-    ],
-  };
+  try {
+    // Parallel API calls
+    const [ranksText, organicText, backlinksText] = await Promise.all([
+      fetchSemrush(`${SEMRUSH_BASE}?type=domain_ranks&key=${SEMRUSH_API_KEY}&export_columns=Dn,Rk,Or,Ot,Oc,Ad,At,Ac&domain=${domain}&database=us`),
+      fetchSemrush(`${SEMRUSH_BASE}?type=domain_organic&key=${SEMRUSH_API_KEY}&export_columns=Ph,Po,Nq,Cp,Ur,Tr&domain=${domain}&database=us&display_limit=10&display_sort=tr_desc`),
+      fetchSemrush(`${SEMRUSH_BACKLINKS}?type=backlinks_overview&key=${SEMRUSH_API_KEY}&target=${domain}&export_columns=total,domains_num,urls_num&target_type=root_domain`),
+    ]);
 
-  return NextResponse.json(report);
+    const ranks = parseSemrushCSV(ranksText)[0];
+    const keywords = parseSemrushCSV(organicText);
+    const backlinks = parseSemrushCSV(backlinksText)[0];
+
+    if (!ranks) {
+      return NextResponse.json({ error: 'No domain data returned from SemRush' }, { status: 502 });
+    }
+
+    const organicTraffic = parseInt(ranks['Organic Traffic'] || '0');
+    const organicKeywords = parseInt(ranks['Organic Keywords'] || '0');
+    const totalBacklinks = backlinks ? parseInt(backlinks['total'] || '0') : 0;
+    const referringDomains = backlinks ? parseInt(backlinks['domains_num'] || '0') : 0;
+
+    const report = {
+      domain,
+      reportDate: new Date().toISOString(),
+      dataSource: 'semrush_live',
+      authorityScore: 0, // Not available via basic API — use SemRush dashboard for this metric
+      organicTraffic,
+      trafficChange: 0, // Requires historical data; current snapshot only
+      organicKeywords,
+      keywordsChange: 0,
+      backlinks: totalBacklinks,
+      backlinksChange: 0,
+      referringDomains,
+      trafficCost: parseInt(ranks['Organic Cost'] || '0'),
+      semrushRank: parseInt(ranks['Rank'] || '0'),
+      aiVisibilityScore: null as number | null, // Not available via SemRush API
+      aiMentions: null as number | null,
+      topKeywords: keywords.map(kw => ({
+        keyword: kw['Keyword'] || '',
+        position: parseInt(kw['Position'] || '0'),
+        traffic: parseFloat(kw['Traffic (%)'] || '0'),
+        volume: parseInt(kw['Search Volume'] || '0'),
+        change: 0, // Requires historical data
+        cpc: parseFloat(kw['CPC'] || '0'),
+        url: kw['Url'] || '',
+      })),
+      trafficChannels: null as { direct: number; ai: number; organic: number; referral: number } | null, // Not available via API
+      weeklyHistory: [] as { week: string; organicTraffic: number; organicKeywords: number }[],
+    };
+
+    return NextResponse.json(report);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: `SemRush API failed: ${message}` }, { status: 502 });
+  }
 }
