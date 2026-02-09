@@ -25,6 +25,9 @@ export function MobileNav() {
       {open && (
         <div className="absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-50">
           <nav className="flex flex-col px-4 py-3 space-y-3">
+            <a href="/contract-analyzer" className="text-sm text-gray-700 hover:text-blue-600 font-medium flex items-center gap-2" onClick={() => setOpen(false)}>
+              📄 Contract Analyzer
+            </a>
             <a href="/videos" className="text-sm text-gray-700 hover:text-blue-600 font-medium flex items-center gap-2" onClick={() => setOpen(false)}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
