@@ -75,35 +75,7 @@ export default function ProDashboard() {
     }
   }
 
-  const hasAccess = isPro || isInnerCircle;
-
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center max-w-md px-4">
-          <h1 className="text-3xl font-bold text-white mb-4">Pro Dashboard</h1>
-          <p className="text-gray-400 mb-6">Log in with your Pro or Inner Circle account to access your SEO reports.</p>
-          <Link href="/" className="px-6 py-3 bg-[#37b0c9] text-white font-semibold rounded-lg hover:bg-[#2d9ab1] transition">
-            Go to Homepage
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (!hasAccess) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center max-w-md px-4">
-          <h1 className="text-3xl font-bold text-white mb-4">🔒 Pro Feature</h1>
-          <p className="text-gray-400 mb-6">Weekly SEO Performance Reports are available on the Inner Circle plan ($99/mo).</p>
-          <Link href="/subscribe" className="px-6 py-3 bg-[#37b0c9] text-white font-semibold rounded-lg hover:bg-[#2d9ab1] transition">
-            Upgrade to Inner Circle
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // Auth gate disabled for demo/preview — will re-enable with proper auth later
 
   return (
     <div className="min-h-screen bg-gray-950">
