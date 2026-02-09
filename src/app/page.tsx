@@ -180,7 +180,7 @@ export default function Home() {
           <div className="max-w-5xl mx-auto px-4 py-4">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold text-sm">DF</div>
+                <img src="/dustin-fox.jpg" alt="Dustin Fox" className="w-10 h-10 rounded-full object-cover" />
                 <div>
                   <p className="font-semibold">Built by Dustin Fox</p>
                   <p className="text-gray-400 text-xs">Fox Homes Team • DC Metro</p>

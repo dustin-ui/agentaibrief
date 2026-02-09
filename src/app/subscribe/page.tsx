@@ -288,9 +288,7 @@ export default function SubscribePage() {
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8">
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-8">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold shrink-0">
-                  DF
-                </div>
+                <img src="/dustin-fox.jpg" alt="Dustin Fox" className="w-20 h-20 rounded-full object-cover shrink-0" />
                 <div className="text-center md:text-left">
                   <h4 className="text-xl font-bold mb-1">Dustin Fox</h4>
                   <p className="text-gray-300 text-sm mb-4">Team Lead, Fox Homes • DC Metro Market</p>
@@ -314,8 +312,8 @@ export default function SubscribePage() {
                 <p className="text-xs text-gray-500 mt-1">5-Star Google Reviews</p>
               </div>
               <div className="p-6 text-center">
-                <p className="text-2xl font-bold text-blue-600">Top 5</p>
-                <p className="text-xs text-gray-500 mt-1">DC Metro Volume Team</p>
+                <p className="text-2xl font-bold text-blue-600">36</p>
+                <p className="text-xs text-gray-500 mt-1">Agents on Team</p>
               </div>
             </div>
           </div>
