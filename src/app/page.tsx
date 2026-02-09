@@ -61,16 +61,10 @@ export default function Home() {
                 </p>
               </div>
               <nav className="hidden md:flex items-center gap-4">
-                <a href="/videos" className="text-sm text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1.5">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
-                  </svg>
-                  Video Library
-                </a>
-                <a href="/about" className="text-sm text-gray-600 hover:text-gray-900 font-medium">
-                  About
-                </a>
+                <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Blog</a>
+                <a href="/tools" className="text-sm text-gray-600 hover:text-gray-900 font-medium">AI Tools</a>
+                <a href="/prompts" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Prompts</a>
+                <a href="/videos" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Video Library</a>
               </nav>
             </div>
             <div className="flex items-center gap-3">

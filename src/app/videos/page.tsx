@@ -76,24 +76,12 @@ export default function VideoLibraryPage() {
                 </h1>
               </Link>
               <nav className="hidden md:flex items-center gap-4">
-                <Link
-                  href="/"
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
-                >
-                  News
-                </Link>
-                <Link
-                  href="/videos"
-                  className="text-sm text-white font-medium border-b-2 border-blue-500 pb-0.5"
-                >
-                  Video Library
-                </Link>
-                <Link
-                  href="/subscribe"
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
-                >
-                  Subscribe
-                </Link>
+                <Link href="/" className="text-sm text-gray-400 hover:text-white transition-colors">News</Link>
+                <Link href="/blog" className="text-sm text-gray-400 hover:text-white transition-colors">Blog</Link>
+                <Link href="/tools" className="text-sm text-gray-400 hover:text-white transition-colors">AI Tools</Link>
+                <Link href="/prompts" className="text-sm text-gray-400 hover:text-white transition-colors">Prompts</Link>
+                <Link href="/videos" className="text-sm text-white font-medium border-b-2 border-blue-500 pb-0.5">Video Library</Link>
+                <Link href="/subscribe" className="text-sm text-gray-400 hover:text-white transition-colors">Subscribe</Link>
               </nav>
             </div>
             <div className="flex items-center gap-3">
