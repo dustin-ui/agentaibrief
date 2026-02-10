@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { href: '/blog', label: 'Blog' },
   { href: '/tools', label: 'AI Tools' },
   { href: '/prompts', label: 'Prompts' },
+  { href: '/neighborhood-brief', label: 'Market Brief' },
   { href: '/videos', label: 'Video Library' },
   { href: '/subscribe', label: 'Subscribe' },
 ];
