@@ -279,6 +279,33 @@ export default function ProDashboard() {
               </div>
             </div>
 
+            {/* Actionable Priorities */}
+            {(report as any).priorities && (report as any).priorities.length > 0 && (
+              <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8">
+                <h3 className="text-lg font-semibold text-white mb-4">🎯 Your Top 3 Priorities This Week</h3>
+                <div className="space-y-4">
+                  {(report as any).priorities.map((p: any, i: number) => (
+                    <div key={i} className="flex gap-4 p-4 bg-gray-900/50 border border-gray-700/50 rounded-lg">
+                      <div className="text-2xl flex-shrink-0 mt-0.5">{p.icon}</div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="text-white font-medium">{p.title}</h4>
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                            p.impact === 'high' ? 'bg-red-500/20 text-red-400' :
+                            p.impact === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+                            'bg-gray-600/30 text-gray-400'
+                          }`}>
+                            {p.impact} impact
+                          </span>
+                        </div>
+                        <p className="text-gray-400 text-sm leading-relaxed">{p.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Weekly History */}
             {report.weeklyHistory && report.weeklyHistory.length > 0 && (
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
