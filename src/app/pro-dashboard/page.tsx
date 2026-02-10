@@ -159,60 +159,86 @@ export default function ProDashboard() {
               <MetricCard label="Organic Traffic" value={report.organicTraffic} change={report.trafficChange} changeSuffix="%" />
               <MetricCard label="Keywords" value={report.organicKeywords} change={report.keywordsChange} changeSuffix="%" />
               <MetricCard label="Backlinks" value={report.backlinks} change={report.backlinksChange} changeSuffix="%" />
-              <MetricCard label="AI Visibility" value={`${report.aiVisibilityScore}/100`} />
+              <MetricCard label="AI Visibility" value={report.aiVisibilityScore != null ? `${report.aiVisibilityScore}/100` : 'N/A'} />
             </div>
 
             {/* Two Column: Traffic Channels + AI Visibility */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {/* Traffic Channels */}
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Traffic Channels</h3>
-                <div className="space-y-3">
-                  {[
-                    { label: 'Organic Search', value: report.trafficChannels.organic, color: 'bg-emerald-500' },
-                    { label: 'Direct', value: report.trafficChannels.direct, color: 'bg-blue-500' },
-                    { label: 'AI Search', value: report.trafficChannels.ai, color: 'bg-purple-500' },
-                    { label: 'Referral', value: report.trafficChannels.referral, color: 'bg-amber-500' },
-                  ].map(ch => (
-                    <div key={ch.label}>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">{ch.label}</span>
-                        <span className="text-white font-medium">{ch.value}%</span>
+                <h3 className="text-lg font-semibold text-white mb-4">Traffic Overview</h3>
+                {report.trafficChannels ? (
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Organic Search', value: report.trafficChannels.organic, color: 'bg-emerald-500' },
+                      { label: 'Direct', value: report.trafficChannels.direct, color: 'bg-blue-500' },
+                      { label: 'AI Search', value: report.trafficChannels.ai, color: 'bg-purple-500' },
+                      { label: 'Referral', value: report.trafficChannels.referral, color: 'bg-amber-500' },
+                    ].map(ch => (
+                      <div key={ch.label}>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-300">{ch.label}</span>
+                          <span className="text-white font-medium">{ch.value}%</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div className={`${ch.color} rounded-full h-2`} style={{ width: `${ch.value}%` }} />
+                        </div>
                       </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className={`${ch.color} rounded-full h-2`} style={{ width: `${ch.value}%` }} />
-                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-300">SemRush Rank</span>
+                      <span className="text-white font-medium">#{(report as any).semrushRank?.toLocaleString() || 'N/A'}</span>
                     </div>
-                  ))}
-                </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-300">Traffic Value</span>
+                      <span className="text-white font-medium">${(report as any).trafficCost?.toLocaleString() || '0'}/mo</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-300">Referring Domains</span>
+                      <span className="text-white font-medium">{(report as any).referringDomains?.toLocaleString() || 'N/A'}</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* AI Visibility */}
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">AI Search Visibility</h3>
-                <div className="flex items-center gap-6 mb-4">
-                  <div className="relative w-28 h-28">
-                    <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="42" fill="none" stroke="#374151" strokeWidth="8" />
-                      <circle
-                        cx="50" cy="50" r="42" fill="none" stroke="#37b0c9" strokeWidth="8"
-                        strokeDasharray={`${report.aiVisibilityScore * 2.64} 264`}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-2xl font-bold text-white">{report.aiVisibilityScore}</span>
+                {report.aiVisibilityScore != null ? (
+                  <>
+                    <div className="flex items-center gap-6 mb-4">
+                      <div className="relative w-28 h-28">
+                        <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="42" fill="none" stroke="#374151" strokeWidth="8" />
+                          <circle
+                            cx="50" cy="50" r="42" fill="none" stroke="#37b0c9" strokeWidth="8"
+                            strokeDasharray={`${report.aiVisibilityScore * 2.64} 264`}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-2xl font-bold text-white">{report.aiVisibilityScore}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-sm">AI Mentions This Week</p>
+                        <p className="text-3xl font-bold text-white">{report.aiMentions}</p>
+                        <p className="text-[#37b0c9] text-sm mt-1">ChatGPT, Gemini, Perplexity</p>
+                      </div>
                     </div>
+                    <p className="text-gray-400 text-sm">
+                      Your domain appears in <span className="text-white font-medium">{report.aiVisibilityScore}%</span> of relevant AI-generated responses about real estate in your market.
+                    </p>
+                  </>
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-gray-400 text-sm">AI Visibility tracking requires the SemRush AI Visibility toolkit.</p>
+                    <p className="text-gray-500 text-xs mt-2">Coming soon to Pro reports</p>
                   </div>
-                  <div>
-                    <p className="text-gray-400 text-sm">AI Mentions This Week</p>
-                    <p className="text-3xl font-bold text-white">{report.aiMentions}</p>
-                    <p className="text-[#37b0c9] text-sm mt-1">ChatGPT, Gemini, Perplexity</p>
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Your domain appears in <span className="text-white font-medium">{report.aiVisibilityScore}%</span> of relevant AI-generated responses about real estate in your market.
-                </p>
+                )}
               </div>
             </div>
 
@@ -254,31 +280,33 @@ export default function ProDashboard() {
             </div>
 
             {/* Weekly History */}
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Weekly Trend</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-gray-400 text-sm border-b border-gray-700">
-                      <th className="text-left py-2">Week</th>
-                      <th className="text-right py-2">Authority</th>
-                      <th className="text-right py-2">Traffic</th>
-                      <th className="text-right py-2">Keywords</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {report.weeklyHistory.map((w, i) => (
-                      <tr key={i} className="border-b border-gray-800">
-                        <td className="py-2 text-gray-300 text-sm">{w.week}</td>
-                        <td className="py-2 text-right text-white text-sm">{w.authorityScore}</td>
-                        <td className="py-2 text-right text-white text-sm">{w.organicTraffic.toLocaleString()}</td>
-                        <td className="py-2 text-right text-white text-sm">{w.organicKeywords.toLocaleString()}</td>
+            {report.weeklyHistory && report.weeklyHistory.length > 0 && (
+              <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Weekly Trend</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-gray-400 text-sm border-b border-gray-700">
+                        <th className="text-left py-2">Week</th>
+                        <th className="text-right py-2">Authority</th>
+                        <th className="text-right py-2">Traffic</th>
+                        <th className="text-right py-2">Keywords</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {report.weeklyHistory.map((w, i) => (
+                        <tr key={i} className="border-b border-gray-800">
+                          <td className="py-2 text-gray-300 text-sm">{w.week}</td>
+                          <td className="py-2 text-right text-white text-sm">{w.authorityScore}</td>
+                          <td className="py-2 text-right text-white text-sm">{w.organicTraffic.toLocaleString()}</td>
+                          <td className="py-2 text-right text-white text-sm">{w.organicKeywords.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+            )}
           </>
         ) : (
           <p className="text-gray-400 text-center py-20">Failed to load report data.</p>
