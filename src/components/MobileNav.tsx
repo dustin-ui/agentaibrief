@@ -44,6 +44,9 @@ export function MobileNav() {
             <a href="/pro-dashboard" className="text-sm text-gray-700 hover:text-blue-600 font-medium flex items-center gap-2" onClick={() => setOpen(false)}>
               📊 SEO Reports
             </a>
+            <a href="/seo-sniper" className="text-sm text-gray-700 hover:text-blue-600 font-medium flex items-center gap-2" onClick={() => setOpen(false)}>
+              🎯 SEO Sniper
+            </a>
             <a href="/subscribe" className="text-sm text-blue-600 hover:text-blue-700 font-semibold" onClick={() => setOpen(false)}>
               Subscribe →
             </a>
