@@ -38,6 +38,9 @@ export function MobileNav() {
             <a href="/preferences" className="text-sm text-gray-700 hover:text-blue-600 font-medium flex items-center gap-2" onClick={() => setOpen(false)}>
               ⚙️ Email Preferences
             </a>
+            <a href="/neighborhood-brief" className="text-sm text-gray-700 hover:text-blue-600 font-medium flex items-center gap-2" onClick={() => setOpen(false)}>
+              🏘️ Market Brief
+            </a>
             <a href="/pro-dashboard" className="text-sm text-gray-700 hover:text-blue-600 font-medium flex items-center gap-2" onClick={() => setOpen(false)}>
               📊 SEO Reports
             </a>
