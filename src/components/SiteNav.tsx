@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: '/tools', label: 'AI Tools' },
   { href: '/prompts', label: 'Prompts' },
   { href: '/neighborhood-brief', label: 'Market Brief' },
+  { href: '/seo-sniper', label: 'SEO Sniper' },
   { href: '/videos', label: 'Video Library' },
   { href: '/subscribe', label: 'Subscribe' },
 ];
