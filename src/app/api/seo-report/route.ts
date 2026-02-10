@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     const [ranksText, organicText, backlinksText] = await Promise.all([
       fetchSemrush(`${SEMRUSH_BASE}?type=domain_ranks&key=${SEMRUSH_API_KEY}&export_columns=Dn,Rk,Or,Ot,Oc,Ad,At,Ac&domain=${domain}&database=us`),
       fetchSemrush(`${SEMRUSH_BASE}?type=domain_organic&key=${SEMRUSH_API_KEY}&export_columns=Ph,Po,Nq,Cp,Ur,Tr&domain=${domain}&database=us&display_limit=10&display_sort=tr_desc`),
-      fetchSemrush(`${SEMRUSH_BACKLINKS}?type=backlinks_overview&key=${SEMRUSH_API_KEY}&target=${domain}&export_columns=total,domains_num,urls_num&target_type=root_domain`),
+      fetchSemrush(`${SEMRUSH_BACKLINKS}?type=backlinks_overview&key=${SEMRUSH_API_KEY}&target=${domain}&export_columns=total,domains_num,urls_num,score&target_type=root_domain`),
     ]);
 
     const ranks = parseSemrushCSV(ranksText)[0];
@@ -46,12 +46,13 @@ export async function GET(request: NextRequest) {
     const organicKeywords = parseInt(ranks['Organic Keywords'] || '0');
     const totalBacklinks = backlinks ? parseInt(backlinks['total'] || '0') : 0;
     const referringDomains = backlinks ? parseInt(backlinks['domains_num'] || '0') : 0;
+    const authorityScore = backlinks ? parseInt(backlinks['score'] || '0') : 0;
 
     const report = {
       domain,
       reportDate: new Date().toISOString(),
       dataSource: 'semrush_live',
-      authorityScore: 0, // Not available via basic API — use SemRush dashboard for this metric
+      authorityScore,
       organicTraffic,
       trafficChange: 0, // Requires historical data; current snapshot only
       organicKeywords,
@@ -63,15 +64,20 @@ export async function GET(request: NextRequest) {
       semrushRank: parseInt(ranks['Rank'] || '0'),
       aiVisibilityScore: null as number | null, // Not available via SemRush API
       aiMentions: null as number | null,
-      topKeywords: keywords.map(kw => ({
-        keyword: kw['Keyword'] || '',
-        position: parseInt(kw['Position'] || '0'),
-        traffic: parseFloat(kw['Traffic (%)'] || '0'),
-        volume: parseInt(kw['Search Volume'] || '0'),
-        change: 0, // Requires historical data
-        cpc: parseFloat(kw['CPC'] || '0'),
-        url: kw['Url'] || '',
-      })),
+      topKeywords: keywords.map(kw => {
+        const trafficPct = parseFloat(kw['Traffic (%)'] || '0');
+        const estimatedTraffic = Math.round((trafficPct / 100) * organicTraffic);
+        return {
+          keyword: kw['Keyword'] || '',
+          position: parseInt(kw['Position'] || '0'),
+          traffic: estimatedTraffic,
+          trafficPct,
+          volume: parseInt(kw['Search Volume'] || '0'),
+          change: 0,
+          cpc: parseFloat(kw['CPC'] || '0'),
+          url: kw['Url'] || '',
+        };
+      }),
       trafficChannels: null as { direct: number; ai: number; organic: number; referral: number } | null, // Not available via API
       weeklyHistory: [] as { week: string; organicTraffic: number; organicKeywords: number }[],
     };
