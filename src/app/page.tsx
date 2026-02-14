@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { NewsFeed } from '@/components/NewsFeed';
 import { WeeklyDeepDive } from '@/components/WeeklyDeepDive';
 import { AIToolsSection } from '@/components/AIToolsSection';
@@ -61,13 +62,13 @@ export default function Home() {
                 </p>
               </div>
               <nav className="hidden md:flex items-center gap-4">
-                <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Blog</a>
-                <a href="/tools" className="text-sm text-gray-600 hover:text-gray-900 font-medium">AI Tools</a>
-                <a href="/prompts" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Prompts</a>
-                <a href="/contract-analyzer" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Contract Analyzer</a>
-                <a href="/videos" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Video Library</a>
+                <Link href="/blog" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Blog</Link>
+                <Link href="/tools" className="text-sm text-gray-600 hover:text-gray-900 font-medium">AI Tools</Link>
+                <Link href="/prompts" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Prompts</Link>
+                <Link href="/contract-analyzer" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Contract Analyzer</Link>
+                <Link href="/videos" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Video Library</Link>
                 {isPro && (
-                  <a href="/pro-dashboard" className="text-sm text-gray-600 hover:text-gray-900 font-medium">SEO Reports</a>
+                  <Link href="/pro-dashboard" className="text-sm text-gray-600 hover:text-gray-900 font-medium">SEO Reports</Link>
                 )}
               </nav>
             </div>
@@ -101,7 +102,7 @@ export default function Home() {
                     className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     Subscribe
-                  </a>
+                  </Link>
                 </>
               )}
             </div>
@@ -128,9 +129,9 @@ export default function Home() {
                   <p className="text-white font-semibold">✅ You&apos;re in! Check your inbox.</p>
                   <p className="text-blue-200 text-sm mt-1">Your first briefing arrives tomorrow morning.</p>
                   {referralCode && (
-                    <a href="/referral" className="inline-block mt-2 text-sm text-white underline hover:text-blue-200">
+                    <Link href="/referral" className="inline-block mt-2 text-sm text-white underline hover:text-blue-200">
                       🎁 Share &amp; earn rewards →
-                    </a>
+                    </Link>
                   )}
                 </div>
               ) : (
@@ -164,14 +165,14 @@ export default function Home() {
                   className="text-white text-xs font-medium underline underline-offset-2 hover:text-blue-100"
                 >
                   📋 See a sample briefing first
-                </a>
+                </Link>
                 <span className="hidden sm:inline text-blue-400">•</span>
                 <a 
                   href="/subscribe"
                   className="text-white text-xs font-medium underline underline-offset-2 hover:text-blue-100"
                 >
                   Want Pro features? $19/mo →
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -246,9 +247,9 @@ export default function Home() {
                     <p className="text-green-700 font-semibold text-sm">✅ You&apos;re in!</p>
                     <p className="text-green-600 text-xs mt-1">Check your inbox for a welcome email.</p>
                     {referralCode && (
-                      <a href="/referral" className="inline-block mt-1 text-xs text-blue-600 underline">
+                      <Link href="/referral" className="inline-block mt-1 text-xs text-blue-600 underline">
                         🎁 Share &amp; earn rewards →
-                      </a>
+                      </Link>
                     )}
                   </div>
                 ) : (
@@ -296,7 +297,7 @@ export default function Home() {
                   className="mt-4 block w-full px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded text-center hover:bg-blue-700"
                 >
                   Get Started
-                </a>
+                </Link>
               )}
             </div>
 
@@ -317,7 +318,7 @@ export default function Home() {
                 className="block w-full px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded text-center hover:bg-gray-800"
               >
                 Join the Inner Circle
-              </a>
+              </Link>
             </div>
 
             {/* This Week in Numbers */}
@@ -348,11 +349,11 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-gray-500">
             <span>© 2026 AgentAIBrief.com</span>
             <span className="hidden sm:inline">•</span>
-            <a href="/privacy" className="hover:text-gray-700">Privacy Policy</a>
+            <Link href="/privacy" className="hover:text-gray-700">Privacy Policy</Link>
             <span className="hidden sm:inline">•</span>
-            <a href="/terms" className="hover:text-gray-700">Terms of Service</a>
+            <Link href="/terms" className="hover:text-gray-700">Terms of Service</Link>
             <span className="hidden sm:inline">•</span>
-            <a href="/preferences" className="hover:text-gray-700">Manage Preferences</a>
+            <Link href="/preferences" className="hover:text-gray-700">Manage Preferences</Link>
           </div>
         </div>
       </footer>

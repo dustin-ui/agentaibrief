@@ -68,7 +68,7 @@ function processInline(text: string): string {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/`(.+?)`/g, '<code class="bg-[#f5f0ea] px-1.5 py-0.5 rounded text-sm">$1</code>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-[#e85d26] hover:underline">$1</a>');
+    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-[#e85d26] hover:underline">$1</Link>');
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -126,9 +126,9 @@ export default async function BlogPostPage({ params }: Props) {
         <div className="mt-12 bg-[#f5f0ea] border border-[#e0dcd4] rounded-2xl p-8 text-center">
           <h3 className="text-2xl font-bold text-[#2a2a2a] mb-3">Get Daily AI Briefings</h3>
           <p className="text-[#666] mb-6">Join thousands of agents getting actionable AI strategies every morning.</p>
-          <a href="/subscribe" className="inline-flex px-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
+          <Link href="/subscribe" className="inline-flex px-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
             Subscribe Free →
-          </a>
+          </Link>
         </div>
 
         {/* Related Posts */}

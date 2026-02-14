@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'About Dustin Fox',
@@ -11,12 +12,12 @@ export default function AboutPage() {
       {/* Header */}
       <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <a href="/" className="text-2xl font-bold text-[#2a2a2a]">
+          <Link href="/" className="text-2xl font-bold text-[#2a2a2a]">
             Agent<span className="text-[#e85d26]">AI</span>Brief
-          </a>
-          <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
+          </Link>
+          <Link href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
             Subscribe
-          </a>
+          </Link>
         </div>
       </header>
 
@@ -128,12 +129,12 @@ export default function AboutPage() {
               I&apos;m sharing everything I&apos;ve learned — the tools, the workflows, the strategies. Let me help you stay ahead.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="/subscribe" className="px-8 py-3 bg-[#e8e6e1] text-[#c44a1a] font-bold rounded-lg hover:bg-[#f5f0ea]">
+              <Link href="/subscribe" className="px-8 py-3 bg-[#e8e6e1] text-[#c44a1a] font-bold rounded-lg hover:bg-[#f5f0ea]">
                 Get the Free Daily Brief →
-              </a>
-              <a href="/demo" className="px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#e85d26] border border-[#e85d26]">
+              </Link>
+              <Link href="/demo" className="px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#e85d26] border border-[#e85d26]">
                 See a Sample First →
-              </a>
+              </Link>
             </div>
           </div>
         </article>
@@ -144,7 +145,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <p className="text-sm text-[#888] text-center">
             © 2026 AgentAIBrief.com • Built for real estate professionals •{' '}
-            <a href="/" className="text-[#e85d26] hover:underline">Home</a>
+            <Link href="/" className="text-[#e85d26] hover:underline">Home</Link>
           </p>
         </div>
       </footer>
