@@ -25,7 +25,7 @@ const tiers = [
     annualSavings: '',
     description: 'Stay informed with the basics — no credit card required.',
     cta: 'Start Free',
-    ctaStyle: 'border-2 border-gray-300 text-gray-700 hover:bg-gray-50',
+    ctaStyle: 'border-2 border-gray-300 text-[#555] hover:bg-[#f0ece4]',
     highlighted: false,
     features: [
       { text: 'Daily headline digest', included: true },
@@ -49,7 +49,7 @@ const tiers = [
     annualSavings: 'Save $38',
     description: 'Daily AI insights that give you a competitive edge in your market.',
     cta: 'Get Started',
-    ctaStyle: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
+    ctaStyle: 'border-2 border-[#e85d26] text-[#e85d26] hover:bg-[#f5f0ea]',
     highlighted: false,
     features: [
       { text: 'Daily email digest', included: true },
@@ -73,7 +73,7 @@ const tiers = [
     annualSavings: 'Save $198',
     description: 'Everything in Pro — plus direct access to Dustin Fox for AI & real estate coaching.',
     cta: 'Join the Inner Circle',
-    ctaStyle: 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200',
+    ctaStyle: 'bg-[#e85d26] text-[#2a2a2a] hover:bg-[#c44a1a] shadow-lg shadow-blue-200',
     highlighted: true,
     badge: 'Recommended',
     scarcity: 'Limited seats available',
@@ -120,19 +120,19 @@ export default function SubscribePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#e8e6e1]">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Agent<span className="text-blue-600">AI</span>Brief
+              <h1 className="text-2xl font-bold text-[#2a2a2a]">
+                Agent<span className="text-[#e85d26]">AI</span>Brief
               </h1>
             </Link>
             <Link
               href="/"
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-sm text-[#888] hover:text-[#555] transition-colors"
             >
               ← Back to News
             </Link>
@@ -143,19 +143,19 @@ export default function SubscribePage() {
       {/* Hero */}
       <section className="bg-gradient-to-b from-gray-50 to-white pt-16 pb-8">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 bg-[#f5f0ea] text-[#c44a1a] text-sm font-medium px-4 py-1.5 rounded-full mb-6">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#e85d26] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#e85d26]"></span>
             </span>
             Join 2,400+ agents staying ahead of AI
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#2a2a2a] mb-4 tracking-tight">
             Don&apos;t just read AI news.
             <br />
-            <span className="text-blue-600">Know what to do with it.</span>
+            <span className="text-[#e85d26]">Know what to do with it.</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-[#666] max-w-2xl mx-auto">
             Every day, we translate the latest AI breakthroughs into specific actions
             you can take to win more listings, close faster, and deliver better
             client experiences.
@@ -167,22 +167,22 @@ export default function SubscribePage() {
       <section className="pt-12 pb-4">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-center gap-4">
-            <span className={`text-sm font-medium ${!isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-[#2a2a2a]' : 'text-[#666]'}`}>
               Monthly
             </span>
             <button
               onClick={() => setIsAnnual(!isAnnual)}
               className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors ${
-                isAnnual ? 'bg-blue-600' : 'bg-gray-300'
+                isAnnual ? 'bg-[#e85d26]' : 'bg-gray-300'
               }`}
             >
               <span
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                className={`inline-block h-5 w-5 transform rounded-full bg-[#e8e6e1] shadow transition-transform ${
                   isAnnual ? 'translate-x-8' : 'translate-x-1'
                 }`}
               />
             </button>
-            <span className={`text-sm font-medium ${isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>
+            <span className={`text-sm font-medium ${isAnnual ? 'text-[#2a2a2a]' : 'text-[#666]'}`}>
               Annual
             </span>
             {isAnnual && (
@@ -203,27 +203,27 @@ export default function SubscribePage() {
                 key={tier.name}
                 className={`relative rounded-2xl p-8 flex flex-col ${
                   tier.highlighted
-                    ? 'border-2 border-blue-600 shadow-xl shadow-blue-100 bg-white z-10'
-                    : 'border border-gray-200 bg-white'
+                    ? 'border-2 border-[#e85d26] shadow-xl shadow-blue-100 bg-[#e8e6e1] z-10'
+                    : 'border border-[#e0dcd4] bg-[#e8e6e1]'
                 }`}
               >
                 {tier.badge && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wide">
+                    <span className="bg-[#e85d26] text-[#2a2a2a] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wide">
                       {tier.badge}
                     </span>
                   </div>
                 )}
 
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                  <h3 className="text-lg font-semibold text-[#2a2a2a] mb-1">
                     {tier.name}
                   </h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-extrabold text-gray-900">
+                    <span className="text-4xl font-extrabold text-[#2a2a2a]">
                       {tier.tier === 'free' ? '$0' : `$${isAnnual ? tier.annualPrice : tier.monthlyPrice}`}
                     </span>
-                    <span className="text-gray-500 text-sm">
+                    <span className="text-[#888] text-sm">
                       {tier.tier === 'free' ? '' : isAnnual ? tier.annualPeriod : tier.period}
                     </span>
                   </div>
@@ -234,16 +234,16 @@ export default function SubscribePage() {
                       <p className="text-sm text-green-600 font-medium mt-1">
                         {tier.annualSavings} vs monthly
                       </p>
-                      <p className="text-sm text-blue-600 font-medium">
+                      <p className="text-sm text-[#e85d26] font-medium">
                         That&apos;s just ${tier.tier === 'pro' ? '15.83' : '82.50'}/mo
                       </p>
                     </>
                   ) : (
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-sm text-[#666] mt-1">
                       or ${tier.annualPrice}/year (save {tier.annualSavings.replace('Save ', '')})
                     </p>
                   )}
-                  <p className="text-sm text-gray-500 mt-2">{tier.description}</p>
+                  <p className="text-sm text-[#888] mt-2">{tier.description}</p>
                   {tier.scarcity && (
                     <div className="mt-3 inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-amber-200">
                       <span className="relative flex h-2 w-2">
@@ -260,7 +260,7 @@ export default function SubscribePage() {
                     <li key={feature.text} className="flex items-start gap-3">
                       {feature.included ? (
                         <svg
-                          className="w-5 h-5 text-blue-600 mt-0.5 shrink-0"
+                          className="w-5 h-5 text-[#e85d26] mt-0.5 shrink-0"
                           fill="none"
                           viewBox="0 0 24 24"
                           strokeWidth={2.5}
@@ -274,7 +274,7 @@ export default function SubscribePage() {
                         </svg>
                       ) : (
                         <svg
-                          className="w-5 h-5 text-gray-300 mt-0.5 shrink-0"
+                          className="w-5 h-5 text-[#555] mt-0.5 shrink-0"
                           fill="none"
                           viewBox="0 0 24 24"
                           strokeWidth={2}
@@ -289,7 +289,7 @@ export default function SubscribePage() {
                       )}
                       <span
                         className={`text-sm ${
-                          feature.included ? 'text-gray-700' : 'text-gray-400'
+                          feature.included ? 'text-[#555]' : 'text-[#666]'
                         }`}
                       >
                         {feature.text}
@@ -329,11 +329,11 @@ export default function SubscribePage() {
                 name="email"
                 placeholder="Enter your email for the free digest"
                 required
-                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#2a2a2a]"
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-blue-600 text-white font-semibold text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold text-sm rounded-lg hover:bg-[#c44a1a] transition-colors"
               >
                 Start Free
               </button>
@@ -343,20 +343,20 @@ export default function SubscribePage() {
       </section>
 
       {/* Social Proof — Dustin's Story */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-[#f0ece4]">
         <div className="max-w-4xl mx-auto px-4">
-          <h3 className="text-center text-sm font-semibold text-gray-400 uppercase tracking-wider mb-10">
+          <h3 className="text-center text-sm font-semibold text-[#666] uppercase tracking-wider mb-10">
             Built by someone who actually sells real estate
           </h3>
           
           {/* Dustin's Story Card */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8">
-            <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-8">
+          <div className="bg-[#e8e6e1] rounded-2xl border border-[#e0dcd4] shadow-sm overflow-hidden mb-8">
+            <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-[#2a2a2a] p-8">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                 <img src="/dustin-fox.jpg" alt="Dustin Fox" className="w-20 h-20 rounded-full object-cover shrink-0" />
                 <div className="text-center md:text-left">
                   <h4 className="text-xl font-bold mb-1">Dustin Fox</h4>
-                  <p className="text-gray-300 text-sm mb-4">Team Lead, Fox Homes • DC Metro Market</p>
+                  <p className="text-[#555] text-sm mb-4">Team Lead, Fox Homes • DC Metro Market</p>
                   <p className="text-gray-200 text-sm leading-relaxed max-w-xl">
                     &ldquo;I went from solo agent to leading the Fox Homes Team doing $277 million in volume. AI didn&apos;t just help — it was the multiplier. This brief is everything I wish I had when I started adopting AI in my business.&rdquo;
                   </p>
@@ -365,27 +365,27 @@ export default function SubscribePage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-200">
               <div className="p-6 text-center">
-                <p className="text-2xl font-bold text-blue-600">$277M</p>
-                <p className="text-xs text-gray-500 mt-1">2025 Sales Volume</p>
+                <p className="text-2xl font-bold text-[#e85d26]">$277M</p>
+                <p className="text-xs text-[#888] mt-1">2025 Sales Volume</p>
               </div>
               <div className="p-6 text-center">
-                <p className="text-2xl font-bold text-blue-600">Top 5</p>
-                <p className="text-xs text-gray-500 mt-1">DC Metro Volume Team</p>
+                <p className="text-2xl font-bold text-[#e85d26]">Top 5</p>
+                <p className="text-xs text-[#888] mt-1">DC Metro Volume Team</p>
               </div>
               <div className="p-6 text-center">
-                <p className="text-2xl font-bold text-blue-600">2,102</p>
-                <p className="text-xs text-gray-500 mt-1">5-Star Google Reviews</p>
+                <p className="text-2xl font-bold text-[#e85d26]">2,102</p>
+                <p className="text-xs text-[#888] mt-1">5-Star Google Reviews</p>
               </div>
               <div className="p-6 text-center">
-                <p className="text-2xl font-bold text-blue-600">36</p>
-                <p className="text-xs text-gray-500 mt-1">Agents on Team</p>
+                <p className="text-2xl font-bold text-[#e85d26]">36</p>
+                <p className="text-xs text-[#888] mt-1">Agents on Team</p>
               </div>
             </div>
           </div>
 
           {/* The Pitch */}
           <div className="text-center max-w-2xl mx-auto">
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-[#666] leading-relaxed">
               Most AI newsletters are written by tech people who&apos;ve never held an open house. 
               AgentAIBrief is different — it&apos;s built by a team lead who uses AI every day to 
               generate leads, create content, analyze markets, and coach a Fox Homes Team. 
@@ -398,7 +398,7 @@ export default function SubscribePage() {
       {/* FAQ */}
       <section className="py-16">
         <div className="max-w-3xl mx-auto px-4">
-          <h3 className="text-2xl font-bold text-gray-900 text-center mb-10">
+          <h3 className="text-2xl font-bold text-[#2a2a2a] text-center mb-10">
             Frequently Asked Questions
           </h3>
           <div className="space-y-6">
@@ -432,11 +432,11 @@ export default function SubscribePage() {
                 a: "Both plans include 2 months free when you go annual. That's $38 back on Pro and $198 back on Inner Circle. If you're committed to staying ahead of AI in real estate, it's a no-brainer.",
               },
             ].map((faq) => (
-              <div key={faq.q} className="border-b border-gray-200 pb-6">
-                <h4 className="text-base font-semibold text-gray-900 mb-2">
+              <div key={faq.q} className="border-b border-[#e0dcd4] pb-6">
+                <h4 className="text-base font-semibold text-[#2a2a2a] mb-2">
                   {faq.q}
                 </h4>
-                <p className="text-sm text-gray-600 leading-relaxed">{faq.a}</p>
+                <p className="text-sm text-[#666] leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -444,7 +444,7 @@ export default function SubscribePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-800 text-[#2a2a2a]">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h3 className="text-3xl font-bold mb-4">
             The agents who adopt AI first will win.
@@ -456,28 +456,28 @@ export default function SubscribePage() {
             <button 
               onClick={() => handleCheckout('pro')}
               disabled={!!loading}
-              className="px-8 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50"
+              className="px-8 py-3 bg-[#e8e6e1] text-[#c44a1a] font-semibold rounded-lg hover:bg-[#f5f0ea] transition-colors disabled:opacity-50"
             >
               {loading === 'pro' ? 'Redirecting...' : `Get Pro — $${isAnnual ? '190/yr' : '19/mo'}`}
             </button>
             <button 
               onClick={() => handleCheckout('inner-circle')}
               disabled={!!loading}
-              className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-400 transition-colors border border-blue-400 disabled:opacity-50"
+              className="px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#e85d26] transition-colors border border-[#e85d26] disabled:opacity-50"
             >
               {loading === 'inner-circle' ? 'Redirecting...' : `Join Inner Circle — $${isAnnual ? '990/yr' : '99/mo'}`}
             </button>
           </div>
-          <p className="text-blue-200 text-sm mt-4">
+          <p className="text-[#888] text-sm mt-4">
             ⚡ Inner Circle seats are limited — don&apos;t wait
           </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-gray-50">
+      <footer className="border-t border-[#e0dcd4] bg-[#f0ece4]">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-[#888] text-center">
             © 2026 AgentAIBrief.com • Built for real estate professionals
           </p>
         </div>

@@ -68,8 +68,8 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-3 text-gray-600">Loading latest AI news...</span>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e85d26]"></div>
+        <span className="ml-3 text-[#666]">Loading latest AI news...</span>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
         <p className="text-red-500">{error}</p>
         <button 
           onClick={() => window.location.reload()} 
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="mt-4 px-4 py-2 bg-[#e85d26] text-[#2a2a2a] rounded hover:bg-[#c44a1a]"
         >
           Retry
         </button>
@@ -98,8 +98,8 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
             onClick={() => setFilter(cat.id)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               filter === cat.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-[#e85d26] text-[#2a2a2a]'
+                : 'bg-[#f5f0ea] text-[#666] hover:bg-gray-200'
             }`}
           >
             {cat.label}
@@ -109,7 +109,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
 
       {/* Last Updated */}
       {lastUpdated && (
-        <p className="text-xs text-gray-400 mb-4">
+        <p className="text-xs text-[#666] mb-4">
           Last updated: {new Date(lastUpdated).toLocaleTimeString()}
         </p>
       )}
@@ -117,7 +117,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
       {/* News Items */}
       <div className="divide-y divide-gray-200">
         {filteredNews.length === 0 ? (
-          <p className="text-center py-8 text-gray-500">No stories found</p>
+          <p className="text-center py-8 text-[#888]">No stories found</p>
         ) : (
           filteredNews.map((item) => (
             <NewsCard key={item.id} {...item} isPremium={isPremium} />
@@ -127,7 +127,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
 
       {/* Load More / Stats */}
       <div className="text-center py-6">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-[#888]">
           Showing {filteredNews.length} of {news.length} stories
         </p>
       </div>

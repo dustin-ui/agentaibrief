@@ -56,12 +56,12 @@ export default function ReferralPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-gray-200 bg-white">
+    <div className="min-h-screen bg-[#e8e6e1]">
+      <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <Link href="/">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Agent<span className="text-blue-600">AI</span>Brief
+            <h1 className="text-2xl font-bold text-[#2a2a2a]">
+              Agent<span className="text-[#e85d26]">AI</span>Brief
             </h1>
           </Link>
         </div>
@@ -70,10 +70,10 @@ export default function ReferralPage() {
       <main className="max-w-2xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <div className="text-5xl mb-4">🎁</div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
+          <h2 className="text-3xl font-bold text-[#2a2a2a] mb-3">
             Refer Friends, Earn Rewards
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-[#666]">
             Share AgentAIBrief with fellow agents and unlock exclusive perks.
           </p>
         </div>
@@ -90,13 +90,13 @@ export default function ReferralPage() {
               key={tier.count}
               className={`text-center p-4 rounded-xl border-2 ${
                 data && data.referralCount >= tier.count
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 bg-gray-50'
+                  ? 'border-[#e85d26] bg-[#f5f0ea]'
+                  : 'border-[#e0dcd4] bg-[#f0ece4]'
               }`}
             >
               <div className="text-3xl mb-1">{tier.emoji}</div>
-              <div className="font-bold text-gray-900">{tier.count} referrals</div>
-              <div className="text-sm text-gray-600">{tier.label}</div>
+              <div className="font-bold text-[#2a2a2a]">{tier.count} referrals</div>
+              <div className="text-sm text-[#666]">{tier.label}</div>
             </div>
           ))}
         </div>
@@ -110,12 +110,12 @@ export default function ReferralPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#2a2a2a]"
             />
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
+              className="px-6 py-3 bg-[#e85d26] text-[#2a2a2a] rounded-lg font-semibold hover:bg-[#c44a1a] disabled:opacity-50"
             >
               {loading ? '...' : 'Look Up'}
             </button>
@@ -134,17 +134,17 @@ export default function ReferralPage() {
         {data && (
           <div className="space-y-6">
             {/* Referral Link */}
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-2">Your Referral Link</h3>
+            <div className="bg-[#f0ece4] rounded-xl p-6 border border-[#e0dcd4]">
+              <h3 className="font-bold text-[#2a2a2a] mb-2">Your Referral Link</h3>
               <div className="flex gap-2">
                 <input
                   readOnly
                   value={data.referralLink}
-                  className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700"
+                  className="flex-1 px-3 py-2 bg-[#e8e6e1] border border-gray-300 rounded-lg text-sm text-[#555]"
                 />
                 <button
                   onClick={copyLink}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700"
+                  className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] rounded-lg text-sm font-semibold hover:bg-[#c44a1a]"
                 >
                   {copied ? '✓ Copied!' : 'Copy'}
                 </button>
@@ -152,19 +152,19 @@ export default function ReferralPage() {
             </div>
 
             {/* Progress */}
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-2">
+            <div className="bg-[#f0ece4] rounded-xl p-6 border border-[#e0dcd4]">
+              <h3 className="font-bold text-[#2a2a2a] mb-2">
                 Your Progress: {data.referralCount} referral{data.referralCount !== 1 ? 's' : ''}
               </h3>
               {data.nextReward ? (
                 <div>
                   <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
                     <div
-                      className="bg-blue-600 h-3 rounded-full transition-all"
+                      className="bg-[#e85d26] h-3 rounded-full transition-all"
                       style={{ width: `${Math.min(100, (data.referralCount / data.nextReward.count) * 100)}%` }}
                     />
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-[#666]">
                     {data.nextReward.count - data.referralCount} more to unlock: {data.nextReward.label}
                   </p>
                 </div>
@@ -176,7 +176,7 @@ export default function ReferralPage() {
             {/* Unlocked Rewards */}
             {data.unlockedRewards.length > 0 && (
               <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-                <h3 className="font-bold text-gray-900 mb-3">🎉 Unlocked Rewards</h3>
+                <h3 className="font-bold text-[#2a2a2a] mb-3">🎉 Unlocked Rewards</h3>
                 <ul className="space-y-2">
                   {data.unlockedRewards.map((r) => (
                     <li key={r.id} className="flex items-center gap-2 text-green-800">
@@ -189,7 +189,7 @@ export default function ReferralPage() {
 
             <button
               onClick={() => { setData(null); setEmail(''); }}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
+              className="text-sm text-[#888] hover:text-[#555] underline"
             >
               Look up a different email
             </button>

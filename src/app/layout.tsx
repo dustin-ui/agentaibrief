@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains' });
 
 const siteUrl = 'https://agentaibrief.com';
 const title = 'AgentAIBrief — AI-Powered Daily Briefings for Real Estate Agents';
@@ -84,7 +85,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <script defer data-domain="agentaibrief.com" src="https://plausible.io/js/script.js"></script>
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className}`}>
         <Providers>{children}</Providers>
       </body>
     </html>

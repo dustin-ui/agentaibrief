@@ -27,7 +27,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
         href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
+        className="p-1.5 text-[#666] hover:text-[#555] hover:bg-[#f5f0ea] rounded transition-colors"
         title="Share on X"
       >
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -39,7 +39,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-1.5 text-gray-400 hover:text-blue-700 hover:bg-gray-100 rounded transition-colors"
+        className="p-1.5 text-[#666] hover:text-[#c44a1a] hover:bg-[#f5f0ea] rounded transition-colors"
         title="Share on LinkedIn"
       >
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -49,7 +49,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
       {/* Copy Link */}
       <button
         onClick={copyLink}
-        className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
+        className="p-1.5 text-[#666] hover:text-[#555] hover:bg-[#f5f0ea] rounded transition-colors"
         title={copied ? 'Copied!' : 'Copy link'}
       >
         {copied ? (

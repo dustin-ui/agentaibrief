@@ -72,10 +72,10 @@ export function TrendingBar() {
   const doubled = [...topics, ...topics];
 
   return (
-    <div className="w-full overflow-hidden bg-gradient-to-r from-orange-500/10 via-red-500/10 to-orange-500/10 border-y border-orange-500/20 py-2">
+    <div className="w-full overflow-hidden border-b py-2" style={{ background: '#d4d0c8', borderColor: 'rgba(255,255,255,0.08)' }}>
       <div className="flex items-center">
-        <span className="flex-shrink-0 px-3 font-bold text-orange-500 text-sm tracking-wide z-10">
-          🔥 TRENDING:
+        <span className="flex-shrink-0 px-3 font-semibold text-sm tracking-wide z-10" style={{ color: '#e85d26' }}>
+          TRENDING:
         </span>
         <div className="overflow-hidden flex-1" ref={scrollRef}>
           <div
@@ -87,9 +87,10 @@ export function TrendingBar() {
             {doubled.map((topic, i) => (
               <span
                 key={`${topic}-${i}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-orange-500/20 text-sm text-gray-600 hover:text-orange-600 hover:border-orange-500/40 transition-colors cursor-default"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm cursor-default transition-colors"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#888' }}
               >
-                <span className="text-orange-400 text-xs">●</span>
+                <span style={{ color: '#e85d26' }} className="text-xs">●</span>
                 {topic}
               </span>
             ))}

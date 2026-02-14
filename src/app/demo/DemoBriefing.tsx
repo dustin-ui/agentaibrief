@@ -77,14 +77,14 @@ export function DemoBriefing() {
   const [email, setEmail] = useState('');
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-[#f5f0ea]">
       {/* Top bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="bg-[#e8e6e1] border-b border-[#e0dcd4] sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="/" className="text-lg font-bold text-gray-900">
-            Agent<span className="text-blue-600">AI</span>Brief
+          <a href="/" className="text-lg font-bold text-[#2a2a2a]">
+            Agent<span className="text-[#e85d26]">AI</span>Brief
           </a>
-          <a href="/subscribe" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">
+          <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
             Subscribe →
           </a>
         </div>
@@ -95,24 +95,24 @@ export function DemoBriefing() {
         <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-6 text-center">
           <p className="text-sm text-amber-800">
             📋 <strong>This is a sample briefing.</strong> The real one lands in your inbox every morning at 7 AM.{' '}
-            <a href="/subscribe" className="text-blue-600 underline font-medium">Subscribe free →</a>
+            <a href="/subscribe" className="text-[#e85d26] underline font-medium">Subscribe free →</a>
           </p>
         </div>
 
         {/* Email container */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div className="bg-[#e8e6e1] rounded-xl shadow-lg border border-[#e0dcd4] overflow-hidden">
           {/* Email header */}
-          <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
+          <div className="bg-[#f0ece4] border-b border-[#e0dcd4] px-6 py-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0">AI</div>
+              <div className="w-10 h-10 rounded-full bg-[#e85d26] flex items-center justify-center text-[#2a2a2a] font-bold text-sm shrink-0">AI</div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-gray-900">AgentAIBrief <span className="font-normal text-gray-400">&lt;daily@agentaibrief.com&gt;</span></p>
-                <p className="text-xs text-gray-500">to me</p>
+                <p className="text-sm font-semibold text-[#2a2a2a]">AgentAIBrief <span className="font-normal text-[#666]">&lt;daily@agentaibrief.com&gt;</span></p>
+                <p className="text-xs text-[#888]">to me</p>
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-400">{BRIEFING_DATE} • 7:00 AM EST</p>
-              <div className="flex items-center gap-1 text-xs text-gray-400">
+              <p className="text-xs text-[#666]">{BRIEFING_DATE} • 7:00 AM EST</p>
+              <div className="flex items-center gap-1 text-xs text-[#666]">
                 <span>⭐</span>
                 <span>↩️</span>
                 <span>⋯</span>
@@ -124,27 +124,27 @@ export function DemoBriefing() {
           <div className="px-6 py-6">
             {/* Greeting */}
             <div className="mb-6">
-              <p className="text-gray-700 text-sm leading-relaxed">
+              <p className="text-[#555] text-sm leading-relaxed">
                 Good morning! ☕
               </p>
-              <p className="text-gray-700 text-sm leading-relaxed mt-2">
+              <p className="text-[#555] text-sm leading-relaxed mt-2">
                 Here are today&apos;s <strong>5 AI stories</strong> that matter for your real estate business — plus what to do about each one.
               </p>
             </div>
 
             {/* Quick stats bar */}
-            <div className="bg-gray-50 rounded-lg p-4 mb-8 grid grid-cols-3 gap-4 text-center">
+            <div className="bg-[#f0ece4] rounded-lg p-4 mb-8 grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-lg font-bold text-blue-600">5</p>
-                <p className="text-[11px] text-gray-500">Stories</p>
+                <p className="text-lg font-bold text-[#e85d26]">5</p>
+                <p className="text-[11px] text-[#888]">Stories</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-green-600">5</p>
-                <p className="text-[11px] text-gray-500">Action Items</p>
+                <p className="text-[11px] text-[#888]">Action Items</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-purple-600">4 min</p>
-                <p className="text-[11px] text-gray-500">Read Time</p>
+                <p className="text-[11px] text-[#888]">Read Time</p>
               </div>
             </div>
 
@@ -154,25 +154,25 @@ export function DemoBriefing() {
                 <div key={story.id}>
                   {/* Story header */}
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-bold text-gray-400">#{i + 1}</span>
+                    <span className="text-xs font-bold text-[#666]">#{i + 1}</span>
                     <ScoreDot score={story.score} />
-                    <span className="text-xs text-gray-400">{story.source} • {story.time}</span>
+                    <span className="text-xs text-[#666]">{story.source} • {story.time}</span>
                   </div>
 
-                  <h3 className="text-base font-semibold text-gray-900 mb-2 leading-snug">
+                  <h3 className="text-base font-semibold text-[#2a2a2a] mb-2 leading-snug">
                     {story.title}
                   </h3>
 
-                  <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                  <p className="text-sm text-[#666] leading-relaxed mb-3">
                     {story.summary}
                   </p>
 
                   {/* Agent Angle - show first 2 clearly, blur rest for "free" */}
                   {i < 2 ? (
                     <>
-                      <div className="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4 mb-2">
-                        <p className="text-[11px] font-bold text-blue-700 mb-1 tracking-wider uppercase">🏠 Agent Angle</p>
-                        <p className="text-sm text-blue-900 leading-relaxed">{story.agentAngle}</p>
+                      <div className="bg-[#f5f0ea] border-l-4 border-[#e85d26] rounded-r-lg p-4 mb-2">
+                        <p className="text-[11px] font-bold text-[#c44a1a] mb-1 tracking-wider uppercase">🏠 Agent Angle</p>
+                        <p className="text-sm text-[#2a2a2a] leading-relaxed">{story.agentAngle}</p>
                       </div>
                       <div className="bg-green-50 border-l-4 border-green-500 rounded-r-lg p-4">
                         <p className="text-[11px] font-bold text-green-700 mb-1 tracking-wider uppercase">💡 Try Today</p>
@@ -181,9 +181,9 @@ export function DemoBriefing() {
                     </>
                   ) : (
                     <div className="relative">
-                      <div className="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4 mb-2 select-none" style={{ filter: 'blur(5px)' }}>
-                        <p className="text-[11px] font-bold text-blue-700 mb-1 tracking-wider uppercase">🏠 Agent Angle</p>
-                        <p className="text-sm text-blue-900 leading-relaxed">{story.agentAngle}</p>
+                      <div className="bg-[#f5f0ea] border-l-4 border-[#e85d26] rounded-r-lg p-4 mb-2 select-none" style={{ filter: 'blur(5px)' }}>
+                        <p className="text-[11px] font-bold text-[#c44a1a] mb-1 tracking-wider uppercase">🏠 Agent Angle</p>
+                        <p className="text-sm text-[#2a2a2a] leading-relaxed">{story.agentAngle}</p>
                       </div>
                       <div className="bg-green-50 border-l-4 border-green-500 rounded-r-lg p-4 select-none" style={{ filter: 'blur(5px)' }}>
                         <p className="text-[11px] font-bold text-green-700 mb-1 tracking-wider uppercase">💡 Try Today</p>
@@ -191,11 +191,11 @@ export function DemoBriefing() {
                       </div>
                       {/* Lock overlay */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl px-6 py-4 text-center shadow-lg max-w-xs">
+                        <div className="bg-[#e8e6e1]/95 backdrop-blur-sm border border-[#e0dcd4] rounded-xl px-6 py-4 text-center shadow-lg max-w-xs">
                           <p className="text-2xl mb-2">🔒</p>
-                          <p className="text-sm font-semibold text-gray-900 mb-1">Pro Members Only</p>
-                          <p className="text-xs text-gray-500 mb-3">Agent Angles & action items on every story</p>
-                          <a href="/subscribe" className="inline-block px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700">
+                          <p className="text-sm font-semibold text-[#2a2a2a] mb-1">Pro Members Only</p>
+                          <p className="text-xs text-[#888] mb-3">Agent Angles & action items on every story</p>
+                          <a href="/subscribe" className="inline-block px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-xs font-semibold rounded-lg hover:bg-[#c44a1a]">
                             Unlock for $19/mo →
                           </a>
                         </div>
@@ -204,17 +204,17 @@ export function DemoBriefing() {
                   )}
 
                   {i < stories.length - 1 && (
-                    <hr className="mt-8 border-gray-200" />
+                    <hr className="mt-8 border-[#e0dcd4]" />
                   )}
                 </div>
               ))}
             </div>
 
             {/* Email footer */}
-            <div className="mt-10 pt-6 border-t border-gray-200">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 text-center text-white">
+            <div className="mt-10 pt-6 border-t border-[#e0dcd4]">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 text-center text-[#2a2a2a]">
                 <h3 className="text-lg font-bold mb-2">Want this every morning?</h3>
-                <p className="text-blue-200 text-sm mb-4">
+                <p className="text-[#888] text-sm mb-4">
                   Free subscribers get headlines + summaries. Pro gets Agent Angles on every story.
                 </p>
                 <form
@@ -229,9 +229,9 @@ export function DemoBriefing() {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="flex-1 px-4 py-2.5 rounded-lg text-gray-900 text-sm placeholder-gray-400 focus:outline-none"
+                    className="flex-1 px-4 py-2.5 rounded-lg text-[#2a2a2a] text-sm placeholder-gray-400 focus:outline-none"
                   />
-                  <button type="submit" className="px-5 py-2.5 bg-white text-blue-700 font-bold rounded-lg text-sm hover:bg-blue-50 whitespace-nowrap">
+                  <button type="submit" className="px-5 py-2.5 bg-[#e8e6e1] text-[#c44a1a] font-bold rounded-lg text-sm hover:bg-[#f5f0ea] whitespace-nowrap">
                     Start Free →
                   </button>
                 </form>
@@ -241,12 +241,12 @@ export function DemoBriefing() {
               <div className="mt-6 flex items-center gap-3 justify-center">
                 <img src="/dustin-fox.jpg" alt="Dustin Fox" className="w-10 h-10 rounded-full object-cover" />
                 <div className="text-left">
-                  <p className="text-sm font-semibold text-gray-900">Dustin Fox</p>
-                  <p className="text-xs text-gray-500">Fox Homes Team • $277M Volume • 2,102 ⭐ Reviews</p>
+                  <p className="text-sm font-semibold text-[#2a2a2a]">Dustin Fox</p>
+                  <p className="text-xs text-[#888]">Fox Homes Team • $277M Volume • 2,102 ⭐ Reviews</p>
                 </div>
               </div>
 
-              <p className="text-center text-[11px] text-gray-400 mt-6">
+              <p className="text-center text-[11px] text-[#666] mt-6">
                 You received this because you subscribed to AgentAIBrief.com<br />
                 <a href="#" className="underline">Unsubscribe</a> • <a href="#" className="underline">Manage preferences</a>
               </p>

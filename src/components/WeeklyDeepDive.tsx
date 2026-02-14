@@ -41,15 +41,15 @@ export function WeeklyDeepDive({ isPremium }: DeepDiveProps) {
       {/* Header */}
       <div className="px-6 pt-6 pb-4">
         <div className="flex items-center gap-3 mb-3">
-          <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+          <span className="bg-[#e85d26] text-[#2a2a2a] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
             🔬 Weekly Deep Dive
           </span>
-          <span className="text-gray-400 text-xs">{CURRENT_DEEP_DIVE.date}</span>
-          <span className="text-gray-500 text-xs">•</span>
-          <span className="text-gray-400 text-xs">{CURRENT_DEEP_DIVE.readTime}</span>
+          <span className="text-[#666] text-xs">{CURRENT_DEEP_DIVE.date}</span>
+          <span className="text-[#888] text-xs">•</span>
+          <span className="text-[#666] text-xs">{CURRENT_DEEP_DIVE.readTime}</span>
         </div>
         
-        <h2 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
+        <h2 className="text-xl md:text-2xl font-bold text-[#2a2a2a] mb-2 leading-tight">
           {CURRENT_DEEP_DIVE.title}
         </h2>
         <p className="text-blue-300 text-sm font-medium">
@@ -59,21 +59,21 @@ export function WeeklyDeepDive({ isPremium }: DeepDiveProps) {
 
       {/* Preview */}
       <div className="px-6 pb-4">
-        <p className="text-gray-300 text-sm leading-relaxed">
+        <p className="text-[#555] text-sm leading-relaxed">
           {CURRENT_DEEP_DIVE.preview}
         </p>
       </div>
 
       {/* What's Inside */}
       <div className="px-6 pb-4">
-        <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
+        <p className="text-[#666] text-xs font-semibold uppercase tracking-wider mb-3">
           What&apos;s inside
         </p>
         <ul className="space-y-2">
           {CURRENT_DEEP_DIVE.sections.map((section, i) => (
             <li key={i} className="flex items-start gap-2 text-sm">
-              <span className="text-blue-400 mt-0.5">→</span>
-              <span className={isPremium ? 'text-gray-300' : 'text-gray-500'}>
+              <span className="text-[#e85d26] mt-0.5">→</span>
+              <span className={isPremium ? 'text-[#555]' : 'text-[#888]'}>
                 {isPremium ? section : (i < 2 ? section : '••••••••••••••••••••••')}
               </span>
             </li>
@@ -84,17 +84,17 @@ export function WeeklyDeepDive({ isPremium }: DeepDiveProps) {
       {/* CTA */}
       <div className="px-6 pb-6">
         {isPremium ? (
-          <button className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="w-full py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
             Read Full Deep Dive →
           </button>
         ) : (
-          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 text-center">
-            <p className="text-gray-400 text-sm mb-3">
-              🔒 Deep Dives are exclusive to <span className="text-white font-semibold">Pro</span> and <span className="text-white font-semibold">Inner Circle</span> members
+          <div className="bg-[#f0ece4]/50 border border-[#d8d4cc] rounded-lg p-4 text-center">
+            <p className="text-[#666] text-sm mb-3">
+              🔒 Deep Dives are exclusive to <span className="text-[#2a2a2a] font-semibold">Pro</span> and <span className="text-[#2a2a2a] font-semibold">Inner Circle</span> members
             </p>
             <a 
               href="/subscribe"
-              className="inline-block px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-block px-6 py-2.5 bg-[#e85d26] text-[#2a2a2a] text-sm font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors"
             >
               Unlock for $19/mo
             </a>
@@ -103,15 +103,15 @@ export function WeeklyDeepDive({ isPremium }: DeepDiveProps) {
       </div>
 
       {/* Upcoming */}
-      <div className="bg-gray-800/50 border-t border-gray-700 px-6 py-4">
-        <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
+      <div className="bg-[#f0ece4]/50 border-t border-[#d8d4cc] px-6 py-4">
+        <p className="text-[#666] text-xs font-semibold uppercase tracking-wider mb-3">
           Coming up
         </p>
         <div className="space-y-2">
           {UPCOMING_DEEP_DIVES.map((dd, i) => (
             <div key={i} className="flex items-center justify-between">
-              <span className="text-gray-300 text-sm">{dd.title}</span>
-              <span className="text-gray-500 text-xs whitespace-nowrap ml-4">{dd.date}</span>
+              <span className="text-[#555] text-sm">{dd.title}</span>
+              <span className="text-[#888] text-xs whitespace-nowrap ml-4">{dd.date}</span>
             </div>
           ))}
         </div>

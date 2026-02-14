@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { AI_TOOLS, CATEGORY_LABELS, type AITool } from '@/lib/ai-tools';
+import { PaywallGate } from '@/components/PaywallGate';
 
 const DUSTINS_PICKS = ['Apply Design AI', 'ChatGPT', 'HeyGen', 'Canva AI', 'HouseCanary', 'Claude'];
 
@@ -27,27 +28,28 @@ export default function ToolsDirectory() {
   }, [search, category]);
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+    <div className="min-h-screen bg-[#e8e6e1]">
+      <header className="border-b border-[#e0dcd4] bg-[#e8e6e1] sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/">
-            <h1 className="text-2xl font-bold text-gray-900">Agent<span className="text-blue-600">AI</span>Brief</h1>
+            <h1 className="text-2xl font-bold text-[#2a2a2a]">Agent<span className="text-[#e85d26]">AI</span>Brief</h1>
           </Link>
           <nav className="hidden md:flex items-center gap-4">
-            <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">News</Link>
-            <Link href="/blog" className="text-sm text-gray-600 hover:text-gray-900">Blog</Link>
-            <Link href="/tools" className="text-sm text-gray-900 font-medium border-b-2 border-blue-600 pb-0.5">AI Tools</Link>
-            <Link href="/prompts" className="text-sm text-gray-600 hover:text-gray-900">Prompts</Link>
-            <Link href="/videos" className="text-sm text-gray-600 hover:text-gray-900">Video Library</Link>
-            <Link href="/subscribe" className="text-sm text-gray-600 hover:text-gray-900">Subscribe</Link>
+            <Link href="/" className="text-sm text-[#666] hover:text-[#2a2a2a]">News</Link>
+            <Link href="/blog" className="text-sm text-[#666] hover:text-[#2a2a2a]">Blog</Link>
+            <Link href="/tools" className="text-sm text-[#2a2a2a] font-medium border-b-2 border-[#e85d26] pb-0.5">AI Tools</Link>
+            <Link href="/prompts" className="text-sm text-[#666] hover:text-[#2a2a2a]">Prompts</Link>
+            <Link href="/videos" className="text-sm text-[#666] hover:text-[#2a2a2a]">Video Library</Link>
+            <Link href="/subscribe" className="text-sm text-[#666] hover:text-[#2a2a2a]">Subscribe</Link>
           </nav>
         </div>
       </header>
 
+      <PaywallGate requiredTier="pro" featureName="AI Tools Directory">
       <main className="max-w-6xl mx-auto px-4 py-12">
         <div className="mb-10">
-          <h2 className="text-4xl font-extrabold text-gray-900 mb-3">AI Tools Directory</h2>
-          <p className="text-lg text-gray-600">The best AI tools for real estate agents — tested and reviewed by Dustin Fox.</p>
+          <h2 className="text-4xl font-extrabold text-[#2a2a2a] mb-3">AI Tools Directory</h2>
+          <p className="text-lg text-[#666]">The best AI tools for real estate agents — tested and reviewed by Dustin Fox.</p>
         </div>
 
         {/* Search */}
@@ -57,7 +59,7 @@ export default function ToolsDirectory() {
             placeholder="Search tools..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-[#e85d26] outline-none"
           />
         </div>
 
@@ -70,7 +72,7 @@ export default function ToolsDirectory() {
                 key={cat}
                 onClick={() => setCategory(cat)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  category === cat ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  category === cat ? 'bg-[#e85d26] text-[#2a2a2a]' : 'bg-[#f5f0ea] text-[#555] hover:bg-gray-200'
                 }`}
               >
                 {label}
@@ -87,21 +89,22 @@ export default function ToolsDirectory() {
         </div>
 
         {filtered.length === 0 && (
-          <p className="text-center text-gray-500 py-12">No tools found. Try a different search or category.</p>
+          <p className="text-center text-[#888] py-12">No tools found. Try a different search or category.</p>
         )}
 
-        <div className="mt-16 bg-blue-50 border border-blue-100 rounded-2xl p-8 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">Want Tool Reviews in Your Inbox?</h3>
-          <p className="text-gray-600 mb-6">We test AI tools so you don&apos;t have to. Get our picks delivered daily.</p>
-          <a href="/subscribe" className="inline-flex px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+        <div className="mt-16 bg-[#f5f0ea] border border-[#e0dcd4] rounded-2xl p-8 text-center">
+          <h3 className="text-2xl font-bold text-[#2a2a2a] mb-3">Want Tool Reviews in Your Inbox?</h3>
+          <p className="text-[#666] mb-6">We test AI tools so you don&apos;t have to. Get our picks delivered daily.</p>
+          <a href="/subscribe" className="inline-flex px-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
             Subscribe Free →
           </a>
         </div>
       </main>
+      </PaywallGate>
 
-      <footer className="border-t border-gray-200 mt-12">
+      <footer className="border-t border-[#e0dcd4] mt-12">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <p className="text-sm text-gray-500 text-center">© 2026 AgentAIBrief.com • Built for real estate professionals</p>
+          <p className="text-sm text-[#888] text-center">© 2026 AgentAIBrief.com • Built for real estate professionals</p>
         </div>
       </footer>
     </div>
@@ -111,29 +114,29 @@ export default function ToolsDirectory() {
 function ToolCard({ tool, isDustinsPick }: { tool: AITool; isDustinsPick: boolean }) {
   return (
     <a href={tool.affiliateUrl || tool.url} target="_blank" rel="noopener noreferrer"
-      className="block border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all relative">
+      className="block border border-[#e0dcd4] rounded-xl p-5 hover:border-[#e85d26] hover:shadow-md transition-all relative">
       {isDustinsPick && (
         <span className="absolute -top-2.5 right-3 bg-amber-400 text-amber-900 text-xs font-bold px-2.5 py-0.5 rounded-full shadow-sm">
           ⭐ Dustin&apos;s Pick
         </span>
       )}
       {tool.badge && !isDustinsPick && (
-        <span className="absolute -top-2.5 right-3 bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full">
+        <span className="absolute -top-2.5 right-3 bg-[#f0ece4] text-[#c44a1a] text-xs font-bold px-2.5 py-0.5 rounded-full">
           {tool.badge}
         </span>
       )}
       <div className="flex items-start justify-between mb-2">
-        <h3 className="font-bold text-gray-900">{tool.name}</h3>
-        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded capitalize">
+        <h3 className="font-bold text-[#2a2a2a]">{tool.name}</h3>
+        <span className="text-xs text-[#888] bg-[#f5f0ea] px-2 py-0.5 rounded capitalize">
           {CATEGORY_LABELS[tool.category]?.emoji} {CATEGORY_LABELS[tool.category]?.label || tool.category}
         </span>
       </div>
-      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{tool.tagline}</p>
+      <p className="text-sm text-[#666] mb-3 line-clamp-2">{tool.tagline}</p>
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-900">{tool.pricing}</span>
+        <span className="text-sm font-medium text-[#2a2a2a]">{tool.pricing}</span>
         <div className="flex items-center gap-1">
           <span className="text-yellow-500 text-sm">★</span>
-          <span className="text-sm text-gray-700 font-medium">{tool.rating}</span>
+          <span className="text-sm text-[#555] font-medium">{tool.rating}</span>
         </div>
       </div>
     </a>

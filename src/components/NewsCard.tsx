@@ -35,21 +35,21 @@ export function NewsCard({
   const categoryColors: Record<string, string> = {
     tech: 'bg-purple-100 text-purple-700',
     realestate: 'bg-green-100 text-green-700',
-    company: 'bg-blue-100 text-blue-700',
+    company: 'bg-[#f0ece4] text-[#c44a1a]',
     research: 'bg-amber-100 text-amber-700',
   };
 
   return (
-    <article className="group border-b border-gray-200 py-4 hover:bg-gray-50 transition-colors">
+    <article className="group border-b border-[#e0dcd4] py-4 hover:bg-[#f0ece4] transition-colors">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           {/* Trending + Category Row */}
           <div className="flex items-center gap-2 mb-2">
             <TrendingBadge score={trendingScore} />
-            <span className={`text-xs px-2 py-0.5 rounded ${categoryColors[category] || 'bg-gray-100 text-gray-600'}`}>
+            <span className={`text-xs px-2 py-0.5 rounded ${categoryColors[category] || 'bg-[#f5f0ea] text-[#666]'}`}>
               {source}
             </span>
-            <span className="text-xs text-gray-400">{timeAgo}</span>
+            <span className="text-xs text-[#666]">{timeAgo}</span>
           </div>
           
           {/* Title */}
@@ -59,23 +59,23 @@ export function NewsCard({
             rel="noopener noreferrer"
             className="block group"
           >
-            <h2 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+            <h2 className="text-lg font-semibold text-[#2a2a2a] group-hover:text-[#e85d26] transition-colors line-clamp-2">
               {title}
             </h2>
           </a>
           
           {/* Summary */}
           {summary && (
-            <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+            <p className="mt-1 text-sm text-[#666] line-clamp-2">
               {summary}
             </p>
           )}
           
           {/* Agent Angle - Premium Content */}
           {agentAngle && (
-            <div className="mt-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-              <p className="text-xs font-semibold text-blue-700 mb-1">🏠 AGENT ANGLE</p>
-              <p className="text-sm text-blue-900">{agentAngle}</p>
+            <div className="mt-3 p-3 bg-[#f5f0ea] rounded-lg border-l-4 border-[#e85d26]">
+              <p className="text-xs font-semibold text-[#c44a1a] mb-1">🏠 AGENT ANGLE</p>
+              <p className="text-sm text-[#2a2a2a]">{agentAngle}</p>
             </div>
           )}
           
@@ -94,10 +94,10 @@ export function NewsCard({
 
           {/* Locked Content Placeholder */}
           {!agentAngle && !isPremium && (
-            <div className="mt-3 p-3 bg-gray-100 rounded-lg border border-dashed border-gray-300">
-              <p className="text-sm text-gray-500 text-center">
+            <div className="mt-3 p-3 bg-[#f5f0ea] rounded-lg border border-dashed border-gray-300">
+              <p className="text-sm text-[#888] text-center">
                 🔒 <span className="font-medium">Agent Angle & Implementation Tips</span> — 
-                <a href="/subscribe" className="text-blue-600 hover:underline ml-1">Subscribe to unlock</a>
+                <a href="/subscribe" className="text-[#e85d26] hover:underline ml-1">Subscribe to unlock</a>
               </p>
             </div>
           )}
