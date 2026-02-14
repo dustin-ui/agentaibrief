@@ -2,7 +2,6 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { PaywallGate } from '@/components/PaywallGate';
 
 // Sample demo data for Arlington VA
 const SAMPLE_BRIEF = {
@@ -145,31 +144,30 @@ export default function NeighborhoodBriefPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#e8e6e1] text-[#2a2a2a]">
+    <div className="min-h-screen bg-gray-950 text-white">
       {/* Header */}
-      <header className="border-b border-[#e0dcd4]">
+      <header className="border-b border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold">
-            <span className="text-[#e85d26]">Agent</span>AIBrief
+            <span className="text-[#37b0c9]">Agent</span>AIBrief
           </Link>
-          <nav className="hidden md:flex items-center gap-4 text-sm text-[#666]">
-            <Link href="/" className="hover:text-[#2a2a2a]">News</Link>
-            <Link href="/blog" className="hover:text-[#2a2a2a]">Blog</Link>
-            <Link href="/tools" className="hover:text-[#2a2a2a]">AI Tools</Link>
-            <Link href="/neighborhood-brief" className="text-[#2a2a2a] font-medium border-b-2 border-[#e85d26] pb-0.5">Market Brief</Link>
-            <Link href="/subscribe" className="hover:text-[#2a2a2a]">Subscribe</Link>
+          <nav className="hidden md:flex items-center gap-4 text-sm text-gray-400">
+            <Link href="/" className="hover:text-white">News</Link>
+            <Link href="/blog" className="hover:text-white">Blog</Link>
+            <Link href="/tools" className="hover:text-white">AI Tools</Link>
+            <Link href="/neighborhood-brief" className="text-white font-medium border-b-2 border-[#37b0c9] pb-0.5">Market Brief</Link>
+            <Link href="/subscribe" className="hover:text-white">Subscribe</Link>
           </nav>
         </div>
       </header>
 
-      <PaywallGate requiredTier="pro" featureName="Neighborhood Brief">
       <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             🏘️ Neighborhood Intelligence Brief
           </h1>
-          <p className="text-[#666] text-lg max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Enter any address and get a comprehensive market brief in seconds. 
             The listing appointment weapon — show up with data that wins.
           </p>
@@ -184,18 +182,18 @@ export default function NeighborhoodBriefPage() {
               onChange={e => setAddress(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && generateBrief()}
               placeholder="Enter address or neighborhood (e.g., 1234 Oak St, Arlington, VA)"
-              className="flex-1 px-4 py-3 bg-[#f0ece4]/50 border border-[#d8d4cc] rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:outline-none focus:border-[#e85d26] focus:ring-1 focus:ring-[#e85d26]"
+              className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#37b0c9] focus:ring-1 focus:ring-[#37b0c9]"
             />
             <button
               onClick={generateBrief}
               disabled={loading || !address.trim()}
-              className="px-6 py-3 bg-[#e85d26] hover:bg-[#2d9bb3] disabled:opacity-50 disabled:cursor-not-allowed text-[#2a2a2a] font-semibold rounded-lg transition-colors whitespace-nowrap"
+              className="px-6 py-3 bg-[#37b0c9] hover:bg-[#2d9bb3] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors whitespace-nowrap"
             >
               {loading ? 'Generating...' : 'Generate Brief'}
             </button>
           </div>
           {!brief && !loading && (
-            <button onClick={showSample} className="mt-3 text-sm text-[#e85d26] hover:underline">
+            <button onClick={showSample} className="mt-3 text-sm text-[#37b0c9] hover:underline">
               👀 See sample brief for Arlington, VA
             </button>
           )}
@@ -204,18 +202,18 @@ export default function NeighborhoodBriefPage() {
         {/* Loading */}
         {loading && (
           <div className="max-w-2xl mx-auto mb-8">
-            <div className="bg-[#f0ece4]/50 border border-[#d8d4cc] rounded-lg p-6">
+            <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="animate-spin h-5 w-5 border-2 border-[#e85d26] border-t-transparent rounded-full" />
-                <span className="text-[#555]">Generating your intelligence brief...</span>
+                <div className="animate-spin h-5 w-5 border-2 border-[#37b0c9] border-t-transparent rounded-full" />
+                <span className="text-gray-300">Generating your intelligence brief...</span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
                 <div
-                  className="bg-[#e85d26] h-2 rounded-full transition-all duration-500"
+                  className="bg-[#37b0c9] h-2 rounded-full transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <div className="text-xs text-[#888] space-y-1">
+              <div className="text-xs text-gray-500 space-y-1">
                 <p>{progress > 10 ? '✅' : '⏳'} Analyzing address & neighborhood...</p>
                 <p>{progress > 30 ? '✅' : '⏳'} Pulling SemRush search demand data...</p>
                 <p>{progress > 50 ? '✅' : '⏳'} Generating market snapshot...</p>
@@ -244,26 +242,26 @@ export default function NeighborhoodBriefPage() {
                 )}
               </div>
               <div className="flex gap-2">
-                <button onClick={exportPDF} className="px-3 py-1.5 text-sm bg-[#f0ece4] hover:bg-gray-700 border border-gray-600 rounded-lg transition-colors">
+                <button onClick={exportPDF} className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-colors">
                   📄 Export PDF
                 </button>
-                <button onClick={copyShareLink} className="px-3 py-1.5 text-sm bg-[#f0ece4] hover:bg-gray-700 border border-gray-600 rounded-lg transition-colors">
+                <button onClick={copyShareLink} className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-colors">
                   🔗 Share Link
                 </button>
               </div>
             </div>
 
             {/* Brief Header */}
-            <div className="bg-gradient-to-r from-[#e85d26]/20 to-gray-800/50 border border-[#e85d26]/30 rounded-xl p-6">
+            <div className="bg-gradient-to-r from-[#37b0c9]/20 to-gray-800/50 border border-[#37b0c9]/30 rounded-xl p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-[#e85d26] font-medium mb-1">NEIGHBORHOOD INTELLIGENCE BRIEF</p>
+                  <p className="text-sm text-[#37b0c9] font-medium mb-1">NEIGHBORHOOD INTELLIGENCE BRIEF</p>
                   <h2 className="text-2xl font-bold">{brief.address}</h2>
-                  <p className="text-[#666] mt-1">{brief.neighborhood} Market Area</p>
+                  <p className="text-gray-400 mt-1">{brief.neighborhood} Market Area</p>
                 </div>
-                <div className="text-right text-sm text-[#666]">
+                <div className="text-right text-sm text-gray-400">
                   <p>{new Date(brief.generatedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                  <p className="text-[#e85d26] font-medium">AgentAIBrief.com</p>
+                  <p className="text-[#37b0c9] font-medium">AgentAIBrief.com</p>
                 </div>
               </div>
             </div>
@@ -277,9 +275,9 @@ export default function NeighborhoodBriefPage() {
                 <StatCard label="Inventory" value={brief.marketSnapshot.inventoryLevel.toUpperCase()} className={inventoryColor(brief.marketSnapshot.inventoryLevel)} />
                 <StatCard label="Market Type" value={brief.marketSnapshot.marketType.charAt(0).toUpperCase() + brief.marketSnapshot.marketType.slice(1)} />
               </div>
-              <p className="text-[#666] text-sm">{brief.marketSnapshot.priceTrendDetail}</p>
-              <p className="text-[#666] text-sm mt-2">{brief.marketSnapshot.inventoryDetail}</p>
-              <p className="text-[#666] text-sm mt-2">{brief.marketSnapshot.marketTypeDetail}</p>
+              <p className="text-gray-400 text-sm">{brief.marketSnapshot.priceTrendDetail}</p>
+              <p className="text-gray-400 text-sm mt-2">{brief.marketSnapshot.inventoryDetail}</p>
+              <p className="text-gray-400 text-sm mt-2">{brief.marketSnapshot.marketTypeDetail}</p>
             </Section>
 
             {/* Search Demand */}
@@ -288,13 +286,13 @@ export default function NeighborhoodBriefPage() {
                 <StatCard label={brief.searchDemand.primaryKeyword} value={`${brief.searchDemand.primarySearchVolume.toLocaleString()} /mo`} />
                 <StatCard label="Search Trend" value={`${trendIcon(brief.searchDemand.searchTrend)} ${brief.searchDemand.searchTrend.charAt(0).toUpperCase() + brief.searchDemand.searchTrend.slice(1)}`} />
               </div>
-              <p className="text-[#666] text-sm mb-4">{brief.searchDemand.searchTrendDetail}</p>
+              <p className="text-gray-400 text-sm mb-4">{brief.searchDemand.searchTrendDetail}</p>
               
-              <h4 className="text-sm font-semibold text-[#555] mb-2">Related Buyer Searches</h4>
+              <h4 className="text-sm font-semibold text-gray-300 mb-2">Related Buyer Searches</h4>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-[#888] border-b border-[#d8d4cc]">
+                    <tr className="text-gray-500 border-b border-gray-700">
                       <th className="text-left py-2">Keyword</th>
                       <th className="text-right py-2">Volume</th>
                       <th className="text-right py-2">CPC</th>
@@ -302,9 +300,9 @@ export default function NeighborhoodBriefPage() {
                   </thead>
                   <tbody>
                     {brief.searchDemand.relatedSearches.map((s, i) => (
-                      <tr key={i} className="border-b border-[#e0dcd4]">
-                        <td className="py-2 text-[#555]">{s.keyword}</td>
-                        <td className="py-2 text-right text-[#666]">{Number(s.volume).toLocaleString()}</td>
+                      <tr key={i} className="border-b border-gray-800">
+                        <td className="py-2 text-gray-300">{s.keyword}</td>
+                        <td className="py-2 text-right text-gray-400">{Number(s.volume).toLocaleString()}</td>
                         <td className="py-2 text-right text-green-400">${Number(s.cpc).toFixed(2)}</td>
                       </tr>
                     ))}
@@ -312,9 +310,9 @@ export default function NeighborhoodBriefPage() {
                 </table>
               </div>
 
-              <div className="mt-4 p-3 bg-[#f0ece4]/30 rounded-lg">
-                <h4 className="text-sm font-semibold text-[#e85d26] mb-1">💡 What Buyers Are Searching For</h4>
-                <p className="text-[#666] text-sm">{brief.searchDemand.buyerSearchInsight}</p>
+              <div className="mt-4 p-3 bg-gray-800/30 rounded-lg">
+                <h4 className="text-sm font-semibold text-[#37b0c9] mb-1">💡 What Buyers Are Searching For</h4>
+                <p className="text-gray-400 text-sm">{brief.searchDemand.buyerSearchInsight}</p>
               </div>
             </Section>
 
@@ -322,58 +320,58 @@ export default function NeighborhoodBriefPage() {
             <Section title="🏡 Neighborhood Highlights">
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-sm font-semibold text-[#555] mb-1">🎓 Schools & Education</h4>
-                  <p className="text-[#666] text-sm">{brief.neighborhoodHighlights.schoolRatings}</p>
+                  <h4 className="text-sm font-semibold text-gray-300 mb-1">🎓 Schools & Education</h4>
+                  <p className="text-gray-400 text-sm">{brief.neighborhoodHighlights.schoolRatings}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-[#555] mb-2">🚗 Commute Times</h4>
+                  <h4 className="text-sm font-semibold text-gray-300 mb-2">🚗 Commute Times</h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     {brief.neighborhoodHighlights.commuteTimes.map((c, i) => (
-                      <div key={i} className="bg-[#f0ece4]/50 rounded-lg p-3 text-center">
-                        <p className="text-lg font-bold text-[#e85d26]">{c.time}</p>
-                        <p className="text-xs text-[#666]">{c.destination}</p>
-                        <p className="text-xs text-[#888]">{c.method}</p>
+                      <div key={i} className="bg-gray-800/50 rounded-lg p-3 text-center">
+                        <p className="text-lg font-bold text-[#37b0c9]">{c.time}</p>
+                        <p className="text-xs text-gray-400">{c.destination}</p>
+                        <p className="text-xs text-gray-500">{c.method}</p>
                       </div>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-[#555] mb-1">🌳 Amenities & Lifestyle</h4>
-                  <p className="text-[#666] text-sm">{brief.neighborhoodHighlights.amenities}</p>
+                  <h4 className="text-sm font-semibold text-gray-300 mb-1">🌳 Amenities & Lifestyle</h4>
+                  <p className="text-gray-400 text-sm">{brief.neighborhoodHighlights.amenities}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-[#555] mb-1">📰 Recent Developments</h4>
-                  <p className="text-[#666] text-sm">{brief.neighborhoodHighlights.recentDevelopments}</p>
+                  <h4 className="text-sm font-semibold text-gray-300 mb-1">📰 Recent Developments</h4>
+                  <p className="text-gray-400 text-sm">{brief.neighborhoodHighlights.recentDevelopments}</p>
                 </div>
               </div>
             </Section>
 
             {/* Competitive Analysis */}
             <Section title="⚔️ Competitive Analysis">
-              <p className="text-[#666] text-sm mb-4">{brief.competitiveAnalysis.agentActivity}</p>
+              <p className="text-gray-400 text-sm mb-4">{brief.competitiveAnalysis.agentActivity}</p>
               <div>
-                <h4 className="text-sm font-semibold text-[#555] mb-2">Content Gaps (Opportunities)</h4>
+                <h4 className="text-sm font-semibold text-gray-300 mb-2">Content Gaps (Opportunities)</h4>
                 <ul className="space-y-1">
                   {brief.competitiveAnalysis.contentGaps.map((gap, i) => (
-                    <li key={i} className="text-[#666] text-sm flex items-start gap-2">
-                      <span className="text-[#e85d26]">→</span> {gap}
+                    <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
+                      <span className="text-[#37b0c9]">→</span> {gap}
                     </li>
                   ))}
                 </ul>
               </div>
-              <p className="text-[#666] text-sm mt-4">{brief.competitiveAnalysis.competitiveInsight}</p>
+              <p className="text-gray-400 text-sm mt-4">{brief.competitiveAnalysis.competitiveInsight}</p>
             </Section>
 
             {/* AI Recommendations */}
             <Section title="🤖 AI Recommendations for the Listing Agent">
               <div className="grid md:grid-cols-2 gap-4 mb-4">
-                <div className="bg-[#f0ece4]/30 rounded-lg p-4">
-                  <p className="text-xs text-[#888] uppercase mb-1">Suggested Price Range</p>
-                  <p className="text-xl font-bold text-[#e85d26]">{brief.aiRecommendations.suggestedPriceRange}</p>
+                <div className="bg-gray-800/30 rounded-lg p-4">
+                  <p className="text-xs text-gray-500 uppercase mb-1">Suggested Price Range</p>
+                  <p className="text-xl font-bold text-[#37b0c9]">{brief.aiRecommendations.suggestedPriceRange}</p>
                 </div>
-                <div className="bg-[#f0ece4]/30 rounded-lg p-4">
-                  <p className="text-xs text-[#888] uppercase mb-1">Best Time to List</p>
-                  <p className="text-sm text-[#555]">{brief.aiRecommendations.bestTimeToList}</p>
+                <div className="bg-gray-800/30 rounded-lg p-4">
+                  <p className="text-xs text-gray-500 uppercase mb-1">Best Time to List</p>
+                  <p className="text-sm text-gray-300">{brief.aiRecommendations.bestTimeToList}</p>
                 </div>
               </div>
 
@@ -382,7 +380,7 @@ export default function NeighborhoodBriefPage() {
                   <h4 className="text-sm font-semibold text-green-400 mb-2">✅ Key Selling Points</h4>
                   <ul className="space-y-1">
                     {brief.aiRecommendations.keySellingPoints.map((p, i) => (
-                      <li key={i} className="text-[#666] text-sm flex items-start gap-2">
+                      <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
                         <span className="text-green-400 mt-0.5">•</span> {p}
                       </li>
                     ))}
@@ -392,7 +390,7 @@ export default function NeighborhoodBriefPage() {
                   <h4 className="text-sm font-semibold text-yellow-400 mb-2">⚠️ Prepare For</h4>
                   <ul className="space-y-1">
                     {brief.aiRecommendations.potentialChallenges.map((c, i) => (
-                      <li key={i} className="text-[#666] text-sm flex items-start gap-2">
+                      <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
                         <span className="text-yellow-400 mt-0.5">•</span> {c}
                       </li>
                     ))}
@@ -402,7 +400,7 @@ export default function NeighborhoodBriefPage() {
             </Section>
 
             {/* Disclaimer */}
-            <div className="text-xs text-[#666] border-t border-[#e0dcd4] pt-4">
+            <div className="text-xs text-gray-600 border-t border-gray-800 pt-4">
               <p><strong>Disclaimer:</strong> This brief is AI-generated using publicly available data and SemRush analytics. Verify all data points independently. Not a substitute for a formal CMA.</p>
             </div>
           </div>
@@ -436,17 +434,16 @@ export default function NeighborhoodBriefPage() {
           </div>
         )}
       </main>
-      </PaywallGate>
 
       {/* Print styles */}
       <style jsx global>{`
         @media print {
           body { background: white !important; color: black !important; }
           header, button, .no-print { display: none !important; }
-          .print\\:bg-[#e8e6e1] { background: white !important; }
+          .print\\:bg-white { background: white !important; }
           * { color: #1a1a1a !important; border-color: #ddd !important; }
-          .text-\\[\\#e85d26\\] { color: #2196F3 !important; }
-          .bg-[#f0ece4]\\/50, .bg-[#f0ece4]\\/30 { background: #f5f5f5 !important; }
+          .text-\\[\\#37b0c9\\] { color: #2196F3 !important; }
+          .bg-gray-800\\/50, .bg-gray-800\\/30 { background: #f5f5f5 !important; }
           .bg-gradient-to-r { background: #f0f9ff !important; }
         }
       `}</style>
@@ -456,7 +453,7 @@ export default function NeighborhoodBriefPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#f0ece4]/50 border border-[#d8d4cc] rounded-xl p-6">
+    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
       <h3 className="text-lg font-bold mb-4">{title}</h3>
       {children}
     </div>
@@ -465,9 +462,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function StatCard({ label, value, className }: { label: string; value: string; className?: string }) {
   return (
-    <div className="bg-[#f0ece4]/50 rounded-lg p-3">
-      <p className="text-xs text-[#888] mb-1">{label}</p>
-      <p className={`text-lg font-bold ${className || 'text-[#2a2a2a]'}`}>{value}</p>
+    <div className="bg-gray-900/50 rounded-lg p-3">
+      <p className="text-xs text-gray-500 mb-1">{label}</p>
+      <p className={`text-lg font-bold ${className || 'text-white'}`}>{value}</p>
     </div>
   );
 }
@@ -476,15 +473,15 @@ function PricingCard({ title, price, period, features, highlighted }: {
   title: string; price: string; period: string; features: string[]; highlighted?: boolean;
 }) {
   return (
-    <div className={`rounded-xl p-6 border ${highlighted ? 'border-[#e85d26] bg-[#e85d26]/10' : 'border-[#d8d4cc] bg-[#f0ece4]/50'}`}>
+    <div className={`rounded-xl p-6 border ${highlighted ? 'border-[#37b0c9] bg-[#37b0c9]/10' : 'border-gray-700 bg-gray-800/50'}`}>
       <h3 className="text-lg font-bold mb-1">{title}</h3>
       <p className="text-3xl font-bold mb-4">
-        {price}<span className="text-sm text-[#666] font-normal">{period}</span>
+        {price}<span className="text-sm text-gray-400 font-normal">{period}</span>
       </p>
       <ul className="space-y-2">
         {features.map((f, i) => (
-          <li key={i} className="text-sm text-[#666] flex items-center gap-2">
-            <span className="text-[#e85d26]">✓</span> {f}
+          <li key={i} className="text-sm text-gray-400 flex items-center gap-2">
+            <span className="text-[#37b0c9]">✓</span> {f}
           </li>
         ))}
       </ul>

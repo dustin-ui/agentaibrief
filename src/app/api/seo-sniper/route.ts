@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const SEMRUSH_KEY = process.env.SEMRUSH_API_KEY || '';
+const SEMRUSH_KEY = 'a3fc492f4f3f6d6066f46f457f2bf02b';
 
 function parseSemrushCSV(csv: string): Record<string, string>[] {
   const lines = csv.trim().split('\n');

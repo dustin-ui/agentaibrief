@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const SEMRUSH_API_KEY = process.env.SEMRUSH_API_KEY || '';
+const SEMRUSH_API_KEY = process.env.SEMRUSH_API_KEY || 'a3fc492f4f3f6d6066f46f457f2bf02b';
 const SEMRUSH_BASE = 'https://api.semrush.com/';
 const SEMRUSH_BACKLINKS = 'https://api.semrush.com/analytics/v1/';
 

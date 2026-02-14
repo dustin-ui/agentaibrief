@@ -2,100 +2,22 @@
 
 import { useState } from 'react';
 import { NewsFeed } from '@/components/NewsFeed';
+import { WeeklyDeepDive } from '@/components/WeeklyDeepDive';
+import { AIToolsSection } from '@/components/AIToolsSection';
 import { TrendingBar } from '@/components/TrendingBar';
 import { LoginModal } from '@/components/LoginModal';
 import { MobileNav } from '@/components/MobileNav';
 import { StickySubscribeBar } from '@/components/StickySubscribeBar';
 import { useAuth } from '@/lib/auth-context';
-import Link from 'next/link';
-
-const tools = [
-  {
-    name: 'Listing Content Factory',
-    href: '/listing-generator',
-    description: '1 listing → 9 pieces of content in 60 seconds',
-    icon: '🏠',
-    badge: 'PRO',
-  },
-  {
-    name: 'Content Briefing',
-    href: '/content-briefing',
-    description: '15 local stories with video scripts, weekly',
-    icon: '📋',
-    badge: 'PRO',
-  },
-  {
-    name: 'Newsletter Builder',
-    href: '/newsletter-builder',
-    description: 'Branded weekly newsletter on autopilot',
-    icon: '📰',
-    badge: 'PRO',
-  },
-  {
-    name: 'Prompt Library',
-    href: '/prompts',
-    description: '53 battle-tested prompts for every scenario',
-    icon: '💬',
-    badge: null,
-  },
-  {
-    name: 'Custom GPT Templates',
-    href: '/gpt-templates',
-    description: '16 ready-to-deploy AI assistants',
-    icon: '🤖',
-    badge: 'IC',
-  },
-  {
-    name: 'Contract Analyzer',
-    href: '/contract-analyzer',
-    description: 'Upload a contract, get instant clause-by-clause analysis',
-    icon: '📄',
-    badge: 'PRO',
-  },
-  {
-    name: 'SEO Sniper',
-    href: '/seo-sniper',
-    description: 'Find and dominate local search gaps',
-    icon: '🎯',
-    badge: 'IC',
-  },
-  {
-    name: 'SEO Command Center',
-    href: '/seo-command',
-    description: 'Prescriptive local SEO actions + ranking grid + full audit',
-    icon: '📡',
-    badge: 'IC',
-  },
-  {
-    name: 'Neighborhood Market Brief',
-    href: '/neighborhood-brief',
-    description: 'Hyperlocal market data for any neighborhood',
-    icon: '📊',
-    badge: 'PRO',
-  },
-  {
-    name: 'Listing Launch Radar',
-    href: '/listing-radar',
-    description: 'Detect pre-listing sell signals before anyone else',
-    icon: '📡',
-    badge: 'PRO',
-  },
-  {
-    name: 'Sphere Seismograph',
-    href: '/sphere-monitor',
-    description: 'Track life events in your sphere — never miss a move signal',
-    icon: '🔮',
-    badge: 'PRO',
-  },
-];
 
 export default function Home() {
-  const { user, isLoggedIn, isPro, signOut, profile } = useAuth();
+  const { user, isLoggedIn, isPro, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [subEmail, setSubEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [referralCode, setReferralCode] = useState<string | null>(null);
 
+  // Capture ?ref= param from URL
   const refCode = typeof window !== 'undefined'
     ? new URLSearchParams(window.location.search).get('ref')
     : null;
@@ -124,325 +46,318 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen animate-fade-in" style={{ background: '#e8e6e1' }}>
-      {/* Header — warm industrial nav */}
-      <header className="sticky top-[48px] md:top-[44px] z-[70] border-b-[3px]" style={{ background: '#d4d0c8', borderColor: '#c4c0b8' }}>
-        <div className="max-w-[1200px] mx-auto px-8 h-[64px] flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold tracking-tight" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#2a2a2a' }}>
-              Agent<span style={{ color: '#e85d26' }}>AI</span>Brief
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="/tools" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">AI Tools</a>
-              <a href="/prompts" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Prompts</a>
-              <a href="/blog" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Blog</a>
-              <a href="/videos" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Videos</a>
-              <a href="/pricing" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Pricing</a>
-              <a href="/affiliate" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Affiliate</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-3">
-            <MobileNav />
-            {isLoggedIn ? (
-              <>
-                <span className="text-sm hidden sm:inline" style={{ color: '#888' }}>{user?.email}</span>
-                <span className="text-xs px-2 py-1 rounded-full font-semibold uppercase" style={{ background: 'rgba(232,93,38,0.15)', color: '#e85d26' }}>
-                  {profile?.subscription_tier === 'inner_circle' ? 'Inner Circle' : profile?.subscription_tier === 'pro' ? 'Pro' : 'Free'}
-                </span>
-                <button onClick={signOut} className="text-sm transition-colors text-[#888] hover:text-[#e85d26]">Log out</button>
-              </>
-            ) : (
-              <>
-                <button onClick={() => setShowLogin(true)} className="btn-outline-dark text-sm">Log In</button>
-                <button onClick={() => { window.location.href = '/subscribe'; }} className="text-sm px-4 py-2 bg-[#2a2a2a] text-white rounded-lg hover:bg-[#e85d26] transition-colors font-semibold">Get Started</button>
-              </>
-            )}
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Agent<span className="text-blue-600">AI</span>Brief
+                </h1>
+                <p className="text-sm text-gray-500">
+                  AI news for real estate pros • Updated hourly
+                </p>
+              </div>
+              <nav className="hidden md:flex items-center gap-4">
+                <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Blog</a>
+                <a href="/tools" className="text-sm text-gray-600 hover:text-gray-900 font-medium">AI Tools</a>
+                <a href="/prompts" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Prompts</a>
+                <a href="/contract-analyzer" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Contract Analyzer</a>
+                <a href="/videos" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Video Library</a>
+                {isPro && (
+                  <a href="/pro-dashboard" className="text-sm text-gray-600 hover:text-gray-900 font-medium">SEO Reports</a>
+                )}
+              </nav>
+            </div>
+            <div className="flex items-center gap-3">
+              <MobileNav />
+              {isLoggedIn ? (
+                <>
+                  <span className="text-sm text-gray-600 hidden sm:inline">
+                    {user?.email}
+                  </span>
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium uppercase">
+                    {user?.tier === 'inner-circle' ? 'Inner Circle' : 'Pro'}
+                  </span>
+                  <button
+                    onClick={logout}
+                    className="text-sm text-gray-400 hover:text-gray-600"
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowLogin(true)}
+                    className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+                  >
+                    Log In
+                  </button>
+                  <a 
+                    href="/subscribe" 
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Subscribe
+                  </a>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Trending Bar */}
-      <TrendingBar />
-
-      {/* Hero Section — Modern Industrial */}
+      {/* Hero Banner — only for guests */}
       {!isLoggedIn && (
-        <section data-hero className="py-24 sm:py-32 max-w-[1400px] mx-auto px-4" style={{ background: '#e8e6e1' }}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 sm:px-8">
-            <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.8rem] font-extrabold tracking-tight leading-[1.05] mb-6" style={{ color: '#1a1a1a', letterSpacing: '-2px' }}>
-                Your AI<br /><span style={{ color: '#e85d26' }}>Command Center</span><br />for Real Estate
-              </h1>
-              <p className="text-lg leading-relaxed max-w-[500px] mb-10" style={{ color: '#666' }}>
-                Daily briefings, market snapshots, listing descriptions, and drip campaigns — all powered by AI, built for agents who move fast.
+        <div data-hero className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+          <div className="max-w-5xl mx-auto px-4 py-10">
+            <div className="max-w-2xl">
+              <p className="text-blue-200 text-sm font-medium mb-2">✨ Join 2,400+ agents staying ahead of AI</p>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                AI is changing real estate. Are you keeping up?
+              </h2>
+              <p className="text-blue-100 mb-6 text-lg">
+                Get the top AI stories + exactly how to use them to win more listings, close faster, and deliver better client experiences. Free daily briefing.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 items-start mb-10">
-                <a href="/subscribe" className="btn-primary px-8 py-4 text-[1rem]">
-                  Start Free Trial
-                </a>
-                <a href="/demo" className="btn-outline-dark px-8 py-4 text-[1rem]">
-                  Watch Demo
-                </a>
-              </div>
-
-              {/* Inline email subscribe */}
+              
+              {/* Email Capture — THE primary CTA */}
               {subStatus === 'success' ? (
-                <div className="max-w-md rounded-2xl p-4" style={{ background: 'rgba(232,93,38,0.08)', border: '2px solid rgba(232,93,38,0.2)' }}>
-                  <p className="font-semibold" style={{ color: '#e85d26' }}>✅ You&apos;re in! Check your inbox.</p>
+                <div className="bg-white/10 backdrop-blur rounded-lg p-4 max-w-md">
+                  <p className="text-white font-semibold">✅ You&apos;re in! Check your inbox.</p>
+                  <p className="text-blue-200 text-sm mt-1">Your first briefing arrives tomorrow morning.</p>
                   {referralCode && (
-                    <a href="/referral" className="text-sm underline mt-1 inline-block" style={{ color: '#e85d26' }}>🎁 Share &amp; earn rewards →</a>
+                    <a href="/referral" className="inline-block mt-2 text-sm text-white underline hover:text-blue-200">
+                      🎁 Share &amp; earn rewards →
+                    </a>
                   )}
                 </div>
               ) : (
-                <form onSubmit={handleEmailSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-[480px]">
+                <form onSubmit={handleEmailSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-lg">
                   <input
                     type="email"
-                    placeholder="Enter your email for the free daily brief"
+                    placeholder="Enter your email"
                     value={subEmail}
                     onChange={e => setSubEmail(e.target.value)}
                     required
-                    className="flex-1 px-4 py-3 rounded-lg text-sm outline-none transition-colors"
-                    style={{ background: '#f0ece4', border: '2px solid #d8d4cc', color: '#2a2a2a' }}
+                    className="flex-1 px-4 py-3 rounded-lg text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                   <button
                     type="submit"
                     disabled={subStatus === 'loading'}
-                    className="px-6 py-3 text-white font-semibold rounded-lg text-sm transition-all disabled:opacity-50 whitespace-nowrap"
-                    style={{ background: '#e85d26', boxShadow: '0 3px 0 #c44a1a' }}
+                    className="px-6 py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-blue-50 transition-colors text-sm whitespace-nowrap disabled:opacity-50"
                   >
-                    {subStatus === 'loading' ? 'Subscribing...' : 'Get Free Brief →'}
+                    {subStatus === 'loading' ? 'Subscribing...' : 'Get Free Daily Briefing →'}
                   </button>
                 </form>
               )}
               {subStatus === 'error' && (
-                <p className="text-red-600 text-sm mt-2">Something went wrong. Try again.</p>
+                <p className="text-red-200 text-sm mt-2">Something went wrong. Try again.</p>
               )}
-              <p className="text-xs mt-3" style={{ color: '#888' }}>No spam. Unsubscribe anytime. Join 2,400+ agents.</p>
-            </div>
-
-            {/* Hero Visual — Keyboard-inspired device */}
-            <div className="hidden lg:block">
-              <div style={{ background: '#d4d0c8', borderRadius: '20px', padding: '40px', boxShadow: '0 20px 60px rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.5)', border: '1px solid #b8b4ac' }}>
-                <div style={{ background: '#1a1a1a', borderRadius: '12px', padding: '30px', marginBottom: '20px' }}>
-                  <div style={{ height: '10px', background: '#e85d26', borderRadius: '5px', marginBottom: '10px' }} />
-                  <div style={{ height: '10px', background: '#333', borderRadius: '5px', marginBottom: '10px', width: '80%' }} />
-                  <div style={{ height: '10px', background: '#333', borderRadius: '5px', marginBottom: '10px', width: '60%' }} />
-                  <div style={{ height: '10px', background: '#333', borderRadius: '5px', marginBottom: '10px' }} />
-                  <div style={{ height: '10px', background: '#e85d26', borderRadius: '5px', width: '60%' }} />
-                </div>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                  <div style={{ flex: 1, background: '#f0ece4', borderRadius: '8px', padding: '12px 20px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.75rem', fontWeight: 600, color: '#666', boxShadow: '0 3px 0 #c4c0b8', border: '1px solid #d8d4cc', textAlign: 'center' }}>BRIEF</div>
-                  <div style={{ flex: 1, background: '#f0ece4', borderRadius: '8px', padding: '12px 20px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.75rem', fontWeight: 600, color: '#666', boxShadow: '0 3px 0 #c4c0b8', border: '1px solid #d8d4cc', textAlign: 'center' }}>MARKET</div>
-                  <div style={{ flex: 1, background: '#e85d26', borderRadius: '8px', padding: '12px 20px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.75rem', fontWeight: 600, color: '#fff', boxShadow: '0 3px 0 #c44a1a', border: '1px solid #d05020', textAlign: 'center' }}>LISTING</div>
-                </div>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                  <div style={{ flex: 1, background: '#2a2a2a', borderRadius: '8px', padding: '12px 20px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.75rem', fontWeight: 600, color: '#fff', boxShadow: '0 3px 0 #111', border: '1px solid #333', textAlign: 'center' }}>DRIP</div>
-                  <div style={{ flex: 1, background: '#f0ece4', borderRadius: '8px', padding: '12px 20px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.75rem', fontWeight: 600, color: '#666', boxShadow: '0 3px 0 #c4c0b8', border: '1px solid #d8d4cc', textAlign: 'center' }}>OPEN HSE</div>
-                  <div style={{ flex: 1, background: '#f0ece4', borderRadius: '8px', padding: '12px 20px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.75rem', fontWeight: 600, color: '#666', boxShadow: '0 3px 0 #c4c0b8', border: '1px solid #d8d4cc', textAlign: 'center' }}>SCRIPTS</div>
-                </div>
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '16px' }}>
-                  <div style={{ width: '36px', height: '36px', background: '#2a2a2a', borderRadius: '50%', border: '2px solid #444', position: 'relative' }} />
-                  <div style={{ width: '36px', height: '36px', background: '#2a2a2a', borderRadius: '50%', border: '2px solid #444', position: 'relative' }} />
-                </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center mt-4">
+                <p className="text-blue-200 text-xs">No spam. Unsubscribe anytime.</p>
+                <span className="hidden sm:inline text-blue-400">•</span>
+                <a 
+                  href="/demo"
+                  className="text-white text-xs font-medium underline underline-offset-2 hover:text-blue-100"
+                >
+                  📋 See a sample briefing first
+                </a>
+                <span className="hidden sm:inline text-blue-400">•</span>
+                <a 
+                  href="/subscribe"
+                  className="text-white text-xs font-medium underline underline-offset-2 hover:text-blue-100"
+                >
+                  Want Pro features? $19/mo →
+                </a>
               </div>
             </div>
           </div>
-        </section>
+        </div>
       )}
 
-      {/* Tool Showcase Grid */}
-      <section className="py-20 px-4">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-[2rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a', letterSpacing: '-1px' }}>Your AI Toolkit</h2>
-            <p style={{ color: '#888' }}>Everything you need to outwork and outsmart the competition.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {tools.map((tool) => (
-              <Link
-                key={tool.href}
-                href={tool.href}
-                className="glass-card relative p-7"
-              >
-                {tool.badge && (
-                  <span className={`absolute top-4 right-4 text-[0.65rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${
-                    tool.badge === 'IC'
-                      ? 'text-[#2a2a2a] bg-[#e8e6e1]'
-                      : 'text-[#e85d26] bg-[rgba(232,93,38,0.1)]'
-                  }`}>
-                    {tool.badge === 'IC' ? 'INNER CIRCLE' : 'PRO'}
-                  </span>
-                )}
-                <div className="text-[2rem] mb-4">{tool.icon}</div>
-                <h3 className="text-[0.95rem] font-bold mb-1" style={{ color: '#2a2a2a' }}>{tool.name}</h3>
-                <p className="text-[0.85rem] leading-relaxed" style={{ color: '#888' }}>{tool.description}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Feature Grid — Built Different */}
-      <section className="py-20 px-4">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-[2.5rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a', letterSpacing: '-1px' }}>Built Different</h2>
-            <p style={{ color: '#888', fontSize: '1.1rem' }}>Every tool designed for speed, accuracy, and the way agents actually work.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { icon: '📰', title: 'Daily AI Briefings', desc: 'Wake up to a personalized market briefing covering your zip codes, price ranges, and competition.' },
-              { icon: '📊', title: 'Market Snapshots', desc: 'Real-time market data turned into shareable graphics and talking points for your clients.' },
-              { icon: '🏠', title: 'Listing Descriptions', desc: 'MLS-ready descriptions in seconds. Fair Housing compliant. Multiple tones and styles.' },
-              { icon: '💧', title: 'Drip Campaigns', desc: 'AI-generated email sequences that nurture leads from cold to closable.' },
-              { icon: '🎤', title: 'Market Update Scripts', desc: 'Teleprompter-ready scripts for video content. 30, 60, 90, or 120 seconds.' },
-              { icon: '🔑', title: 'Open House Follow-Up', desc: 'Instant follow-up sequences triggered by sign-in sheets. Never miss a lead.' },
-            ].map((f) => (
-              <div key={f.title} className="glass-card p-9">
-                <div className="feature-icon mb-5">{f.icon}</div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: '#2a2a2a' }}>{f.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#888' }}>{f.desc}</p>
+      {/* Social Proof Bar */}
+      {!isLoggedIn && (
+        <div className="bg-gray-900 text-white">
+          <div className="max-w-5xl mx-auto px-4 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+              <div className="flex items-center gap-3">
+                <img src="/dustin-fox.jpg" alt="Dustin Fox" className="w-10 h-10 rounded-full object-cover" />
+                <div>
+                  <p className="font-semibold">Built by Dustin Fox</p>
+                  <p className="text-gray-400 text-xs">Fox Homes Team • DC Metro</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* AI News Section */}
-      <section className="py-20" style={{ background: '#e8e6e1' }}>
-        <div className="max-w-[1080px] mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-[2rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a', letterSpacing: '-1px' }}>AI News for Agents</h2>
-            <p style={{ color: '#888' }}>Stay current on what matters. Updated hourly.</p>
-          </div>
-          <NewsFeed isPremium={isPro} />
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section className="py-20 px-4" style={{ background: '#d4d0c8' }}>
-        <div className="max-w-[1100px] mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-[2.5rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a', letterSpacing: '-1px' }}>Simple, Clear Pricing</h2>
-            <p style={{ color: '#666' }}>Start free, upgrade when you&apos;re ready.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {/* Free */}
-            <div className="rounded-2xl p-8 text-center" style={{ background: '#f0ece4', border: '2px solid #d8d4cc' }}>
-              <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>Free</div>
-              <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$0<span className="text-[0.9rem] font-medium" style={{ color: '#888' }}>/mo</span></div>
-              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#666' }}>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Daily AI Brief</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Prompt Library</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>AI News Feed</li>
-              </ul>
-              <a href="/subscribe" className="btn-outline-dark block w-full py-3 text-center text-sm">
-                Get Started
-              </a>
-            </div>
-
-            {/* Pro */}
-            <div className="rounded-2xl p-8 text-center" style={{ background: '#f0ece4', border: '2px solid #d8d4cc' }}>
-              <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>Pro</div>
-              <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$19<span className="text-[0.9rem] font-medium" style={{ color: '#888' }}>/mo</span></div>
-              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#666' }}>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Everything in Free</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Listing Content Factory</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Newsletter Builder</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Contract Analyzer</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Neighborhood Market Brief</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Listing Launch Radar</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Sphere Seismograph</li>
-              </ul>
-              <a href="/subscribe" className="block w-full py-3 text-white font-semibold rounded-lg text-sm transition-all" style={{ background: '#e85d26', boxShadow: '0 3px 0 #c44a1a' }}>
-                Start Pro →
-              </a>
-            </div>
-
-            {/* Inner Circle — featured */}
-            <div className="rounded-2xl p-8 text-center relative" style={{ background: '#2a2a2a', border: '2px solid #e85d26', boxShadow: '0 3px 0 #e85d26' }}>
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[0.7rem] font-bold px-3 py-1 rounded-full uppercase" style={{ background: '#e85d26', color: '#fff' }}>Most Popular</span>
-              <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>Inner Circle</div>
-              <div className="text-[2.5rem] font-extrabold text-white leading-none mb-1">$99<span className="text-[0.9rem] font-medium" style={{ color: '#aaa' }}>/mo</span></div>
-              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#ccc' }}>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Everything in Pro</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Content Briefing</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>SEO Command Center</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>SEO Sniper</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Custom GPT Templates</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Direct access to Dustin Fox</li>
-              </ul>
-              <a href="/subscribe" className="block w-full py-3 text-white font-semibold rounded-lg text-sm transition-all" style={{ background: '#e85d26', boxShadow: '0 3px 0 #c44a1a' }}>
-                Join Inner Circle →
-              </a>
-            </div>
-
-            {/* Team */}
-            <div className="rounded-2xl p-8 text-center" style={{ background: '#f0ece4', border: '2px solid #d8d4cc' }}>
-              <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>Team</div>
-              <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$299<span className="text-[0.9rem] font-medium" style={{ color: '#888' }}>/mo</span></div>
-              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#666' }}>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Everything in Inner Circle</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Up to 10 agent seats</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Team analytics</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Custom onboarding</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Priority support</li>
-              </ul>
-              <a href="/subscribe" className="btn-outline-dark block w-full py-3 text-center text-sm">
-                Contact Sales →
-              </a>
+              <div className="hidden sm:block w-px h-8 bg-gray-700" />
+              <div className="flex items-center gap-6 text-center">
+                <div>
+                  <p className="text-xl font-bold text-blue-400">$277M</p>
+                  <p className="text-gray-400 text-xs">2025 Volume</p>
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-blue-400">2,102</p>
+                  <p className="text-gray-400 text-xs">5-Star Reviews</p>
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-blue-400">Top 5</p>
+                  <p className="text-gray-400 text-xs">DC Metro Volume</p>
+                </div>
+              </div>
+              <div className="hidden sm:block w-px h-8 bg-gray-700" />
+              <p className="text-gray-300 text-xs max-w-xs text-center sm:text-left">
+                &ldquo;AI helped me scale from a solo agent to a $277M team. This brief is how I stay ahead.&rdquo;
+              </p>
             </div>
           </div>
         </div>
-      </section>
+      )}
 
-      {/* Affiliate Banner */}
-      <section className="py-14 text-center" style={{ background: '#e8e6e1' }}>
-        <h2 className="text-[1.6rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a' }}>Earn 30% Recurring Commission</h2>
-        <p className="mb-5 text-[0.95rem]" style={{ color: '#888' }}>Refer agents to AgentAIBrief and earn 30% of every payment, forever.</p>
-        <a href="/affiliate" className="btn-primary inline-block px-8 py-3 text-[0.95rem]">
-          Join the Affiliate Program →
-        </a>
-      </section>
+      {/* Trending Bar — powered by Grok */}
+      <TrendingBar />
 
-      {/* Stats */}
-      <section className="py-14 px-4" style={{ background: '#e8e6e1' }}>
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            { num: '2,000+', label: '5-Star Google Reviews' },
-            { num: '#4', label: 'Team in DC Metro' },
-            { num: '$277M', label: '2025 Volume' },
-          ].map((s) => (
-            <div key={s.label} className="glass-card p-8 text-center">
-              <p className="text-[2.5rem] font-extrabold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>{s.num}</p>
-              <p className="text-sm mt-2 font-medium" style={{ color: '#888' }}>{s.label}</p>
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Column */}
+          <div className="lg:col-span-3">
+            {/* AI Tools Directory */}
+            <AIToolsSection isPremium={isPro} />
+
+            {/* Weekly Deep Dive */}
+            <WeeklyDeepDive isPremium={isPro} />
+
+            {/* News Feed */}
+            <NewsFeed isPremium={isPro} />
+          </div>
+          
+          {/* Sidebar */}
+          <aside className="lg:col-span-1">
+            {/* Subscribe CTA — guests only */}
+            {!isLoggedIn && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h3 className="font-semibold text-blue-900 mb-2">📬 Get the Daily Brief</h3>
+                <p className="text-sm text-blue-700 mb-3">
+                  Top AI stories + agent angles delivered to your inbox every morning.
+                </p>
+                {subStatus === 'success' ? (
+                  <div className="text-center py-2">
+                    <p className="text-green-700 font-semibold text-sm">✅ You&apos;re in!</p>
+                    <p className="text-green-600 text-xs mt-1">Check your inbox for a welcome email.</p>
+                    {referralCode && (
+                      <a href="/referral" className="inline-block mt-1 text-xs text-blue-600 underline">
+                        🎁 Share &amp; earn rewards →
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <form method="POST" action="/api/subscribe" onSubmit={handleEmailSubscribe}>
+                    <input 
+                      type="email" 
+                      name="email"
+                      placeholder="Enter your email"
+                      value={subEmail}
+                      onChange={e => setSubEmail(e.target.value)}
+                      required
+                      className="w-full px-3 py-2 border border-blue-300 rounded mb-2 text-sm"
+                    />
+                    <button 
+                      type="submit"
+                      disabled={subStatus === 'loading'}
+                      className="w-full px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {subStatus === 'loading' ? 'Subscribing...' : 'Subscribe — Free Daily Brief'}
+                    </button>
+                    {subStatus === 'error' && (
+                      <p className="text-xs text-red-500 mt-2 text-center">Something went wrong. Try again.</p>
+                    )}
+                  </form>
+                )}
+                <p className="text-xs text-blue-500 mt-2 text-center">
+                  Use code <span className="font-bold">LAUNCH25</span> for 25% off Pro
+                </p>
+              </div>
+            )}
+
+            {/* Pro Features */}
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+              <h3 className="font-semibold text-gray-900 mb-2">⭐ Pro — $19/mo</h3>
+              <ul className="text-sm text-gray-600 space-y-2">
+                <li>✅ Agent Angle on every story</li>
+                <li>✅ Implementation tips</li>
+                <li>✅ Daily digest</li>
+                <li>✅ Tool reviews & tutorials</li>
+                <li>✅ Weekly Deep Dives</li>
+              </ul>
+              {!isPro && (
+                <a 
+                  href="/subscribe" 
+                  className="mt-4 block w-full px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded text-center hover:bg-blue-700"
+                >
+                  Get Started
+                </a>
+              )}
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Social Proof / Built By Section */}
-      <section className="py-20 text-center px-4" style={{ background: '#d4d0c8' }}>
-        <div className="max-w-[720px] mx-auto">
-          <h2 className="text-[1.6rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a' }}>Built by Dustin Fox &amp; the Fox Homes Team</h2>
-          <p className="mb-8" style={{ color: '#666' }}>DC Metro&apos;s Top Producing Real Estate Team</p>
-          <blockquote className="text-lg italic leading-relaxed mb-6 max-w-[700px] mx-auto" style={{ color: '#2a2a2a' }}>
-            &ldquo;Built by agents who actually sell real estate. Not coaches. Not gurus. Not theorists.&rdquo;
-          </blockquote>
-          <div className="font-bold text-[0.9rem]" style={{ color: '#e85d26' }}>Dustin Fox</div>
-          <div className="text-xs mt-1" style={{ color: '#888' }}>Fox Homes Team · $277M in Volume · 2,000+ Google Reviews</div>
+            {/* Inner Circle CTA */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="font-semibold text-blue-900 mb-2">🔥 Inner Circle — $99/mo</h3>
+              <p className="text-sm text-blue-700 mb-2">
+                Everything in Pro + direct access to Dustin Fox for coaching & strategy.
+              </p>
+              <ul className="text-sm text-blue-700 mb-2 space-y-1">
+                <li>📊 <strong>Weekly SEO Performance Report</strong></li>
+                <li>🤖 AI Search Visibility Score</li>
+                <li>🔑 Top Keywords & Rankings</li>
+              </ul>
+              <p className="text-xs text-amber-600 font-semibold mb-3">⚡ Limited seats available</p>
+              <a 
+                href="/subscribe" 
+                className="block w-full px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded text-center hover:bg-gray-800"
+              >
+                Join the Inner Circle
+              </a>
+            </div>
+
+            {/* This Week in Numbers */}
+            <div className="border border-gray-200 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-900 mb-3">📊 This Week in AI + RE</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-2xl font-bold text-blue-600">23%</p>
+                  <p className="text-xs text-gray-500">More deals closed by AI-using agents</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-green-600">$25</p>
+                  <p className="text-xs text-gray-500">Cost per AI-staged room (vs $2K+ traditional)</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-purple-600">67%</p>
+                  <p className="text-xs text-gray-500">Lead engagement with AI voice response</p>
+                </div>
+              </div>
+            </div>
+          </aside>
         </div>
-      </section>
+      </main>
 
       {/* Footer */}
-      <footer className="py-10 text-center text-xs border-t-2" style={{ color: '#888', borderColor: '#d4d0c8' }}>
-        <div>© 2026 AgentAIBrief.com</div>
-        <div className="mt-2 flex justify-center gap-6">
-          <a href="/privacy" className="transition-colors text-[#888] hover:text-[#e85d26]">Privacy Policy</a>
-          <a href="/terms" className="transition-colors text-[#888] hover:text-[#e85d26]">Terms of Service</a>
-          <a href="/preferences" className="transition-colors text-[#888] hover:text-[#e85d26]">Manage Preferences</a>
+      <footer className="border-t border-gray-200 bg-gray-50 mt-12">
+        <div className="max-w-5xl mx-auto px-4 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-gray-500">
+            <span>© 2026 AgentAIBrief.com</span>
+            <span className="hidden sm:inline">•</span>
+            <a href="/privacy" className="hover:text-gray-700">Privacy Policy</a>
+            <span className="hidden sm:inline">•</span>
+            <a href="/terms" className="hover:text-gray-700">Terms of Service</a>
+            <span className="hidden sm:inline">•</span>
+            <a href="/preferences" className="hover:text-gray-700">Manage Preferences</a>
+          </div>
         </div>
       </footer>
 
+      {/* Login Modal */}
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
       <StickySubscribeBar />
     </div>

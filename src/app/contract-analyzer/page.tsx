@@ -1,10 +1,8 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { generateICS, generateGoogleCalendarLink, extractCalendarEvents } from '@/lib/calendar-export';
-import { supabase } from '@/lib/supabase';
-import { PaywallGate } from '@/components/PaywallGate';
+import { generateICS, extractCalendarEvents } from '@/lib/calendar-export';
 
 // ─── Types ───────────────────────────────────────────────────────────
 type ContractData = {
@@ -28,40 +26,28 @@ type ContractData = {
 };
 
 type CompareOfferData = {
-  propertyAddress?: string | null;
   purchasePrice?: number | null;
   purchasePriceFormatted?: string | null;
-  earnestMoneyDeposit?: number | null;
-  earnestMoneyDepositFormatted?: string | null;
+  earnestMoney?: number | null;
+  earnestMoneyFormatted?: string | null;
+  escalationClause?: { present?: boolean; cap?: string | null; increment?: string | null; details?: string | null };
   financingType?: string | null;
-  amountFinanced?: string | null;
-  downPayment?: string | null;
-  sellerPaidBuyerAgency?: string | null;
-  sellerPaidBuyerAgencyAmount?: number | null;
+  downPaymentPercent?: string | null;
+  closingDate?: string | null;
+  closingDaysFromNow?: number | null;
+  settlementCompany?: string | null;
+  inspectionContingencyDays?: number | null;
+  financingContingencyDays?: number | null;
+  appraisalContingency?: { present?: boolean; gapCoverage?: string | null };
+  homeSaleContingency?: boolean;
   sellerConcessions?: string | null;
   sellerConcessionsAmount?: number | null;
-  closingDate?: string | null;
-  financingContingency?: string | null;
-  financingContingencyDays?: number | null;
-  appraisalContingency?: string | null;
-  appraisalContingencyDays?: number | null;
-  homeInspection?: string | null;
-  homeInspectionDays?: number | null;
-  hoaContingency?: string | null;
-  escalationClause?: { present?: boolean; increment?: string | null; maxEscalation?: string | null; maxEscalationAmount?: number | null; details?: string | null };
-  wdiInspection?: string | null;
-  appraisalGap?: string | null;
-  septicWell?: string | null;
-  septicPaidBy?: string | null;
-  radon?: string | null;
-  lender?: string | null;
-  titleCompany?: string | null;
+  personalProperty?: string[] | null;
+  postSettlementOccupancy?: string | null;
+  unusualClauses?: string[] | null;
   buyerName?: string | null;
-  buyerAgentName?: string | null;
-  rentBack?: string | null;
-  notes?: string | null;
-  // legacy fields for calendar compat
   allDatesAndDeadlines?: Array<{ event: string; date: string; daysFromNow?: number | null }>;
+  riskFlags?: string[] | null;
 };
 
 type CompareOffer = { label: string; fileName: string; data: CompareOfferData | null; error?: string };
@@ -69,13 +55,119 @@ type CompareResult = {
   address: string;
   offers: CompareOffer[];
   comparison: {
-    summary: string;
+    summary: string[];
+    bestOffer: { label: string; reasoning: string };
+    riskAnalysis: Array<{ offer: string; risks: string[] }>;
   } | null;
 };
 
-type OfferFiles = { files: File[] };
+// ─── Sample Data ─────────────────────────────────────────────────────
+const SAMPLE_DATA = {
+  address: '1234 Oak Street, Arlington, VA 22201',
+  results: [
+    {
+      fileName: 'Purchase_Agreement.pdf',
+      data: {
+        closingDate: 'March 15, 2026',
+        settlementCompany: 'Cardinal Title Group',
+        purchasePrice: '$725,000',
+        financingType: 'Conventional',
+        loanAmount: '$580,000',
+        downPayment: '$145,000 (20%)',
+        interestRate: '6.25%',
+        earnestMoney: { amount: '$15,000', dueDate: 'Within 5 business days of ratification', heldBy: 'Cardinal Title Group' },
+        contingencies: [
+          { type: 'Home Inspection', deadline: '10 days from ratification', details: 'Buyer may request repairs up to $10,000' },
+          { type: 'Appraisal', deadline: 'N/A — waived', details: 'Buyer waives appraisal contingency' },
+          { type: 'Financing', deadline: '21 days from ratification', details: 'Pre-approval from First National Bank' },
+          { type: 'Radon', deadline: '10 days from ratification', details: 'Concurrent with home inspection period' },
+          { type: 'HOA Document Review', deadline: '3 days from receipt', details: 'Buyer has right to void if HOA docs unsatisfactory' },
+        ],
+        sellerConcessions: '$8,000 toward closing costs',
+        personalProperty: ['Refrigerator', 'Washer/Dryer', 'Ring Doorbell', 'Mounted TV in family room'],
+        escalationClause: { present: true, maxPrice: '$750,000', increment: '$2,500 above competing offer', details: 'Requires copy of competing offer as proof' },
+        addenda: ['Lead Paint Disclosure', 'HOA Addendum', 'Escalation Clause Addendum'],
+        parties: {
+          buyer: 'Michael & Sarah Johnson', seller: 'Robert & Linda Chen',
+          buyerAgent: 'Devon Fox — Fox Homes', sellerAgent: 'Amanda Williams — Compass',
+          buyerBrokerage: 'Fox Homes — eXp Realty', sellerBrokerage: 'Compass',
+          lender: 'First National Bank — John Davis', titleCompany: 'Cardinal Title Group',
+        },
+        possessionDate: 'At settlement',
+        homeWarranty: { included: true, provider: 'American Home Shield', cost: '$550', paidBy: 'Seller' },
+        otherTerms: ['Seller to provide termite inspection', 'Buyer to receive $500 credit for carpet cleaning'],
+      } as ContractData,
+    },
+  ],
+};
 
-// ─── Color helpers ───────────────────────────────────────────────────
+const SAMPLE_COMPARE: CompareResult = {
+  address: '1234 Oak Street, Arlington, VA 22201',
+  offers: [
+    {
+      label: 'Offer A', fileName: 'Johnson_Offer.pdf',
+      data: {
+        purchasePrice: 725000, purchasePriceFormatted: '$725,000', earnestMoney: 15000, earnestMoneyFormatted: '$15,000',
+        escalationClause: { present: true, cap: '$750,000', increment: '$2,500', details: 'Requires competing offer proof' },
+        financingType: 'Conventional', downPaymentPercent: '20%', closingDate: 'March 15, 2026', closingDaysFromNow: 33,
+        settlementCompany: 'Cardinal Title Group', inspectionContingencyDays: 10, financingContingencyDays: 21,
+        appraisalContingency: { present: false, gapCoverage: null }, homeSaleContingency: false,
+        sellerConcessions: '$8,000 closing costs', sellerConcessionsAmount: 8000,
+        personalProperty: ['Refrigerator', 'Washer/Dryer', 'Ring Doorbell', 'TV'],
+        postSettlementOccupancy: 'None', unusualClauses: [], buyerName: 'Michael & Sarah Johnson',
+        riskFlags: ['Requesting $8K in seller concessions', '21-day financing contingency'],
+      },
+    },
+    {
+      label: 'Offer B', fileName: 'Martinez_Offer.pdf',
+      data: {
+        purchasePrice: 740000, purchasePriceFormatted: '$740,000', earnestMoney: 20000, earnestMoneyFormatted: '$20,000',
+        escalationClause: { present: false }, financingType: 'Conventional', downPaymentPercent: '25%',
+        closingDate: 'March 1, 2026', closingDaysFromNow: 19, settlementCompany: 'Ekko Title',
+        inspectionContingencyDays: 7, financingContingencyDays: 14,
+        appraisalContingency: { present: true, gapCoverage: '$15,000' }, homeSaleContingency: false,
+        sellerConcessions: 'None', sellerConcessionsAmount: 0, personalProperty: ['Refrigerator'],
+        postSettlementOccupancy: 'None', unusualClauses: [], buyerName: 'Carlos & Maria Martinez',
+        riskFlags: [],
+      },
+    },
+    {
+      label: 'Offer C', fileName: 'Williams_Offer.pdf',
+      data: {
+        purchasePrice: 760000, purchasePriceFormatted: '$760,000', earnestMoney: 10000, earnestMoneyFormatted: '$10,000',
+        escalationClause: { present: false }, financingType: 'FHA', downPaymentPercent: '3.5%',
+        closingDate: 'April 10, 2026', closingDaysFromNow: 59, settlementCompany: 'National Settlement',
+        inspectionContingencyDays: 15, financingContingencyDays: 30,
+        appraisalContingency: { present: true, gapCoverage: null }, homeSaleContingency: true,
+        sellerConcessions: '$12,000 closing costs', sellerConcessionsAmount: 12000,
+        personalProperty: ['Refrigerator', 'Washer/Dryer', 'Patio furniture', 'Shed contents'],
+        postSettlementOccupancy: 'Seller requests 14 days post-settlement', unusualClauses: ['Home sale contingency — buyer must sell 456 Elm St'],
+        buyerName: 'James Williams',
+        riskFlags: ['Home sale contingency', 'FHA financing — stricter appraisal', 'Low EMD ($10K)', '$12K concessions', '15-day inspection', '30-day financing contingency', '14-day post-settlement occupancy request'],
+      },
+    },
+  ],
+  comparison: {
+    summary: [
+      'Offer B ($740K) is the strongest overall — clean terms, fast 19-day close, $20K EMD, no concessions, and $15K appraisal gap coverage.',
+      'Offer C is highest at $760K but carries significant risk: home sale contingency, FHA financing, low EMD, and 59-day close.',
+      'Offer A ($725K) has an escalation clause up to $750K with $8K concessions — net to seller is lower than Offer B.',
+      'Offer B\'s 25% down payment and 7-day inspection window signal a serious, well-qualified buyer.',
+      'Offer C requests $12K in concessions and 14-day post-settlement occupancy — highest seller burden of all three.',
+    ],
+    bestOffer: {
+      label: 'Offer B',
+      reasoning: 'Despite not being the highest price, Offer B provides the best combination of price, certainty, and speed. Strong financing (25% down), highest EMD ($20K), fastest close (19 days), no concessions, and $15K appraisal gap coverage make this the most reliable path to closing.',
+    },
+    riskAnalysis: [
+      { offer: 'Offer A', risks: ['$8,000 seller concessions reduce net proceeds', '21-day financing contingency is longer than typical', 'Escalation clause requires competing offer documentation'] },
+      { offer: 'Offer B', risks: ['Appraisal contingency present (mitigated by $15K gap coverage)', 'Slightly lower price than Offer C'] },
+      { offer: 'Offer C', risks: ['HOME SALE CONTINGENCY — deal depends on buyer selling their property', 'FHA financing has stricter appraisal requirements', 'Only $10,000 EMD — low commitment signal', '$12,000 in concessions requested', '59-day close is very long', '14-day post-settlement occupancy adds complexity', '15-day inspection and 30-day financing contingencies'] },
+    ],
+  },
+};
+
+// ─── Color coding helpers ────────────────────────────────────────────
 function getBestWorst(offers: CompareOffer[], field: string, mode: 'highest' | 'lowest'): { best: number; worst: number } {
   const vals = offers.map((o, i) => {
     const d = o.data as Record<string, unknown>;
@@ -94,444 +186,106 @@ function cellColor(idx: number, best: number, worst: number): string {
   return 'bg-yellow-900/20 border-yellow-700/20';
 }
 
-function calcSellerNet(d: CompareOfferData): string {
-  const price = d.escalationClause?.present && d.escalationClause.maxEscalationAmount
-    ? d.escalationClause.maxEscalationAmount
-    : d.purchasePrice;
-  if (!price) return '—';
-  const concessions = d.sellerConcessionsAmount || 0;
-  const buyerAgency = d.sellerPaidBuyerAgencyAmount || 0;
-  const net = price - concessions - buyerAgency;
-  return `$${net.toLocaleString()} (estimated)`;
-}
-
-const DEFAULT_FIELDS = [
-  'Purchase Price', 'Earnest Money Deposit', 'Financing Type', 'Amount Financed',
-  'Down Payment', 'Seller Paid Buyer Agency', 'Seller Concessions', 'Closing Date',
-  'Financing Contingency', 'Appraisal Contingency', 'Home Inspection', 'HOA',
-  'Escalation', 'Escalation Increments', 'Max Escalation', 'WDI', 'Appraisal Gap',
-  'Septic/Well', 'Septic Paid By', 'Radon', 'Lender', 'Title Company',
-  'Buyer Name', 'Buyer Agent Name', 'Rent Back',
-];
-
-const LOADING_MESSAGES = [
-  'Reading contract documents...',
-  'Extracting key terms...',
-  'Comparing offers...',
-  'Calculating seller net...',
-  'Almost done...',
-];
-
-const OFFER_COLORS = ['#e85d26', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#f97316', '#ec4899', '#6366f1', '#14b8a6', '#e11d48'];
-const OFFER_LABELS = Array.from({ length: 20 }, (_, i) => String.fromCharCode(65 + i));
-
 // ─── Main Page ───────────────────────────────────────────────────────
 export default function ContractAnalyzerPage() {
-  // Wizard state
-  const [step, setStep] = useState(1);
+  const [mode, setMode] = useState<'analyze' | 'compare'>('analyze');
   const [address, setAddress] = useState('');
-  const [offerCount, setOfferCount] = useState(2);
-  const [offers, setOffers] = useState<OfferFiles[]>([{ files: [] }, { files: [] }]);
+  const [files, setFiles] = useState<File[]>([]);
   const [analyzing, setAnalyzing] = useState(false);
-  const [analyzeProgress, setAnalyzeProgress] = useState('');
-  const [error, setError] = useState('');
+  const [results, setResults] = useState<{ address: string; results: { fileName: string; data: ContractData }[] } | null>(null);
+  const [showDemo, setShowDemo] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Results
-  const [singleResults, setSingleResults] = useState<{ address: string; results: { fileName: string; data: ContractData }[] } | null>(null);
+  // Compare mode state
+  const [compareFiles, setCompareFiles] = useState<(File | null)[]>([null, null]);
   const [compareResult, setCompareResult] = useState<CompareResult | null>(null);
+  const [showCompareDemo, setShowCompareDemo] = useState(false);
+  const [compareDragOver, setCompareDragOver] = useState<number | null>(null);
+  const compareInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Winner / calendar
-  const [selectedWinner, setSelectedWinner] = useState<string | null>(null);
-  const [showCalendarModal, setShowCalendarModal] = useState(false);
-  const [addToCalendar, setAddToCalendar] = useState(true);
-  const [ratificationDate, setRatificationDate] = useState('');
-  const [showRatDateInput, setShowRatDateInput] = useState(false);
-  const [calculatingDates, setCalculatingDates] = useState(false);
-  const [discoveredEvents, setDiscoveredEvents] = useState<Array<{ title: string; date: Date }>>([]);
-  const [visibleEventCount, setVisibleEventCount] = useState(0);
-  const [removedEventIndices, setRemovedEventIndices] = useState<Set<number>>(new Set());
-  const [reminderChecked, setReminderChecked] = useState<Set<number>>(new Set());
-  const [reminderEmails, setReminderEmails] = useState<string[]>(['']);
-  const [selectAllReminders, setSelectAllReminders] = useState(true);
-
-  // Share
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
-  const [sharing, setSharing] = useState(false);
-
-  // Fields selection
-  const [selectedFields, setSelectedFields] = useState<Set<string>>(new Set(DEFAULT_FIELDS));
-  const [customFields, setCustomFields] = useState<string[]>([]);
-  const [customFieldInput, setCustomFieldInput] = useState('');
-
-  // Loading animation
-  const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-
-  // Agent Notes
-  const [agentNotes, setAgentNotes] = useState('');
-
-  // Supabase persistence
-  const [savedId, setSavedId] = useState<string | null>(null);
-  const [savedShareId, setSavedShareId] = useState<string | null>(null);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  const [savedComparisons, setSavedComparisons] = useState<Array<{ id: string; address: string; offers: CompareOffer[]; created_at: string; share_id: string }>>([]);
-  const [showSaved, setShowSaved] = useState(false);
-  const notesTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  // Loading animation cycle
-  useEffect(() => {
-    if (!analyzing) { setLoadingMsgIdx(0); setLoadingProgress(0); return; }
-    const msgInterval = setInterval(() => setLoadingMsgIdx(i => (i + 1) % LOADING_MESSAGES.length), 3000);
-    const progInterval = setInterval(() => setLoadingProgress(p => Math.min(p + 0.5, 95)), 200);
-    return () => { clearInterval(msgInterval); clearInterval(progInterval); };
-  }, [analyzing]);
-
-  // Auto-save when comparison completes (step 4, no savedId yet)
-  useEffect(() => {
-    if (step === 4 && compareResult && !savedId && saveStatus === 'idle') {
-      saveToSupabase(compareResult);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, compareResult, savedId, saveStatus]);
-
-  // Load recent comparisons on mount
-  useEffect(() => {
-    fetch('/api/comparisons?recent=10')
-      .then(r => r.ok ? r.json() : [])
-      .then(data => { if (Array.isArray(data)) setSavedComparisons(data); })
-      .catch(() => {});
-  }, []);
-
-  // Auto-save agent notes (debounced 1s)
-  useEffect(() => {
-    if (!savedId || saveStatus === 'saving') return;
-    if (notesTimerRef.current) clearTimeout(notesTimerRef.current);
-    notesTimerRef.current = setTimeout(() => {
-      fetch('/api/comparisons', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: savedId, agent_notes: agentNotes }),
-      }).catch(() => {});
-    }, 1000);
-    return () => { if (notesTimerRef.current) clearTimeout(notesTimerRef.current); };
-  }, [agentNotes, savedId, saveStatus]);
-
-  // Save comparison to Supabase
-  const saveToSupabase = async (result: CompareResult) => {
-    setSaveStatus('saving');
-    try {
-      const res = await fetch('/api/comparisons', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          address: result.address,
-          offers: result.offers,
-          comparison: result.comparison,
-          agent_notes: agentNotes,
-        }),
-      });
-      if (!res.ok) throw new Error();
-      const { id, share_id } = await res.json();
-      setSavedId(id);
-      setSavedShareId(share_id);
-      setSaveStatus('saved');
-      // Refresh saved list
-      fetch('/api/comparisons?recent=10')
-        .then(r => r.ok ? r.json() : [])
-        .then(data => { if (Array.isArray(data)) setSavedComparisons(data); })
-        .catch(() => {});
-    } catch {
-      setSaveStatus('error');
-    }
-  };
-
-  // Load a saved comparison
-  const loadComparison = async (id: string) => {
-    try {
-      const res = await fetch(`/api/comparisons?id=${id}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      setAddress(data.address);
-      setCompareResult({ address: data.address, offers: data.offers, comparison: data.comparison });
-      setAgentNotes(data.agent_notes || '');
-      setSavedId(data.id);
-      setSavedShareId(data.share_id);
-      setSaveStatus('saved');
-      setOfferCount(data.offers.length);
-      setStep(4);
-      setShowSaved(false);
-      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-    } catch { /* ignore */ }
-  };
-
-  // ─── Field Selection ────────────────────────────────────────
-  const toggleField = (field: string) => {
-    setSelectedFields(prev => {
-      const next = new Set(prev);
-      if (next.has(field)) next.delete(field); else next.add(field);
-      return next;
-    });
-  };
-
-  const toggleAllFields = () => {
-    const allFields = [...DEFAULT_FIELDS, ...customFields];
-    if (allFields.every(f => selectedFields.has(f))) {
-      setSelectedFields(new Set());
-    } else {
-      setSelectedFields(new Set(allFields));
-    }
-  };
-
-  const addCustomField = () => {
-    const val = customFieldInput.trim();
-    if (val && !customFields.includes(val) && !DEFAULT_FIELDS.includes(val)) {
-      setCustomFields(prev => [...prev, val]);
-      setSelectedFields(prev => new Set([...prev, val]));
-      setCustomFieldInput('');
-    }
-  };
-
-  const removeCustomField = (field: string) => {
-    setCustomFields(prev => prev.filter(f => f !== field));
-    setSelectedFields(prev => { const next = new Set(prev); next.delete(field); return next; });
-  };
-
-  const getAllSelectedFields = () => [...selectedFields];
-
-  // ─── Wizard Navigation ────────────────────────────────────────
-  const goNext = () => setStep((s) => Math.min(s + 1, 4));
-  const goBack = () => setStep((s) => Math.max(s - 1, 1));
-
-  const handleOfferCountChange = (count: number) => {
-    setOfferCount(count);
-    const newOffers: OfferFiles[] = [];
-    for (let i = 0; i < count; i++) {
-      newOffers.push(offers[i] || { files: [] });
-    }
-    setOffers(newOffers);
-  };
-
-  // ─── File Handlers ────────────────────────────────────────────
-  const handleFileDrop = useCallback((offerIdx: number, e: React.DragEvent) => {
+  // ─── Analyze Mode Handlers ─────────────────────────────────────
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
+    setDragOver(false);
     const dropped = Array.from(e.dataTransfer.files).filter(
       (f) => f.type === 'application/pdf' || f.type === 'image/jpeg' || f.type === 'image/png'
     );
-    setOffers((prev) => {
-      const next = [...prev];
-      next[offerIdx] = { files: [...next[offerIdx].files, ...dropped] };
-      return next;
-    });
+    setFiles((prev) => [...prev, ...dropped]);
   }, []);
 
-  const handleFileSelect = (offerIdx: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const selected = Array.from(e.target.files);
-    setOffers((prev) => {
-      const next = [...prev];
-      next[offerIdx] = { files: [...next[offerIdx].files, ...selected] };
-      return next;
-    });
-    e.target.value = '';
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) setFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
   };
 
-  const removeFile = (offerIdx: number, fileIdx: number) => {
-    setOffers((prev) => {
-      const next = [...prev];
-      next[offerIdx] = { files: next[offerIdx].files.filter((_, i) => i !== fileIdx) };
-      return next;
-    });
-  };
+  const removeFile = (idx: number) => setFiles((prev) => prev.filter((_, i) => i !== idx));
 
-  const allOffersHaveFiles = offers.every((o) => o.files.length > 0);
-  const totalFiles = offers.reduce((sum, o) => sum + o.files.length, 0);
-
-  // ─── Add Offer (from results page) ───────────────────────────
-  const handleAddOffer = () => {
-    const newCount = offerCount + 1;
-    setOfferCount(newCount);
-    setOffers((prev) => [...prev, { files: [] }]);
-    setStep(3);
-  };
-
-  // ─── Analyze ──────────────────────────────────────────────────
-  const runAnalysis = async () => {
+  const analyze = async () => {
+    if (!address || !files.length) return;
     setAnalyzing(true);
-    setError('');
-    setAnalyzeProgress(`Analyzing ${totalFiles} document${totalFiles !== 1 ? 's' : ''} across ${offerCount} offer${offerCount !== 1 ? 's' : ''}...`);
-
     try {
-      const fieldsJson = JSON.stringify(getAllSelectedFields());
-
-      if (offerCount === 1) {
-        // Single offer analysis
-        const formData = new FormData();
-        formData.set('address', address);
-        formData.set('fields', fieldsJson);
-        offers[0].files.forEach((f) => formData.append('files', f));
-        const res = await fetch('/api/contract-analyze', { method: 'POST', body: formData });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({ error: 'Analysis failed' }));
-          throw new Error(err.error || 'Analysis failed');
-        }
-        setSingleResults(await res.json());
-        setCompareResult(null);
-      } else {
-        // Multi-offer comparison — only send offers that have new files
-        // If we have existing results, we need to merge
-        const formData = new FormData();
-        formData.set('address', address);
-        formData.set('fields', fieldsJson);
-
-        // Find which offers have files (new ones to analyze)
-        const offersToAnalyze: number[] = [];
-        offers.forEach((offer, i) => {
-          if (offer.files.length > 0) {
-            // Check if this offer already has results
-            const existingOffer = compareResult?.offers[i];
-            if (!existingOffer?.data) {
-              offersToAnalyze.push(i);
-            }
-          }
-        });
-
-        // If we have existing results and only new offers to add
-        if (compareResult && offersToAnalyze.length > 0 && offersToAnalyze.length < offerCount) {
-          // Only send new offers
-          formData.set('offerCount', offersToAnalyze.length.toString());
-          offersToAnalyze.forEach((origIdx, newIdx) => {
-            offers[origIdx].files.forEach((f) => formData.append(`offer_${newIdx}_files`, f));
-          });
-
-          const res = await fetch('/api/contract-compare', { method: 'POST', body: formData });
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({ error: 'Comparison failed' }));
-            throw new Error(err.error || 'Comparison failed');
-          }
-          const newResult = await res.json() as CompareResult;
-
-          // Merge: keep existing offers + add new ones with correct labels
-          const mergedOffers = [...compareResult.offers];
-          let newIdx = 0;
-          for (const origIdx of offersToAnalyze) {
-            const newOffer = newResult.offers[newIdx];
-            if (newOffer) {
-              newOffer.label = `Offer ${OFFER_LABELS[origIdx]}`;
-              mergedOffers[origIdx] = newOffer;
-            }
-            newIdx++;
-          }
-
-          setCompareResult({
-            address,
-            offers: mergedOffers,
-            comparison: newResult.comparison,
-          });
-        } else {
-          // Fresh analysis — upload files to Supabase Storage first, then send URLs
-          const sessionId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-          const offerResults: Array<{ label: string; fileName: string; data: Record<string, unknown> | null; error?: string }> = [];
-
-          // Upload all files to Supabase Storage in parallel
-          const offersWithUrls = await Promise.all(
-            offers.map(async (offer, i) => {
-              if (offer.files.length === 0) {
-                return { label: `Offer ${OFFER_LABELS[i]}`, fileUrls: [] as string[], fileNames: [] as string[] };
-              }
-              const fileUrls: string[] = [];
-              const fileNames: string[] = [];
-              await Promise.all(
-                offer.files.map(async (file) => {
-                  const path = `${sessionId}/offer_${i}/${file.name}`;
-                  const { error: uploadError } = await supabase.storage.from('contracts').upload(path, file);
-                  if (uploadError) throw new Error(`Upload failed for ${file.name}: ${uploadError.message}`);
-                  const { data: urlData } = supabase.storage.from('contracts').getPublicUrl(path);
-                  fileUrls.push(urlData.publicUrl);
-                  fileNames.push(file.name);
-                })
-              );
-              return { label: `Offer ${OFFER_LABELS[i]}`, fileUrls, fileNames };
-            })
-          );
-
-          // Send all offers to API as JSON with URLs (no body size limit concerns)
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 290000);
-            const res = await fetch('/api/contract-compare', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                address,
-                fields: getAllSelectedFields(),
-                offers: offersWithUrls.map((o) => ({
-                  label: o.label,
-                  fileUrls: o.fileUrls,
-                })),
-              }),
-              signal: controller.signal,
-            });
-            clearTimeout(timeoutId);
-            if (!res.ok) {
-              const err = await res.json().catch(() => ({ error: 'Comparison failed' }));
-              throw new Error(err.error || 'Comparison failed');
-            }
-            const result = await res.json();
-            offerResults.push(...result.offers);
-          } catch (err) {
-            // Fallback: populate errors for all offers
-            for (let i = 0; i < offers.length; i++) {
-              const msg = err instanceof DOMException && err.name === 'AbortError' ? 'Request timed out' : String(err).slice(0, 200);
-              offerResults.push({ label: `Offer ${OFFER_LABELS[i]}`, fileName: offers[i].files.map(f => f.name).join(', '), data: null, error: msg });
-            }
-          }
-
-          // Get summary comparison if 2+ valid offers (optional — won't block results)
-          let comparison = null;
-          const validOffers = offerResults.filter(o => o.data);
-          if (validOffers.length >= 2) {
-            try {
-              const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 60000);
-              const summaryRes = await fetch('/api/contract-compare', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ summarize: true, offers: validOffers, address }),
-                signal: controller.signal,
-              });
-              clearTimeout(timeoutId);
-              if (summaryRes.ok) {
-                const summaryData = await summaryRes.json();
-                comparison = summaryData.comparison;
-              }
-            } catch { /* summary is optional — show results without it */ }
-          }
-
-          setCompareResult({ address, offers: offerResults, comparison });
-        }
-        setSingleResults(null);
-      }
-      setSelectedWinner(null);
-      setShareUrl(null);
-      setSavedId(null);
-      setSavedShareId(null);
-      setSaveStatus('idle');
-      setStep(4);
-      // Scroll to top so user sees comparison table first
-      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+      const formData = new FormData();
+      formData.set('address', address);
+      files.forEach((f) => formData.append('files', f));
+      const res = await fetch('/api/contract-analyze', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Analysis failed');
+      setResults(await res.json());
+      setShowDemo(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed');
+      alert('Analysis failed. ' + (err instanceof Error ? err.message : ''));
     } finally {
       setAnalyzing(false);
-      setAnalyzeProgress('');
+    }
+  };
+
+  // ─── Compare Mode Handlers ────────────────────────────────────
+  const addCompareSlot = () => {
+    if (compareFiles.length < 5) setCompareFiles((prev) => [...prev, null]);
+  };
+
+  const removeCompareSlot = (idx: number) => {
+    if (compareFiles.length <= 2) return;
+    setCompareFiles((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleCompareDrop = (e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+    setCompareDragOver(null);
+    const file = e.dataTransfer.files[0];
+    if (file && (file.type === 'application/pdf' || file.type.startsWith('image/'))) {
+      setCompareFiles((prev) => { const n = [...prev]; n[idx] = file; return n; });
+    }
+  };
+
+  const handleCompareFileSelect = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+    const file = e.target.files?.[0];
+    if (file) setCompareFiles((prev) => { const n = [...prev]; n[idx] = file; return n; });
+  };
+
+  const runComparison = async () => {
+    const validFiles = compareFiles.filter((f): f is File => f !== null);
+    if (validFiles.length < 2 || !address) return;
+    setAnalyzing(true);
+    try {
+      const formData = new FormData();
+      formData.set('address', address);
+      const labels = compareFiles.map((_, i) => `Offer ${String.fromCharCode(65 + i)}`);
+      formData.set('labels', labels.filter((_, i) => compareFiles[i] !== null).join(','));
+      validFiles.forEach((f) => formData.append('files', f));
+      const res = await fetch('/api/contract-compare', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Comparison failed');
+      setCompareResult(await res.json());
+      setShowCompareDemo(false);
+    } catch (err) {
+      alert('Comparison failed. ' + (err instanceof Error ? err.message : ''));
+    } finally {
+      setAnalyzing(false);
     }
   };
 
   // ─── Calendar Export ──────────────────────────────────────────
-  const downloadCalendar = (contractData: ContractData | CompareOfferData, addr: string, ratDate?: Date) => {
-    const events = extractCalendarEvents(contractData as Record<string, unknown>, addr, ratDate);
+  const downloadCalendar = (contractData: ContractData, addr: string) => {
+    const events = extractCalendarEvents(contractData as Record<string, unknown>, addr);
     if (!events.length) { alert('No parseable dates found in this contract.'); return; }
     const ics = generateICS(events, `Contract Deadlines — ${addr}`);
     const blob = new Blob([ics], { type: 'text/calendar' });
@@ -543,94 +297,125 @@ export default function ContractAnalyzerPage() {
     URL.revokeObjectURL(url);
   };
 
-  const openGoogleCalendar = (contractData: CompareOfferData, addr: string, ratDate?: Date) => {
-    const events = extractCalendarEvents(contractData as Record<string, unknown>, addr, ratDate);
-    if (!events.length) { alert('No parseable dates found.'); return; }
-    for (const event of events) {
-      const link = generateGoogleCalendarLink(event);
-      window.open(link, '_blank');
+  // ─── CSV Export (single analysis) ─────────────────────────────
+  const activeData = showDemo ? SAMPLE_DATA : results;
+
+  const exportCSV = () => {
+    if (!activeData) return;
+    const rows: string[][] = [['Field', 'Value']];
+    for (const result of activeData.results) {
+      const d = result.data;
+      if (!d) continue;
+      rows.push(['--- File ---', result.fileName]);
+      rows.push(['Purchase Price', d.purchasePrice || '']);
+      rows.push(['Closing Date', d.closingDate || '']);
+      rows.push(['Settlement Company', d.settlementCompany || '']);
+      rows.push(['Financing Type', d.financingType || '']);
+      rows.push(['Loan Amount', d.loanAmount || '']);
+      rows.push(['Down Payment', d.downPayment || '']);
+      rows.push(['Interest Rate', d.interestRate || '']);
+      rows.push(['Earnest Money', d.earnestMoney?.amount || '']);
+      rows.push(['Seller Concessions', d.sellerConcessions || '']);
+      rows.push(['Possession Date', d.possessionDate || '']);
+      d.contingencies?.forEach((c) => rows.push([`Contingency: ${c.type}`, `${c.details} (Deadline: ${c.deadline})`]));
+      d.personalProperty?.forEach((p) => rows.push(['Personal Property', p]));
+      if (d.escalationClause?.present) rows.push(['Escalation Clause', `Max: ${d.escalationClause.maxPrice}, Increment: ${d.escalationClause.increment}`]);
+      d.addenda?.forEach((a) => rows.push(['Addendum', a]));
+      if (d.parties) Object.entries(d.parties).forEach(([k, v]) => { if (v) rows.push([`Party: ${k}`, v]); });
+      if (d.homeWarranty?.included) rows.push(['Home Warranty', `${d.homeWarranty.provider} - ${d.homeWarranty.cost} (${d.homeWarranty.paidBy})`]);
+      d.otherTerms?.forEach((t) => rows.push(['Other Term', t]));
     }
+    downloadCSVBlob(rows, `contract-analysis-${activeData.address.replace(/[^a-zA-Z0-9]/g, '_')}.csv`);
   };
 
-  // ─── Select Winner ───────────────────────────────────────────
-  const handleSelectWinner = (label: string) => {
-    setSelectedWinner(label);
-    setShowRatDateInput(true);
-    setRatificationDate('');
-    setDiscoveredEvents([]);
-    setVisibleEventCount(0);
-    setCalculatingDates(false);
-    setRemovedEventIndices(new Set());
-    setReminderChecked(new Set());
-    setReminderEmails(['']);
-    setSelectAllReminders(true);
-  };
-
-  const handleRatDateSubmit = () => {
-    if (!ratificationDate || !selectedWinner || !compareResult) return;
-    const offer = compareResult.offers.find(o => o.label === selectedWinner);
-    if (!offer?.data) return;
-
-    const ratDate = new Date(ratificationDate + 'T12:00:00');
-    const events = extractCalendarEvents(offer.data as Record<string, unknown>, compareResult.address, ratDate);
-    
-    if (!events.length) {
-      setShowCalendarModal(true);
-      return;
-    }
-
-    // Animate: show "calculating" then reveal events one by one
-    setCalculatingDates(true);
-    setDiscoveredEvents(events);
-    setVisibleEventCount(0);
-    // Default all reminders to checked
-    setReminderChecked(new Set(events.map((_, i) => i)));
-    setSelectAllReminders(true);
-
-    // Reveal events one at a time with animation
-    let count = 0;
-    const interval = setInterval(() => {
-      count++;
-      setVisibleEventCount(count);
-      if (count >= events.length) {
-        clearInterval(interval);
-        setTimeout(() => {
-          setCalculatingDates(false);
-        }, 600);
+  // ─── CSV Export (comparison) ──────────────────────────────────
+  const exportCompareCSV = () => {
+    const data = showCompareDemo ? SAMPLE_COMPARE : compareResult;
+    if (!data) return;
+    const fields = [
+      'Purchase Price', 'Earnest Money', 'Financing Type', 'Down Payment %', 'Closing Date',
+      'Days to Close', 'Settlement Company', 'Inspection Days', 'Financing Contingency Days',
+      'Appraisal Contingency', 'Home Sale Contingency', 'Seller Concessions', 'Personal Property',
+      'Post-Settlement Occupancy', 'Escalation Clause', 'Risk Flags',
+    ];
+    const rows: string[][] = [['Field', ...data.offers.map((o) => o.label)]];
+    for (const field of fields) {
+      const row = [field];
+      for (const offer of data.offers) {
+        const d = offer.data;
+        if (!d) { row.push('N/A'); continue; }
+        switch (field) {
+          case 'Purchase Price': row.push(d.purchasePriceFormatted || ''); break;
+          case 'Earnest Money': row.push(d.earnestMoneyFormatted || ''); break;
+          case 'Financing Type': row.push(d.financingType || ''); break;
+          case 'Down Payment %': row.push(d.downPaymentPercent || ''); break;
+          case 'Closing Date': row.push(d.closingDate || ''); break;
+          case 'Days to Close': row.push(d.closingDaysFromNow?.toString() || ''); break;
+          case 'Settlement Company': row.push(d.settlementCompany || ''); break;
+          case 'Inspection Days': row.push(d.inspectionContingencyDays?.toString() || 'None'); break;
+          case 'Financing Contingency Days': row.push(d.financingContingencyDays?.toString() || 'None'); break;
+          case 'Appraisal Contingency': row.push(d.appraisalContingency?.present ? `Yes${d.appraisalContingency.gapCoverage ? ` (gap: ${d.appraisalContingency.gapCoverage})` : ''}` : 'Waived'); break;
+          case 'Home Sale Contingency': row.push(d.homeSaleContingency ? 'YES ⚠️' : 'No'); break;
+          case 'Seller Concessions': row.push(d.sellerConcessions || 'None'); break;
+          case 'Personal Property': row.push(d.personalProperty?.join('; ') || 'None'); break;
+          case 'Post-Settlement Occupancy': row.push(d.postSettlementOccupancy || 'None'); break;
+          case 'Escalation Clause': row.push(d.escalationClause?.present ? `Yes — cap ${d.escalationClause.cap}` : 'No'); break;
+          case 'Risk Flags': row.push(d.riskFlags?.join('; ') || 'None'); break;
+          default: row.push('');
+        }
       }
-    }, 300);
-  };
-
-  const confirmWinner = () => {
-    setShowCalendarModal(false);
-    if (addToCalendar && selectedWinner && compareResult) {
-      const offer = compareResult.offers.find(o => o.label === selectedWinner);
-      if (offer?.data) {
-        const ratDate = ratificationDate ? new Date(ratificationDate + 'T12:00:00') : undefined;
-        downloadCalendar(offer.data, compareResult.address, ratDate);
-      }
+      rows.push(row);
     }
+    downloadCSVBlob(rows, `contract-comparison-${data.address.replace(/[^a-zA-Z0-9]/g, '_')}.csv`);
   };
 
-  // ─── Share (real URL) ───────────────────────────────────────────
-  const shareComparison = async () => {
-    if (!compareResult) return;
-    setSharing(true);
-    try {
-      const shareId = savedShareId;
-      if (!shareId) { alert('Save in progress, try again in a moment.'); return; }
-      const url = `https://agentaibrief.com/compare/${shareId}`;
-      await navigator.clipboard.writeText(url);
-      setShareUrl(url);
-      setTimeout(() => setShareUrl(null), 5000);
-    } catch {
-      alert('Failed to copy share link');
-    } finally {
-      setSharing(false);
-    }
+  // ─── PDF Export (comparison) ──────────────────────────────────
+  const exportComparePDF = () => {
+    const data = showCompareDemo ? SAMPLE_COMPARE : compareResult;
+    if (!data) return;
+    // Generate a printable HTML document and trigger print
+    const w = window.open('', '_blank');
+    if (!w) return;
+    const offerHeaders = data.offers.map((o) => `<th style="padding:8px;border:1px solid #ccc;background:#f0f0f0">${o.label}<br><small>${o.fileName}</small></th>`).join('');
+    const fieldRows = [
+      ['Purchase Price', (d: CompareOfferData) => d.purchasePriceFormatted || ''],
+      ['Earnest Money', (d: CompareOfferData) => d.earnestMoneyFormatted || ''],
+      ['Financing Type', (d: CompareOfferData) => d.financingType || ''],
+      ['Down Payment', (d: CompareOfferData) => d.downPaymentPercent || ''],
+      ['Closing Date', (d: CompareOfferData) => d.closingDate || ''],
+      ['Days to Close', (d: CompareOfferData) => d.closingDaysFromNow?.toString() || ''],
+      ['Inspection Days', (d: CompareOfferData) => d.inspectionContingencyDays?.toString() || 'None'],
+      ['Financing Contingency', (d: CompareOfferData) => d.financingContingencyDays?.toString() || 'None'],
+      ['Appraisal Contingency', (d: CompareOfferData) => d.appraisalContingency?.present ? `Yes${d.appraisalContingency.gapCoverage ? ` (gap: ${d.appraisalContingency.gapCoverage})` : ''}` : 'Waived'],
+      ['Home Sale Contingency', (d: CompareOfferData) => d.homeSaleContingency ? 'YES ⚠️' : 'No'],
+      ['Seller Concessions', (d: CompareOfferData) => d.sellerConcessions || 'None'],
+      ['Personal Property', (d: CompareOfferData) => d.personalProperty?.join(', ') || 'None'],
+      ['Post-Settlement Occupancy', (d: CompareOfferData) => d.postSettlementOccupancy || 'None'],
+    ] as [string, (d: CompareOfferData) => string][];
+
+    const tableRows = fieldRows.map(([label, fn]) => {
+      const cells = data.offers.map((o) => `<td style="padding:8px;border:1px solid #ccc">${o.data ? fn(o.data) : 'N/A'}</td>`).join('');
+      return `<tr><td style="padding:8px;border:1px solid #ccc;font-weight:bold;background:#fafafa">${label}</td>${cells}</tr>`;
+    }).join('');
+
+    const summaryHtml = data.comparison?.summary?.map((s) => `<li>${s}</li>`).join('') || '';
+    const bestHtml = data.comparison?.bestOffer ? `<h3>🏆 Best Offer: ${data.comparison.bestOffer.label}</h3><p>${data.comparison.bestOffer.reasoning}</p>` : '';
+    const riskHtml = data.comparison?.riskAnalysis?.map((r) => `<h4>${r.offer}</h4><ul>${r.risks.map((ri) => `<li>${ri}</li>`).join('')}</ul>`).join('') || '';
+
+    w.document.write(`<!DOCTYPE html><html><head><title>Contract Comparison — ${data.address}</title>
+      <style>body{font-family:Arial,sans-serif;max-width:1000px;margin:20px auto;padding:20px}table{border-collapse:collapse;width:100%}h1{color:#37b0c9}h3{margin-top:24px}.disclaimer{color:#999;font-size:12px;margin-top:20px;padding-top:10px;border-top:1px solid #eee}</style>
+    </head><body>
+      <h1>Contract Comparison Report</h1><p><strong>Property:</strong> ${data.address}</p>
+      ${summaryHtml ? `<h3>Quick Summary</h3><ul>${summaryHtml}</ul>` : ''}
+      <table><thead><tr><th style="padding:8px;border:1px solid #ccc;background:#f0f0f0">Field</th>${offerHeaders}</tr></thead><tbody>${tableRows}</tbody></table>
+      ${bestHtml}
+      ${riskHtml ? `<h3>⚠️ Risk Analysis</h3>${riskHtml}` : ''}
+      <p class="disclaimer">⚖️ This is AI-generated analysis for informational purposes only. It does not constitute legal advice. Always consult with a licensed attorney or real estate professional before making decisions. Generated by AgentAIBrief.com</p>
+    </body></html>`);
+    w.document.close();
+    setTimeout(() => w.print(), 500);
   };
 
-  // ─── CSV Exports ──────────────────────────────────────────────
   function downloadCSVBlob(rows: string[][], filename: string) {
     const csv = rows.map((r) => r.map((c) => `"${(c || '').replace(/"/g, '""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -640,560 +425,211 @@ export default function ContractAnalyzerPage() {
     URL.revokeObjectURL(url);
   }
 
-  const exportSingleCSV = () => {
-    if (!singleResults) return;
-    const rows: string[][] = [['Field', 'Value']];
-    for (const result of singleResults.results) {
-      const d = result.data;
-      if (!d) continue;
-      rows.push(['--- File ---', result.fileName]);
-      rows.push(['Purchase Price', d.purchasePrice || '']);
-      rows.push(['Closing Date', d.closingDate || '']);
-      rows.push(['Financing Type', d.financingType || '']);
-      rows.push(['Earnest Money', d.earnestMoney?.amount || '']);
-      rows.push(['Seller Concessions', d.sellerConcessions || '']);
-      d.contingencies?.forEach((c) => rows.push([`Contingency: ${c.type}`, `${c.details} (Deadline: ${c.deadline})`]));
-    }
-    downloadCSVBlob(rows, `contract-analysis-${address.replace(/[^a-zA-Z0-9]/g, '_')}.csv`);
-  };
-
-  const exportCompareCSV = () => {
-    if (!compareResult) return;
-    const fields: [string, (d: CompareOfferData) => string][] = [
-      ['Buyer Name', d => d.buyerName || ''],
-      ['Buyer Agent', d => d.buyerAgentName || ''],
-      ['Purchase Price', d => d.purchasePriceFormatted || ''],
-      ['Earnest Money Deposit', d => d.earnestMoneyDepositFormatted || ''],
-      ['Financing Type', d => d.financingType || ''],
-      ['Amount Financed', d => d.amountFinanced || ''],
-      ['Down Payment', d => d.downPayment || ''],
-      ['Seller Paid Buyer Agency', d => d.sellerPaidBuyerAgency || 'None'],
-      ['Seller Concessions', d => d.sellerConcessions || 'None'],
-      ['Closing Date', d => d.closingDate || ''],
-      ['Financing Contingency', d => d.financingContingency || 'None'],
-      ['Appraisal Contingency', d => d.appraisalContingency || 'None'],
-      ['Home Inspection', d => d.homeInspection || 'None'],
-      ['HOA', d => d.hoaContingency || 'None'],
-      ['Escalation', d => d.escalationClause?.present ? 'Yes' : 'No'],
-      ['Escalation Increments', d => d.escalationClause?.increment || ''],
-      ['Max Escalation', d => d.escalationClause?.maxEscalation || ''],
-      ['WDI', d => d.wdiInspection || 'None'],
-      ['Appraisal Gap', d => d.appraisalGap || 'None'],
-      ['Septic/Well', d => d.septicWell || 'None'],
-      ['Septic Paid By', d => d.septicPaidBy || ''],
-      ['Radon', d => d.radon || 'None'],
-      ['Lender', d => d.lender || ''],
-      ['Title Company', d => d.titleCompany || ''],
-      ['Rent Back', d => d.rentBack || 'None'],
-      ['Notes', d => d.notes || ''],
-      ['Seller Net Estimate', d => calcSellerNet(d)],
-    ];
-    const rows: string[][] = [['Field', ...compareResult.offers.map((o) => o.label)]];
-    for (const [label, fn] of fields) {
-      const row = [label];
-      for (const offer of compareResult.offers) {
-        row.push(offer.data ? fn(offer.data) : 'N/A');
-      }
-      rows.push(row);
-    }
-    downloadCSVBlob(rows, `contract-comparison-${address.replace(/[^a-zA-Z0-9]/g, '_')}.csv`);
-  };
-
-  // ─── PDF Export ───────────────────────────────────────────────
-  const exportComparePDF = () => {
-    if (!compareResult) return;
-    const w = window.open('', '_blank');
-    if (!w) return;
-
-    const offerHeaders = compareResult.offers.map((o) =>
-      `<th style="padding:10px;border:1px solid #ddd;background:#f8f9fa;min-width:160px">${o.label}<br><small style="color:#666">${o.fileName}</small>${o.data?.buyerName ? `<br><small style="color:#e85d26">${o.data.buyerName}</small>` : ''}</th>`
-    ).join('');
-
-    const fieldRows: [string, (d: CompareOfferData) => string][] = [
-      ['Purchase Price', (d) => d.purchasePriceFormatted || '—'],
-      ['Earnest Money Deposit', (d) => d.earnestMoneyDepositFormatted || '—'],
-      ['Financing Type', (d) => d.financingType || '—'],
-      ['Amount Financed', (d) => d.amountFinanced || '—'],
-      ['Down Payment', (d) => d.downPayment || '—'],
-      ['Seller Paid Buyer Agency', (d) => d.sellerPaidBuyerAgency || 'None'],
-      ['Seller Concessions', (d) => d.sellerConcessions || 'None'],
-      ['Closing Date', (d) => d.closingDate || '—'],
-      ['Financing Contingency', (d) => d.financingContingency || 'None'],
-      ['Appraisal Contingency', (d) => d.appraisalContingency || 'None'],
-      ['Home Inspection', (d) => d.homeInspection || 'None'],
-      ['Seller Net Estimate', (d) => calcSellerNet(d)],
-    ];
-
-    const tableRows = fieldRows.map(([label, fn]) => {
-      const cells = compareResult.offers.map((o) => `<td style="padding:8px;border:1px solid #ddd">${o.data ? fn(o.data) : 'N/A'}</td>`).join('');
-      return `<tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;background:#fafafa">${label}</td>${cells}</tr>`;
-    }).join('');
-
-    w.document.write(`<!DOCTYPE html><html><head><title>Contract Comparison — ${compareResult.address}</title>
-      <style>body{font-family:-apple-system,Arial,sans-serif;max-width:1100px;margin:20px auto;padding:20px;color:#333}table{border-collapse:collapse;width:100%}h1{color:#e85d26}@media print{body{max-width:100%}}</style>
-    </head><body>
-      <h1>📋 Contract Comparison Report</h1>
-      <p><strong>Property:</strong> ${compareResult.address}</p>
-      <p style="color:#999;font-size:12px">Generated ${new Date().toLocaleDateString()} by AgentAIBrief.com</p>
-      <table><thead><tr><th style="padding:10px;border:1px solid #ddd;background:#f8f9fa">Field</th>${offerHeaders}</tr></thead><tbody>${tableRows}</tbody></table>
-      <p style="color:#999;font-size:11px;margin-top:24px;border-top:1px solid #eee;padding-top:12px">⚖️ AI-generated analysis for informational purposes only. Not legal advice. Generated by AgentAIBrief.com</p>
-    </body></html>`);
-    w.document.close();
-    setTimeout(() => w.print(), 500);
-  };
-
-  // ─── Start Over ───────────────────────────────────────────────
-  const startOver = () => {
-    setStep(1);
-    setAddress('');
-    setOfferCount(2);
-    setOffers([{ files: [] }, { files: [] }]);
-    setSingleResults(null);
-    setCompareResult(null);
-    setSelectedWinner(null);
-    setShareUrl(null);
-    setAgentNotes('');
-    setError('');
-    setSavedId(null);
-    setSavedShareId(null);
-    setSaveStatus('idle');
-    setSelectedFields(new Set(DEFAULT_FIELDS));
-    setCustomFields([]);
-    setCustomFieldInput('');
-  };
-
-  // ═══════════════════════════════════════════════════════════════
-  // RENDER
-  // ═══════════════════════════════════════════════════════════════
+  const activeCompare = showCompareDemo ? SAMPLE_COMPARE : compareResult;
 
   return (
-    <div className="min-h-screen bg-[#e8e6e1] text-[#2a2a2a]">
+    <div className="min-h-screen bg-gray-950 text-white">
       {/* Header */}
-      <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]/90 backdrop-blur sticky top-0 z-50">
+      <header className="border-b border-gray-800 bg-gray-950/90 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold">Agent<span className="text-[#e85d26]">AI</span>Brief</Link>
+          <Link href="/" className="text-xl font-bold">Agent<span className="text-[#37b0c9]">AI</span>Brief</Link>
           <nav className="flex items-center gap-4 text-sm">
-            <Link href="/" className="text-[#666] hover:text-[#2a2a2a]">Home</Link>
-            <Link href="/tools" className="text-[#666] hover:text-[#2a2a2a]">AI Tools</Link>
-            <span className="text-[#e85d26] font-semibold">Contract Analyzer</span>
+            <Link href="/" className="text-gray-400 hover:text-white">Home</Link>
+            <Link href="/tools" className="text-gray-400 hover:text-white">AI Tools</Link>
+            <span className="text-[#37b0c9] font-semibold">Contract Analyzer</span>
           </nav>
         </div>
       </header>
 
-      <PaywallGate requiredTier="pro" featureName="Contract Analyzer">
-      {/* Saved Comparisons Banner */}
-      {savedComparisons.length > 0 && (
-        <div className="max-w-6xl mx-auto px-4 pt-4">
-          <button
-            onClick={() => setShowSaved(!showSaved)}
-            className="text-sm text-[#e85d26] hover:text-[#e85d26]/80 flex items-center gap-1"
-          >
-            📁 Saved Comparisons ({savedComparisons.length}) {showSaved ? '▲' : '▼'}
-          </button>
-          {showSaved && (
-            <div className="mt-2 bg-[#f0ece4] border border-[#e0dcd4] rounded-xl overflow-hidden mb-4">
-              {savedComparisons.map((c) => (
-                <div key={c.id} className="flex items-center justify-between px-4 py-3 border-b border-[#e0dcd4]/50 last:border-0">
-                  <div>
-                    <p className="text-sm font-medium text-[#2a2a2a]">{c.address}</p>
-                    <p className="text-xs text-[#888]">
-                      {new Date(c.created_at).toLocaleDateString()} • {Array.isArray(c.offers) ? c.offers.length : '?'} offers
-                    </p>
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 border-b border-gray-800">
+        <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+          <div className="inline-block px-3 py-1 bg-[#37b0c9]/10 border border-[#37b0c9]/30 rounded-full text-[#37b0c9] text-xs font-medium mb-4">
+            {mode === 'compare' ? 'COMPARE OFFERS' : 'AI-POWERED'}
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+            Contract <span className="text-[#37b0c9]">{mode === 'compare' ? 'Comparison' : 'Analyzer'}</span>
+          </h1>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+            {mode === 'compare'
+              ? 'Upload multiple offers and get a side-by-side comparison with AI-powered recommendations for your listing.'
+              : 'Upload your real estate contracts and get every term, contingency, and deadline extracted into a clean spreadsheet — powered by AI.'}
+          </p>
+
+          {/* Mode Toggle */}
+          <div className="flex justify-center gap-2 mb-6">
+            <button
+              onClick={() => setMode('analyze')}
+              className={`px-5 py-2.5 rounded-lg font-medium text-sm transition ${mode === 'analyze' ? 'bg-[#37b0c9] text-white' : 'border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500'}`}
+            >📄 Analyze Contract</button>
+            <button
+              onClick={() => setMode('compare')}
+              className={`px-5 py-2.5 rounded-lg font-medium text-sm transition ${mode === 'compare' ? 'bg-[#37b0c9] text-white' : 'border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500'}`}
+            >⚖️ Compare Offers</button>
+          </div>
+
+          <div className="flex justify-center gap-4">
+            {mode === 'analyze' ? (
+              <>
+                <button onClick={() => { setShowDemo(true); setResults(null); }} className="px-6 py-3 border border-[#37b0c9] text-[#37b0c9] rounded-lg font-medium hover:bg-[#37b0c9]/10 transition">View Sample Output</button>
+                <a href="#upload" className="px-6 py-3 bg-[#37b0c9] text-white rounded-lg font-medium hover:bg-[#37b0c9]/80 transition">Analyze a Contract</a>
+              </>
+            ) : (
+              <>
+                <button onClick={() => { setShowCompareDemo(true); setCompareResult(null); }} className="px-6 py-3 border border-[#37b0c9] text-[#37b0c9] rounded-lg font-medium hover:bg-[#37b0c9]/10 transition">View Sample Comparison</button>
+                <a href="#upload" className="px-6 py-3 bg-[#37b0c9] text-white rounded-lg font-medium hover:bg-[#37b0c9]/80 transition">Compare Offers</a>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="max-w-4xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { name: 'Free', price: '$0', desc: '/month', features: ['Analyze 1 contract/month', 'View sample outputs', 'Basic CSV export'] },
+            { name: 'Pro', price: '$19', desc: '/month', features: ['Unlimited analysis', 'Compare up to 3 offers', 'CSV export', 'AI recommendations'], highlight: true },
+            { name: 'Inner Circle', price: '$99', desc: '/month', features: ['Unlimited everything', 'Compare up to 5 offers', 'PDF export', 'Calendar sync (.ics)', 'Priority processing'] },
+          ].map((tier) => (
+            <div key={tier.name} className={`rounded-xl p-6 border ${tier.highlight ? 'border-[#37b0c9] bg-[#37b0c9]/5' : 'border-gray-800 bg-gray-900'}`}>
+              <h3 className="font-bold text-lg">{tier.name}</h3>
+              <p className="text-3xl font-bold mt-2">{tier.price}<span className="text-sm text-gray-400 font-normal">/mo</span></p>
+              <ul className="mt-4 space-y-2">
+                {tier.features.map((f) => (
+                  <li key={f} className="text-sm text-gray-300 flex items-center gap-2">
+                    <span className="text-[#37b0c9]">✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Upload Section */}
+      <section id="upload" className="max-w-4xl mx-auto px-4 py-12">
+        <h2 className="text-2xl font-bold mb-6">{mode === 'compare' ? 'Upload Offers to Compare' : 'Upload & Analyze'}</h2>
+
+        {/* Address Input (shared) */}
+        <div className="mb-4">
+          <label className="block text-sm text-gray-400 mb-1">Property Address</label>
+          <input
+            type="text" placeholder="e.g. 1234 Oak Street, Arlington, VA 22201"
+            value={address} onChange={(e) => setAddress(e.target.value)}
+            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#37b0c9]"
+          />
+        </div>
+
+        {mode === 'analyze' ? (
+          <div className="space-y-4">
+            {/* Drop Zone */}
+            <div
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition ${dragOver ? 'border-[#37b0c9] bg-[#37b0c9]/5' : 'border-gray-700 hover:border-gray-500'}`}
+            >
+              <input ref={fileInputRef} type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileSelect} className="hidden" />
+              <div className="text-4xl mb-3">📄</div>
+              <p className="text-gray-300 font-medium">Drag & drop contracts here</p>
+              <p className="text-gray-500 text-sm mt-1">PDF, JPG, PNG — or click to browse</p>
+            </div>
+            {files.length > 0 && (
+              <div className="space-y-2">
+                {files.map((f, i) => (
+                  <div key={i} className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-lg px-4 py-2">
+                    <span className="text-sm text-gray-300 truncate">{f.name} <span className="text-gray-500">({(f.size / 1024).toFixed(0)} KB)</span></span>
+                    <button onClick={() => removeFile(i)} className="text-gray-500 hover:text-red-400 text-sm ml-2">✕</button>
                   </div>
-                  <button
-                    onClick={() => loadComparison(c.id)}
-                    className="px-3 py-1.5 bg-[#e85d26]/10 border border-[#e85d26]/30 rounded-lg text-xs font-medium text-[#e85d26] hover:bg-[#e85d26]/20 transition"
+                ))}
+              </div>
+            )}
+            <button onClick={analyze} disabled={!address || !files.length || analyzing}
+              className="w-full py-3 bg-[#37b0c9] text-white font-bold rounded-lg hover:bg-[#37b0c9]/80 transition disabled:opacity-40 disabled:cursor-not-allowed">
+              {analyzing ? 'Analyzing contracts...' : `Analyze ${files.length} Contract${files.length !== 1 ? 's' : ''}`}
+            </button>
+          </div>
+        ) : (
+          /* Compare Mode Upload */
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {compareFiles.map((file, idx) => (
+                <div key={idx} className="relative">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold text-[#37b0c9]">Offer {String.fromCharCode(65 + idx)}</span>
+                    {compareFiles.length > 2 && (
+                      <button onClick={() => removeCompareSlot(idx)} className="text-gray-500 hover:text-red-400 text-xs">Remove</button>
+                    )}
+                  </div>
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setCompareDragOver(idx); }}
+                    onDragLeave={() => setCompareDragOver(null)}
+                    onDrop={(e) => handleCompareDrop(e, idx)}
+                    onClick={() => compareInputRefs.current[idx]?.click()}
+                    className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition min-h-[120px] flex flex-col items-center justify-center ${
+                      compareDragOver === idx ? 'border-[#37b0c9] bg-[#37b0c9]/5' : file ? 'border-green-700/50 bg-green-900/10' : 'border-gray-700 hover:border-gray-500'
+                    }`}
                   >
-                    Load
-                  </button>
+                    <input
+                      ref={(el) => { compareInputRefs.current[idx] = el; }}
+                      type="file" accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={(e) => handleCompareFileSelect(e, idx)}
+                      className="hidden"
+                    />
+                    {file ? (
+                      <>
+                        <div className="text-2xl mb-1">✅</div>
+                        <p className="text-sm text-gray-300 truncate max-w-full">{file.name}</p>
+                        <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(0)} KB</p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-2xl mb-1">📄</div>
+                        <p className="text-sm text-gray-400">Drop PDF here</p>
+                      </>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      )}
-
-      {/* Progress Bar */}
-      {step < 4 && (
-        <div className="max-w-2xl mx-auto px-4 pt-8 pb-2">
-          <div className="flex items-center gap-2 mb-2">
-            {[1, 2, 3].map((s) => (
-              <div key={s} className="flex items-center gap-2 flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all ${
-                  s < step ? 'bg-[#e85d26] text-[#2a2a2a]' : s === step ? 'bg-[#e85d26]/20 border-2 border-[#e85d26] text-[#e85d26]' : 'bg-[#f0ece4] text-[#888]'
-                }`}>
-                  {s < step ? '✓' : s}
-                </div>
-                {s < 3 && <div className={`h-0.5 flex-1 ${s < step ? 'bg-[#e85d26]' : 'bg-[#f0ece4]'}`} />}
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between text-xs text-[#888] px-1">
-            <span className={step >= 1 ? 'text-[#e85d26]' : ''}>Address</span>
-            <span className={step >= 2 ? 'text-[#e85d26]' : ''}>Offers</span>
-            <span className={step >= 3 ? 'text-[#e85d26]' : ''}>Upload</span>
-          </div>
-        </div>
-      )}
-
-      {/* ═══ STEP 1: Property Address ═══ */}
-      {step === 1 && (
-        <section className="max-w-2xl mx-auto px-4 py-12">
-          <div className="text-center mb-8">
-            <div className="inline-block px-3 py-1 bg-[#e85d26]/10 border border-[#e85d26]/30 rounded-full text-[#e85d26] text-xs font-medium mb-4">
-              AI-POWERED CONTRACT ANALYSIS
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-3">
-              Contract <span className="text-[#e85d26]">Analyzer</span>
-            </h1>
-            <p className="text-[#666] max-w-lg mx-auto">
-              Upload real estate contracts and get every term, contingency, and deadline extracted. Compare multiple offers side-by-side.
-            </p>
-          </div>
-
-          <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl p-6">
-            <label className="block text-sm font-medium text-[#555] mb-2">Property Address</label>
-            <input
-              type="text"
-              placeholder="e.g. 1234 Oak Street, Arlington, VA 22201"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && address.trim() && goNext()}
-              autoFocus
-              className="w-full px-4 py-3 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:outline-none focus:border-[#e85d26] text-lg"
-            />
-
-            {/* Fields to Compare */}
-            <div className="mt-6 pt-6 border-t border-[#e0dcd4]">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-[#555]">Fields to Compare</h3>
-                <button
-                  onClick={toggleAllFields}
-                  className="text-xs text-[#e85d26] hover:text-[#e85d26]/80 transition"
-                >
-                  {[...DEFAULT_FIELDS, ...customFields].every(f => selectedFields.has(f)) ? 'Deselect All' : 'Select All'}
-                </button>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5">
-                {DEFAULT_FIELDS.map(field => (
-                  <label key={field} className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={selectedFields.has(field)}
-                      onChange={() => toggleField(field)}
-                      className="w-3.5 h-3.5 rounded accent-[#e85d26] bg-[#f0ece4] border-gray-600"
-                    />
-                    <span className="text-xs text-[#666] group-hover:text-gray-200 transition select-none">{field}</span>
-                  </label>
-                ))}
-                {customFields.map(field => (
-                  <label key={field} className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={selectedFields.has(field)}
-                      onChange={() => toggleField(field)}
-                      className="w-3.5 h-3.5 rounded accent-[#e85d26] bg-[#f0ece4] border-gray-600"
-                    />
-                    <span className="text-xs text-[#e85d26] group-hover:text-[#e85d26]/80 transition select-none">{field}</span>
-                    <button onClick={(e) => { e.preventDefault(); removeCustomField(field); }} className="text-[#666] hover:text-red-400 text-xs ml-auto">✕</button>
-                  </label>
-                ))}
-              </div>
-
-              {/* Additional Fields */}
-              <div className="mt-4 pt-4 border-t border-[#e0dcd4]/50">
-                <p className="text-xs text-[#888] mb-2">Additional Fields</p>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={customFieldInput}
-                    onChange={(e) => setCustomFieldInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addCustomField()}
-                    placeholder="e.g. Lead Paint, Home Warranty..."
-                    className="flex-1 px-3 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm text-[#2a2a2a] placeholder-gray-600 focus:outline-none focus:border-[#e85d26]"
-                  />
-                  <button
-                    onClick={addCustomField}
-                    disabled={!customFieldInput.trim()}
-                    className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium text-[#555] hover:border-[#e85d26] hover:text-[#e85d26] transition disabled:opacity-30"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={goNext}
-              disabled={!address.trim()}
-              className="w-full mt-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Next →
+            {compareFiles.length < 5 && (
+              <button onClick={addCompareSlot} className="text-sm text-[#37b0c9] hover:text-[#37b0c9]/80 font-medium">
+                + Add Another Offer (up to 5)
+              </button>
+            )}
+            <button onClick={runComparison}
+              disabled={!address || compareFiles.filter(Boolean).length < 2 || analyzing}
+              className="w-full py-3 bg-[#37b0c9] text-white font-bold rounded-lg hover:bg-[#37b0c9]/80 transition disabled:opacity-40 disabled:cursor-not-allowed">
+              {analyzing ? 'Comparing offers...' : `Analyze & Compare ${compareFiles.filter(Boolean).length} Offers`}
             </button>
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
-      {/* ═══ STEP 2: How Many Offers ═══ */}
-      {step === 2 && (
-        <section className="max-w-2xl mx-auto px-4 py-12">
-          <button onClick={goBack} className="text-[#666] hover:text-[#2a2a2a] text-sm mb-6 flex items-center gap-1">← Back</button>
-
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">How many offers?</h2>
-            <p className="text-[#666] text-sm">{address}</p>
-          </div>
-
-          <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl p-6">
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => handleOfferCountChange(Math.max(1, offerCount - 1))}
-                  className="w-12 h-12 rounded-lg border border-[#d8d4cc] text-2xl font-bold text-[#555] hover:border-[#e85d26] hover:text-[#e85d26] transition"
-                >−</button>
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={offerCount}
-                  onChange={(e) => {
-                    const v = parseInt(e.target.value);
-                    if (v >= 1 && v <= 20) handleOfferCountChange(v);
-                  }}
-                  className="w-20 h-14 text-center text-3xl font-bold bg-transparent border-2 border-[#e85d26] rounded-lg text-[#e85d26] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
-                <button
-                  onClick={() => handleOfferCountChange(Math.min(20, offerCount + 1))}
-                  className="w-12 h-12 rounded-lg border border-[#d8d4cc] text-2xl font-bold text-[#555] hover:border-[#e85d26] hover:text-[#e85d26] transition"
-                >+</button>
-              </div>
-              <input
-                type="range"
-                min={1}
-                max={20}
-                value={offerCount}
-                onChange={(e) => handleOfferCountChange(parseInt(e.target.value))}
-                className="w-full max-w-xs accent-[#e85d26]"
-              />
-              <p className="text-xs text-[#888] text-center">
-                {offerCount === 1 ? 'Single contract analysis' : `Compare ${offerCount} offers side-by-side`}
-              </p>
-              <button
-                onClick={goNext}
-                className="mt-4 px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-lg hover:bg-[#e85d26]/80 transition"
-              >
-                Continue →
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ═══ STEP 3: Upload Files Per Offer ═══ */}
-      {step === 3 && (
-        <section className="max-w-3xl mx-auto px-4 py-12">
-          <button onClick={goBack} className="text-[#666] hover:text-[#2a2a2a] text-sm mb-6 flex items-center gap-1">← Back</button>
-
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">Upload Documents</h2>
-            <p className="text-[#666] text-sm">{address} • {offerCount} offer{offerCount !== 1 ? 's' : ''}</p>
-          </div>
-
-          <div className="space-y-6">
-            {offers.map((offer, offerIdx) => {
-              const hasExistingResult = compareResult?.offers[offerIdx]?.data;
-              return (
-                <div key={offerIdx} className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl overflow-hidden">
-                  {/* Offer Header */}
-                  <div className="px-5 py-3 border-b border-[#e0dcd4] flex items-center gap-3">
-                    <span
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#2a2a2a]"
-                      style={{ backgroundColor: OFFER_COLORS[offerIdx % OFFER_COLORS.length] }}
-                    >
-                      {OFFER_LABELS[offerIdx]}
-                    </span>
-                    <span className="font-semibold">
-                      {offerCount === 1 ? 'Contract Documents' : `Offer ${OFFER_LABELS[offerIdx]}`}
-                    </span>
-                    <span className="text-xs text-[#888] ml-auto">
-                      {hasExistingResult ? (
-                        <span className="text-green-400">✅ Already analyzed</span>
-                      ) : (
-                        `${offer.files.length} file${offer.files.length !== 1 ? 's' : ''}`
-                      )}
-                    </span>
-                  </div>
-
-                  {/* Drop Zone (hide if already analyzed) */}
-                  {!hasExistingResult && (
-                    <div className="p-4">
-                      <div
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={(e) => handleFileDrop(offerIdx, e)}
-                        onClick={() => fileInputRefs.current[offerIdx]?.click()}
-                        className="border-2 border-dashed border-[#d8d4cc] hover:border-gray-500 rounded-lg p-6 text-center cursor-pointer transition"
-                      >
-                        <input
-                          ref={(el) => { fileInputRefs.current[offerIdx] = el; }}
-                          type="file"
-                          multiple
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          onChange={(e) => handleFileSelect(offerIdx, e)}
-                          className="hidden"
-                        />
-                        <p className="text-[#666] text-sm">
-                          📄 Drop files here or <span className="text-[#e85d26]">browse</span>
-                        </p>
-                        <p className="text-[#666] text-xs mt-1">Contract + all addendums • PDF, JPG, PNG</p>
-                      </div>
-
-                      {/* File List */}
-                      {offer.files.length > 0 && (
-                        <div className="mt-3 space-y-1.5">
-                          {offer.files.map((f, fileIdx) => (
-                            <div key={fileIdx} className="flex items-center justify-between bg-[#f0ece4] rounded-lg px-3 py-2">
-                              <span className="text-sm text-[#555] truncate">
-                                {f.name} <span className="text-[#888]">({(f.size / 1024).toFixed(0)} KB)</span>
-                              </span>
-                              <button onClick={() => removeFile(offerIdx, fileIdx)} className="text-[#888] hover:text-red-400 text-sm ml-2">✕</button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Error */}
-          {error && (
-            <div className="mt-4 bg-red-900/20 border border-red-700/30 rounded-lg p-3 text-red-400 text-sm">
-              {error}
-            </div>
-          )}
-
-          {/* Analyze Button */}
-          <button
-            onClick={runAnalysis}
-            disabled={!allOffersHaveFiles || analyzing}
-            className="w-full mt-6 py-4 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-lg text-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {offerCount === 1
-              ? `Analyze ${totalFiles} Document${totalFiles !== 1 ? 's' : ''}`
-              : `Analyze & Compare ${offerCount} Offers (${totalFiles} files)`
-            }
-          </button>
-
-          {!allOffersHaveFiles && !analyzing && (
-            <p className="text-xs text-[#888] text-center mt-2">
-              Upload at least 1 file per offer to continue
-            </p>
-          )}
-
-          {/* Loading Overlay */}
-          {analyzing && (
-            <div className="fixed inset-0 bg-[#e8e6e1]/90 backdrop-blur-md z-50 flex items-center justify-center">
-              <div className="text-center max-w-md mx-auto px-6">
-                {/* Spinner */}
-                <div className="relative w-20 h-20 mx-auto mb-8">
-                  <div className="absolute inset-0 rounded-full border-4 border-[#e0dcd4]" />
-                  <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#e85d26] animate-spin" />
-                  <div className="absolute inset-2 rounded-full border-4 border-transparent border-t-[#e85d26]/50 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-3 h-3 bg-[#e85d26] rounded-full animate-pulse" />
-                  </div>
-                </div>
-
-                {/* Cycling message */}
-                <p className="text-lg font-semibold text-[#2a2a2a] mb-2 transition-opacity duration-500">
-                  {LOADING_MESSAGES[loadingMsgIdx]}
-                </p>
-                <p className="text-sm text-[#888] mb-6">
-                  {totalFiles} document{totalFiles !== 1 ? 's' : ''} • {offerCount} offer{offerCount !== 1 ? 's' : ''}
-                </p>
-
-                {/* Progress bar */}
-                <div className="w-full bg-[#f0ece4] rounded-full h-2 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-[#e85d26] to-[#e85d26]/60 rounded-full transition-all duration-300 ease-out"
-                    style={{ width: `${loadingProgress}%` }}
-                  />
-                </div>
-                <p className="text-xs text-[#666] mt-2">{Math.round(loadingProgress)}%</p>
-              </div>
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ═══ STEP 4: Results ═══ */}
-      {step === 4 && (
-        <section className="max-w-7xl mx-auto px-4 py-12">
+      {/* ═══ SINGLE ANALYSIS RESULTS ═══ */}
+      {mode === 'analyze' && activeData && (
+        <section className="max-w-6xl mx-auto px-4 py-12">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
             <div>
-              <h2 className="text-2xl font-bold">
-                {compareResult ? 'Comparison Results' : 'Analysis Results'}
-              </h2>
-              <p className="text-[#666] text-sm">
-                {address}
-                {compareResult && ` • ${compareResult.offers.length} offers`}
-              </p>
+              <h2 className="text-2xl font-bold">Analysis Results</h2>
+              <p className="text-gray-400 text-sm">{activeData.address}{showDemo ? ' (Sample Demo)' : ''}</p>
             </div>
-            <div className="flex gap-2 flex-wrap">
-              <button onClick={startOver} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">
-                🔄 New Analysis
-              </button>
-              {compareResult && (
-                <button onClick={handleAddOffer} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">
-                  ➕ Add Offer
-                </button>
-              )}
-              {compareResult ? (
-                <>
-                  <button onClick={exportCompareCSV} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">📥 CSV</button>
-                  <button onClick={exportComparePDF} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">📄 PDF</button>
-                  <button onClick={shareComparison} disabled={sharing}
-                    className="px-4 py-2 bg-[#e85d26]/10 border border-[#e85d26]/30 rounded-lg text-sm font-medium text-[#e85d26] hover:bg-[#e85d26]/20 transition disabled:opacity-50">
-                    {sharing ? '...' : '🔗 Share'}
-                  </button>
-                </>
-              ) : (
-                <button onClick={exportSingleCSV} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">📥 Export CSV</button>
-              )}
+            <div className="flex gap-2">
+              <button onClick={exportCSV} className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-700 transition flex items-center gap-2">📥 Export CSV</button>
             </div>
           </div>
 
-          {/* Save status */}
-          {saveStatus === 'saved' && (
-            <div className="bg-green-900/20 border border-green-700/30 rounded-lg p-2 mb-4 flex items-center gap-2">
-              <span className="text-green-400 text-sm">✅ Saved to database</span>
-            </div>
-          )}
-          {saveStatus === 'saving' && (
-            <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-2 mb-4 flex items-center gap-2">
-              <span className="text-yellow-400 text-sm">💾 Saving...</span>
-            </div>
-          )}
-
-          {/* Share toast */}
-          {shareUrl && (
-            <div className="bg-green-900/20 border border-green-700/30 rounded-lg p-3 mb-4 flex items-center gap-2">
-              <span className="text-green-400 text-sm">🔗 Share link copied: {shareUrl}</span>
-            </div>
-          )}
-
-          {/* ─── Single Analysis Results ─── */}
-          {singleResults && singleResults.results.map((result, idx) => (
-            <div key={idx} className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl overflow-hidden mb-6">
-              <div className="px-6 py-4 border-b border-[#e0dcd4] bg-[#f0ece4]/50 flex items-center justify-between">
-                <h3 className="font-semibold text-[#e85d26]">📄 {result.fileName}</h3>
+          {activeData.results.map((result, idx) => (
+            <div key={idx} className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden mb-6">
+              <div className="px-6 py-4 border-b border-gray-800 bg-gray-900/50 flex items-center justify-between">
+                <h3 className="font-semibold text-[#37b0c9]">📄 {result.fileName}</h3>
                 {result.data && (
-                  <button onClick={() => downloadCalendar(result.data, address)}
-                    className="px-3 py-1.5 bg-[#e85d26]/10 border border-[#e85d26]/30 rounded-lg text-xs font-medium text-[#e85d26] hover:bg-[#e85d26]/20 transition">
-                    📅 Add to Calendar
-                  </button>
+                  <button
+                    onClick={() => downloadCalendar(result.data, activeData.address)}
+                    className="px-3 py-1.5 bg-[#37b0c9]/10 border border-[#37b0c9]/30 rounded-lg text-xs font-medium text-[#37b0c9] hover:bg-[#37b0c9]/20 transition"
+                  >📅 Add to Calendar</button>
                 )}
               </div>
               {result.data ? (
@@ -1219,13 +655,13 @@ export default function ContractAnalyzerPage() {
                     <ResultSection title="Contingencies">
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
-                          <thead><tr className="text-left text-[#666]"><th className="px-6 py-2 font-medium">Type</th><th className="px-6 py-2 font-medium">Deadline</th><th className="px-6 py-2 font-medium">Details</th></tr></thead>
+                          <thead><tr className="text-left text-gray-400"><th className="px-6 py-2 font-medium">Type</th><th className="px-6 py-2 font-medium">Deadline</th><th className="px-6 py-2 font-medium">Details</th></tr></thead>
                           <tbody>
                             {result.data.contingencies.map((c, i) => (
-                              <tr key={i} className="border-t border-[#e0dcd4]/50">
-                                <td className="px-6 py-2 font-medium text-[#2a2a2a]">{c.type}</td>
-                                <td className="px-6 py-2 text-[#e85d26]">{c.deadline}</td>
-                                <td className="px-6 py-2 text-[#555]">{c.details}</td>
+                              <tr key={i} className="border-t border-gray-800/50">
+                                <td className="px-6 py-2 font-medium text-white">{c.type}</td>
+                                <td className="px-6 py-2 text-[#37b0c9]">{c.deadline}</td>
+                                <td className="px-6 py-2 text-gray-300">{c.details}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -1242,6 +678,7 @@ export default function ContractAnalyzerPage() {
                   )}
                   <ResultSection title="Other Terms">
                     <ResultRow label="Seller Concessions" value={result.data.sellerConcessions} />
+                    <ResultRow label="Personal Property" value={result.data.personalProperty?.join(', ')} />
                     {result.data.homeWarranty?.included && (
                       <ResultRow label="Home Warranty" value={`${result.data.homeWarranty.provider} — ${result.data.homeWarranty.cost} (${result.data.homeWarranty.paidBy})`} />
                     )}
@@ -1261,332 +698,115 @@ export default function ContractAnalyzerPage() {
                   )}
                 </div>
               ) : (
-                <div className="px-6 py-8 text-center text-[#888]">Failed to parse this document.</div>
+                <div className="px-6 py-8 text-center text-gray-500">Failed to parse this document.</div>
               )}
             </div>
           ))}
-
-          {/* ─── Comparison Results ─── */}
-          {compareResult && (
-            <>
-              {/* Brief Summary */}
-              {compareResult.comparison?.summary && (
-                <div className="bg-[#f0ece4]/50 border border-[#e0dcd4] rounded-lg px-5 py-3 mb-6 text-sm text-[#555]">
-                  {compareResult.comparison.summary}
-                </div>
-              )}
-
-              {/* Side-by-Side Comparison Table */}
-              <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl overflow-hidden mb-6">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-[#e0dcd4]">
-                        <th className="px-4 py-3 text-left text-[#666] font-medium bg-[#f0ece4] sticky left-0 z-10 min-w-[160px]">Field</th>
-                        {compareResult.offers.map((o) => (
-                          <th key={o.label} className="px-4 py-3 text-left font-semibold text-[#e85d26] min-w-[180px]">
-                            <div className="flex items-center gap-2">
-                              <span>{o.label}</span>
-                              {selectedWinner === o.label && <span className="text-green-400 text-xs">✅ Selected</span>}
-                            </div>
-                            <span className="text-xs text-[#888] font-normal block">{o.fileName}</span>
-                            {o.data?.buyerName && <span className="text-xs text-[#666] font-normal block">{o.data.buyerName}</span>}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-800/50">
-                      {selectedFields.has('Purchase Price') && <CompareRow label="Purchase Price" offers={compareResult.offers} render={(d) => d.purchasePriceFormatted || '—'} colorize colorField="purchasePrice" colorMode="highest" />}
-                      {selectedFields.has('Earnest Money Deposit') && <CompareRow label="Earnest Money Deposit" offers={compareResult.offers} render={(d) => d.earnestMoneyDepositFormatted || '—'} colorize colorField="earnestMoneyDeposit" colorMode="highest" />}
-                      {selectedFields.has('Financing Type') && <CompareRow label="Financing Type" offers={compareResult.offers} render={(d) => d.financingType || '—'} />}
-                      {selectedFields.has('Amount Financed') && <CompareRow label="Amount Financed" offers={compareResult.offers} render={(d) => d.amountFinanced || '—'} />}
-                      {selectedFields.has('Down Payment') && <CompareRow label="Down Payment" offers={compareResult.offers} render={(d) => d.downPayment || '—'} />}
-                      {selectedFields.has('Seller Paid Buyer Agency') && <CompareRow label="Seller Paid Buyer Agency" offers={compareResult.offers} render={(d) => d.sellerPaidBuyerAgency || 'None'} />}
-                      {selectedFields.has('Seller Concessions') && <CompareRow label="Seller Concessions" offers={compareResult.offers} render={(d) => d.sellerConcessions || 'None'} colorize colorField="sellerConcessionsAmount" colorMode="lowest" />}
-                      {selectedFields.has('Closing Date') && <CompareRow label="Closing Date" offers={compareResult.offers} render={(d) => d.closingDate || '—'} />}
-                      {selectedFields.has('Financing Contingency') && <CompareRow label="Financing Contingency" offers={compareResult.offers} render={(d) => d.financingContingency || 'None'} colorize colorField="financingContingencyDays" colorMode="lowest" />}
-                      {selectedFields.has('Appraisal Contingency') && <CompareRow label="Appraisal Contingency" offers={compareResult.offers} render={(d) => d.appraisalContingency || 'None'} colorize colorField="appraisalContingencyDays" colorMode="lowest" />}
-                      {selectedFields.has('Home Inspection') && <CompareRow label="Home Inspection" offers={compareResult.offers} render={(d) => d.homeInspection || 'None'} colorize colorField="homeInspectionDays" colorMode="lowest" />}
-                      {selectedFields.has('HOA') && <CompareRow label="HOA" offers={compareResult.offers} render={(d) => d.hoaContingency || 'None'} />}
-                      {selectedFields.has('Escalation') && <CompareRow label="Escalation" offers={compareResult.offers} render={(d) => d.escalationClause?.present ? 'Yes' : 'No'} />}
-                      {selectedFields.has('Escalation Increments') && <CompareRow label="Escalation Increments" offers={compareResult.offers} render={(d) => d.escalationClause?.increment || '—'} />}
-                      {selectedFields.has('Max Escalation') && <CompareRow label="Max Escalation" offers={compareResult.offers} render={(d) => d.escalationClause?.maxEscalation || '—'} />}
-                      {selectedFields.has('WDI') && <CompareRow label="WDI" offers={compareResult.offers} render={(d) => d.wdiInspection || 'None'} />}
-                      {selectedFields.has('Appraisal Gap') && <CompareRow label="Appraisal Gap" offers={compareResult.offers} render={(d) => d.appraisalGap || 'None'} />}
-                      {selectedFields.has('Septic/Well') && <CompareRow label="Septic/Well" offers={compareResult.offers} render={(d) => d.septicWell || 'None'} />}
-                      {selectedFields.has('Septic Paid By') && <CompareRow label="Septic Paid By" offers={compareResult.offers} render={(d) => d.septicPaidBy || '—'} />}
-                      {selectedFields.has('Radon') && <CompareRow label="Radon" offers={compareResult.offers} render={(d) => d.radon || 'None'} />}
-                      {selectedFields.has('Lender') && <CompareRow label="Lender" offers={compareResult.offers} render={(d) => d.lender || '—'} />}
-                      {selectedFields.has('Title Company') && <CompareRow label="Title Company" offers={compareResult.offers} render={(d) => d.titleCompany || '—'} />}
-                      {selectedFields.has('Buyer Name') && <CompareRow label="Buyer Name" offers={compareResult.offers} render={(d) => d.buyerName || '—'} />}
-                      {selectedFields.has('Buyer Agent Name') && <CompareRow label="Buyer Agent Name" offers={compareResult.offers} render={(d) => d.buyerAgentName || '—'} />}
-                      {selectedFields.has('Rent Back') && <CompareRow label="Rent Back" offers={compareResult.offers} render={(d) => d.rentBack || 'None'} />}
-                      {/* Custom fields rendered from notes/data */}
-                      {customFields.filter(f => selectedFields.has(f)).map(f => (
-                        <CompareRow key={f} label={f} offers={compareResult.offers} render={(d) => {
-                          const data = d as Record<string, unknown>;
-                          const key = f.toLowerCase().replace(/[^a-z0-9]/g, '');
-                          for (const [k, v] of Object.entries(data)) {
-                            if (k.toLowerCase().replace(/[^a-z0-9]/g, '') === key && v) return String(v);
-                          }
-                          return '—';
-                        }} />
-                      ))}
-                      <CompareRow label="Notes" offers={compareResult.offers} render={(d) => d.notes || 'None'} />
-                      <CompareRow label="Seller Net Estimate" offers={compareResult.offers} render={(d) => calcSellerNet(d)} colorize colorField="purchasePrice" colorMode="highest" />
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Agent Notes */}
-              <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl p-6 mb-6">
-                <h3 className="text-sm font-semibold text-[#666] uppercase tracking-wider mb-3">📝 Agent Notes</h3>
-                <textarea
-                  value={agentNotes}
-                  onChange={(e) => setAgentNotes(e.target.value)}
-                  placeholder="Add your own notes about these offers..."
-                  rows={4}
-                  className="w-full px-4 py-3 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:outline-none focus:border-[#e85d26] text-sm resize-y"
-                />
-              </div>
-
-              {/* Select Winner */}
-              <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl p-6 mb-6">
-                <h3 className="text-lg font-bold mb-4">🏆 Select Winning Offer</h3>
-                <p className="text-sm text-[#666] mb-4">Choose the accepted offer to calculate all contingency deadlines.</p>
-                <div className={`grid grid-cols-1 ${compareResult.offers.length <= 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-3 lg:grid-cols-4'} gap-3`}>
-                  {compareResult.offers.map((o) => (
-                    <button key={o.label}
-                      onClick={() => handleSelectWinner(o.label)}
-                      className={`p-4 rounded-lg border text-left transition ${selectedWinner === o.label ? 'border-green-500 bg-green-900/20' : 'border-[#d8d4cc] hover:border-[#e85d26] hover:bg-[#e85d26]/5'}`}>
-                      <p className="font-bold text-sm">{o.label}</p>
-                      <p className="text-xs text-[#666]">{o.data?.buyerName || o.fileName}</p>
-                      <p className="text-sm text-[#e85d26] mt-1">{o.data?.purchasePriceFormatted || '—'}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Ratification Date Input */}
-              {selectedWinner && showRatDateInput && !calculatingDates && discoveredEvents.length === 0 && (
-                <div className="bg-[#f0ece4] border-2 border-[#e85d26]/40 rounded-xl p-6 mb-6 animate-fade-in">
-                  <h3 className="text-lg font-bold mb-2">📅 Select Ratification Date</h3>
-                  <p className="text-sm text-[#666] mb-4">All contingency deadlines (EMD, inspection, financing, appraisal, etc.) are calculated from the ratification date.</p>
-                  <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
-                    <div className="flex-1 w-full">
-                      <label className="block text-xs font-medium text-[#555] mb-1">Ratification Date</label>
-                      <input
-                        type="date"
-                        value={ratificationDate}
-                        onChange={(e) => setRatificationDate(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border-2 border-[#d8d4cc] rounded-lg text-[#2a2a2a] focus:outline-none focus:border-[#e85d26] text-lg"
-                      />
-                    </div>
-                    <button
-                      onClick={handleRatDateSubmit}
-                      disabled={!ratificationDate}
-                      className="px-6 py-3 bg-[#e85d26] text-white font-bold rounded-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
-                    >
-                      Calculate Deadlines →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Animated Deadline Discovery */}
-              {selectedWinner && (calculatingDates || discoveredEvents.length > 0) && (
-                <div className="bg-[#f0ece4] border-2 border-[#e85d26]/40 rounded-xl p-6 mb-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    {calculatingDates && (
-                      <div className="w-5 h-5 border-2 border-[#e85d26] border-t-transparent rounded-full animate-spin" />
-                    )}
-                    <h3 className="text-lg font-bold">
-                      {calculatingDates ? '🔍 Finding all deadlines...' : `📋 ${discoveredEvents.length - removedEventIndices.size} Deadlines Found`}
-                    </h3>
-                  </div>
-                  <p className="text-xs text-[#666] mb-3">Ratification: {new Date(ratificationDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                  
-                  {/* Header row with select all */}
-                  {!calculatingDates && discoveredEvents.length > 0 && (
-                    <div className="flex items-center justify-between mb-2 px-1">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <div
-                          onClick={() => {
-                            const newVal = !selectAllReminders;
-                            setSelectAllReminders(newVal);
-                            if (newVal) {
-                              setReminderChecked(new Set(discoveredEvents.map((_, i) => i).filter(i => !removedEventIndices.has(i))));
-                            } else {
-                              setReminderChecked(new Set());
-                            }
-                          }}
-                          className="cursor-pointer"
-                          style={{
-                            width: '22px', height: '22px', borderRadius: '4px',
-                            border: selectAllReminders ? '2px solid #e85d26' : '2px solid #ccc',
-                            background: selectAllReminders ? '#e85d26' : '#fff',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            color: '#fff', fontSize: '14px', fontWeight: 'bold',
-                            transition: 'all 0.15s ease',
-                          }}
-                        >{selectAllReminders ? '✓' : ''}</div>
-                        <span className="text-xs font-medium text-[#555] cursor-pointer">Select All for Calendar</span>
-                      </label>
-                      <span className="text-xs text-[#888]">Date</span>
-                    </div>
-                  )}
-
-                  <div className="space-y-2 max-h-[400px] overflow-y-auto">
-                    {discoveredEvents.slice(0, visibleEventCount).map((evt, i) => (
-                      !removedEventIndices.has(i) && (
-                        <div
-                          key={i}
-                          className="flex items-center bg-white rounded-lg px-4 py-3 border border-[#e0dcd4] animate-fade-in group gap-3"
-                          style={{ animationDelay: `${i * 50}ms` }}
-                        >
-                          <div
-                            onClick={() => {
-                              setReminderChecked(prev => {
-                                const next = new Set(prev);
-                                if (next.has(i)) next.delete(i); else next.add(i);
-                                return next;
-                              });
-                            }}
-                            className="shrink-0 cursor-pointer"
-                            style={{
-                              width: '22px', height: '22px', borderRadius: '4px',
-                              border: reminderChecked.has(i) ? '2px solid #e85d26' : '2px solid #ccc',
-                              background: reminderChecked.has(i) ? '#e85d26' : '#fff',
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              color: '#fff', fontSize: '14px', fontWeight: 'bold',
-                              transition: 'all 0.15s ease',
-                            }}
-                            title="Include in calendar"
-                          >{reminderChecked.has(i) ? '✓' : ''}</div>
-                          <span className="text-sm font-medium text-[#2a2a2a] flex-1">{evt.title.replace(` - ${compareResult.address}`, '')}</span>
-                          <span className="text-sm text-[#e85d26] font-semibold whitespace-nowrap">
-                            {evt.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                          </span>
-                          <button
-                            onClick={() => {
-                              setRemovedEventIndices(prev => { const next = new Set(prev); next.add(i); return next; });
-                              setReminderChecked(prev => { const next = new Set(prev); next.delete(i); return next; });
-                            }}
-                            className="text-[#ccc] hover:text-red-500 transition text-lg leading-none shrink-0"
-                            title="Remove from calendar"
-                          >✕</button>
-                        </div>
-                      )
-                    ))}
-                  </div>
-
-                  {/* Email addresses for reminders */}
-                  {!calculatingDates && discoveredEvents.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-[#e0dcd4]">
-                      <p className="text-sm font-medium text-[#555] mb-2">📧 Email addresses for reminders</p>
-                      <div className="space-y-2">
-                        {reminderEmails.map((email, idx) => (
-                          <div key={idx} className="flex gap-2">
-                            <input
-                              type="email"
-                              value={email}
-                              onChange={(e) => {
-                                const updated = [...reminderEmails];
-                                updated[idx] = e.target.value;
-                                setReminderEmails(updated);
-                              }}
-                              placeholder="email@example.com"
-                              className="flex-1 px-3 py-2 bg-white border border-[#d8d4cc] rounded-lg text-sm text-[#2a2a2a] placeholder-[#aaa] focus:outline-none focus:border-[#e85d26]"
-                            />
-                            {reminderEmails.length > 1 && (
-                              <button
-                                onClick={() => setReminderEmails(prev => prev.filter((_, i) => i !== idx))}
-                                className="text-[#ccc] hover:text-red-500 px-2"
-                              >✕</button>
-                            )}
-                          </div>
-                        ))}
-                        <button
-                          onClick={() => setReminderEmails(prev => [...prev, ''])}
-                          className="text-xs text-[#e85d26] hover:text-[#e85d26]/80 font-medium"
-                        >+ Add another email</button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Calendar Actions for Selected Winner */}
-              {selectedWinner && !showCalendarModal && !calculatingDates && discoveredEvents.length > 0 && (
-                <div className="bg-green-900/20 border border-green-700/30 rounded-xl p-6 mb-6 animate-fade-in">
-                  <h3 className="text-lg font-bold text-green-600 mb-3">✅ {selectedWinner} Selected — {discoveredEvents.length - removedEventIndices.size} deadlines ready</h3>
-                  <div className="flex flex-wrap gap-3">
-                    <button onClick={() => {
-                      const activeIndices = discoveredEvents.map((_, i) => i).filter(i => !removedEventIndices.has(i));
-                      const filtered = activeIndices.map(i => discoveredEvents[i]);
-                      const reminderFlags = activeIndices.map(i => reminderChecked.has(i));
-                      const emails = reminderEmails.filter(e => e && e.includes('@'));
-                      if (!filtered.length) { alert('No deadlines selected.'); return; }
-                      const ics = generateICS(filtered, `Contract Deadlines — ${compareResult.address}`, { emails, reminderFlags });
-                      const blob = new Blob([ics], { type: 'text/calendar' });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement('a'); a.href = url;
-                      a.download = `contract-deadlines-${compareResult.address.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40)}.ics`;
-                      a.click(); URL.revokeObjectURL(url);
-                    }} className="px-4 py-2 bg-white border border-[#d8d4cc] rounded-lg text-sm font-medium hover:border-[#e85d26] transition">
-                      📅 Download .ics Calendar
-                    </button>
-                    <button onClick={() => {
-                      const filtered = discoveredEvents.filter((_, i) => !removedEventIndices.has(i));
-                      if (!filtered.length) { alert('No deadlines selected.'); return; }
-                      for (const event of filtered) {
-                        const link = generateGoogleCalendarLink(event);
-                        window.open(link, '_blank');
-                      }
-                    }} className="px-4 py-2 bg-white border border-[#d8d4cc] rounded-lg text-sm font-medium hover:border-[#e85d26] transition">
-                      🗓️ Add to Google Calendar
-                    </button>
-                  </div>
-                  <p className="text-xs text-[#666] mt-3">Calendar events include 24-hour and 3-hour email reminders for each deadline.</p>
-                </div>
-              )}
-            </>
-          )}
         </section>
       )}
 
-      {/* Calendar Modal */}
-      {showCalendarModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowCalendarModal(false)}>
-          <div className="bg-[#f0ece4] border border-[#d8d4cc] rounded-xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-bold mb-2">📅 Add to Calendar?</h3>
-            <p className="text-sm text-[#666] mb-4">
-              {discoveredEvents.length > 0
-                ? `Add ${discoveredEvents.length} deadline${discoveredEvents.length !== 1 ? 's' : ''} to your calendar with reminders?`
-                : 'No parseable dates were found in this contract. You can still download the .ics file.'}
-            </p>
-            <label className="flex items-center gap-3 mb-6 cursor-pointer">
-              <input type="checkbox" checked={addToCalendar} onChange={(e) => setAddToCalendar(e.target.checked)}
-                className="w-5 h-5 rounded accent-[#e85d26]" />
-              <span className="text-sm text-[#555]">📅 Download .ics calendar file</span>
-            </label>
-            <div className="flex gap-3">
-              <button onClick={() => setShowCalendarModal(false)} className="flex-1 py-2 border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-[#f0ece4] transition">Skip</button>
-              <button onClick={confirmWinner} className="flex-1 py-2 bg-[#e85d26] text-white rounded-lg text-sm font-bold hover:bg-[#e85d26]/80 transition">
-                {addToCalendar ? 'Download Calendar' : 'Done'}
-              </button>
+      {/* ═══ COMPARISON RESULTS ═══ */}
+      {mode === 'compare' && activeCompare && (
+        <section className="max-w-7xl mx-auto px-4 py-12">
+          {/* Header + Export */}
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+              <h2 className="text-2xl font-bold">Comparison Results</h2>
+              <p className="text-gray-400 text-sm">{activeCompare.address}{showCompareDemo ? ' (Sample Demo)' : ''}</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={exportCompareCSV} className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-700 transition">📥 CSV</button>
+              <button onClick={exportComparePDF} className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-700 transition">📄 PDF</button>
             </div>
           </div>
-        </div>
+
+          {/* AI Summary */}
+          {activeCompare.comparison && (
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">🤖 AI Quick Summary</h3>
+              <ul className="space-y-2 mb-6">
+                {activeCompare.comparison.summary.map((s, i) => (
+                  <li key={i} className="flex gap-3 text-sm text-gray-300">
+                    <span className="text-[#37b0c9] shrink-0">•</span>
+                    <span>{s}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Best Offer */}
+              <div className="bg-green-900/20 border border-green-700/30 rounded-lg p-4 mb-4">
+                <h4 className="font-bold text-green-400 mb-1">🏆 Best Offer: {activeCompare.comparison.bestOffer.label}</h4>
+                <p className="text-sm text-gray-300">{activeCompare.comparison.bestOffer.reasoning}</p>
+              </div>
+
+              {/* Risk Analysis */}
+              <h4 className="font-semibold text-sm text-gray-400 uppercase tracking-wider mb-3">⚠️ Risk Flags</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {activeCompare.comparison.riskAnalysis.map((r) => (
+                  <div key={r.offer} className={`rounded-lg p-3 border ${r.risks.length > 3 ? 'bg-red-900/20 border-red-700/30' : r.risks.length > 0 ? 'bg-yellow-900/15 border-yellow-700/25' : 'bg-green-900/15 border-green-700/25'}`}>
+                    <h5 className="font-semibold text-sm mb-2">{r.offer}</h5>
+                    {r.risks.length === 0 ? (
+                      <p className="text-xs text-green-400">✅ No significant risks</p>
+                    ) : (
+                      <ul className="space-y-1">
+                        {r.risks.map((ri, i) => (
+                          <li key={i} className="text-xs text-gray-300 flex gap-1.5">
+                            <span className="text-red-400 shrink-0">⚠</span>{ri}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-xs text-gray-500 mt-4 pt-3 border-t border-gray-800">
+                ⚖️ This is AI-generated analysis for informational purposes only. It does not constitute legal advice. Always consult with a licensed attorney or real estate professional.
+              </p>
+            </div>
+          )}
+
+          {/* Side-by-Side Comparison Table */}
+          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-800">
+                    <th className="px-4 py-3 text-left text-gray-400 font-medium bg-gray-900 sticky left-0 z-10 min-w-[160px]">Field</th>
+                    {activeCompare.offers.map((o) => (
+                      <th key={o.label} className="px-4 py-3 text-left font-semibold text-[#37b0c9] min-w-[180px]">
+                        {o.label}<br /><span className="text-xs text-gray-500 font-normal">{o.fileName}</span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-800/50">
+                  <CompareRow label="Purchase Price" offers={activeCompare.offers} field="purchasePriceFormatted" colorize colorField="purchasePrice" colorMode="highest" />
+                  <CompareRow label="Earnest Money" offers={activeCompare.offers} field="earnestMoneyFormatted" colorize colorField="earnestMoney" colorMode="highest" />
+                  <CompareRow label="Financing Type" offers={activeCompare.offers} render={(d) => d.financingType || '—'} />
+                  <CompareRow label="Down Payment %" offers={activeCompare.offers} render={(d) => d.downPaymentPercent || '—'} />
+                  <CompareRow label="Closing Date" offers={activeCompare.offers} render={(d) => d.closingDate ? `${d.closingDate}${d.closingDaysFromNow ? ` (${d.closingDaysFromNow}d)` : ''}` : '—'} colorize colorField="closingDaysFromNow" colorMode="lowest" />
+                  <CompareRow label="Settlement Co." offers={activeCompare.offers} field="settlementCompany" />
+                  <CompareRow label="Inspection Days" offers={activeCompare.offers} render={(d) => d.inspectionContingencyDays?.toString() || 'None'} colorize colorField="inspectionContingencyDays" colorMode="lowest" />
+                  <CompareRow label="Financing Contingency" offers={activeCompare.offers} render={(d) => d.financingContingencyDays ? `${d.financingContingencyDays} days` : 'None'} colorize colorField="financingContingencyDays" colorMode="lowest" />
+                  <CompareRow label="Appraisal Contingency" offers={activeCompare.offers} render={(d) => d.appraisalContingency?.present ? `Yes${d.appraisalContingency.gapCoverage ? ` — gap: ${d.appraisalContingency.gapCoverage}` : ''}` : '✅ Waived'} />
+                  <CompareRow label="Home Sale Contingency" offers={activeCompare.offers} render={(d) => d.homeSaleContingency ? '🔴 YES' : '✅ No'} />
+                  <CompareRow label="Seller Concessions" offers={activeCompare.offers} render={(d) => d.sellerConcessions || 'None'} colorize colorField="sellerConcessionsAmount" colorMode="lowest" />
+                  <CompareRow label="Personal Property" offers={activeCompare.offers} render={(d) => d.personalProperty?.join(', ') || 'None'} />
+                  <CompareRow label="Post-Settlement Occupancy" offers={activeCompare.offers} render={(d) => d.postSettlementOccupancy || 'None'} />
+                  <CompareRow label="Escalation Clause" offers={activeCompare.offers} render={(d) => d.escalationClause?.present ? `Yes — cap: ${d.escalationClause.cap || 'N/A'}` : 'No'} />
+                  <CompareRow label="Unusual Clauses" offers={activeCompare.offers} render={(d) => d.unusualClauses?.length ? d.unusualClauses.join('; ') : 'None'} />
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
       )}
 
-      </PaywallGate>
-
       {/* Footer */}
-      <footer className="border-t border-[#e0dcd4] mt-12">
-        <div className="max-w-6xl mx-auto px-4 py-6 text-center text-sm text-[#888]">
-          © 2026 AgentAIBrief.com • <Link href="/privacy" className="hover:text-[#555]">Privacy</Link> • <Link href="/terms" className="hover:text-[#555]">Terms</Link>
+      <footer className="border-t border-gray-800 mt-12">
+        <div className="max-w-6xl mx-auto px-4 py-6 text-center text-sm text-gray-500">
+          © 2026 AgentAIBrief.com • <Link href="/privacy" className="hover:text-gray-300">Privacy</Link> • <Link href="/terms" className="hover:text-gray-300">Terms</Link>
         </div>
       </footer>
     </div>
@@ -1598,7 +818,7 @@ export default function ContractAnalyzerPage() {
 function ResultSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="px-6 py-4">
-      <h4 className="text-xs uppercase tracking-wider text-[#888] font-semibold mb-3">{title}</h4>
+      <h4 className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-3">{title}</h4>
       <div className="space-y-1">{children}</div>
     </div>
   );
@@ -1608,22 +828,10 @@ function ResultRow({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
     <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4 py-1">
-      <span className="text-sm text-[#666] sm:w-48 shrink-0">{label}</span>
-      <span className="text-sm text-[#2a2a2a]">{value}</span>
+      <span className="text-sm text-gray-400 sm:w-48 shrink-0">{label}</span>
+      <span className="text-sm text-white">{value}</span>
     </div>
   );
-}
-
-function getBestWorstLocal(offers: CompareOffer[], field: string, mode: 'highest' | 'lowest'): { best: number; worst: number } {
-  const vals = offers.map((o, i) => {
-    const d = o.data as Record<string, unknown>;
-    const v = d?.[field];
-    return { i, v: typeof v === 'number' ? v : null };
-  }).filter((x) => x.v !== null);
-  if (vals.length < 2) return { best: -1, worst: -1 };
-  vals.sort((a, b) => (a.v as number) - (b.v as number));
-  if (mode === 'highest') return { best: vals[vals.length - 1].i, worst: vals[0].i };
-  return { best: vals[0].i, worst: vals[vals.length - 1].i };
 }
 
 function CompareRow({
@@ -1643,13 +851,13 @@ function CompareRow({
 
   return (
     <tr>
-      <td className="px-4 py-2.5 text-[#666] font-medium bg-[#f0ece4] sticky left-0 z-10">{label}</td>
+      <td className="px-4 py-2.5 text-gray-400 font-medium bg-gray-900 sticky left-0 z-10">{label}</td>
       {offers.map((o, idx) => {
         const d = o.data;
         const val = d ? (render ? render(d) : (d as Record<string, unknown>)[field || '']?.toString() || '—') : 'N/A';
         const color = colorize && best >= 0 ? cellColor(idx, best, worst) : '';
         return (
-          <td key={o.label} className={`px-4 py-2.5 text-[#2a2a2a] border-l border-[#e0dcd4]/30 ${color}`}>
+          <td key={o.label} className={`px-4 py-2.5 text-white border-l border-gray-800/30 ${color}`}>
             {val}
           </td>
         );

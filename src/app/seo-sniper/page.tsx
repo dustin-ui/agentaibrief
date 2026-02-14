@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { MobileNav } from '@/components/MobileNav';
 import { SiteNav } from '@/components/SiteNav';
-import { PaywallGate } from '@/components/PaywallGate';
 
 interface KeywordResult {
   keyword: string;
@@ -90,24 +89,17 @@ export default function SEOSniperPage() {
     setArticleKeyword('');
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 290000);
       const res = await fetch('/api/seo-sniper/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ keyword, marketArea: marketArea.trim() }),
-        signal: controller.signal,
       });
-      clearTimeout(timeoutId);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setArticle(data.article);
       setArticleKeyword(keyword);
-      // Scroll to article
-      setTimeout(() => document.getElementById('generated-article')?.scrollIntoView({ behavior: 'smooth' }), 100);
     } catch (err: unknown) {
-      const msg = err instanceof DOMException && err.name === 'AbortError' ? 'Request timed out' : (err instanceof Error ? err.message : 'Failed to generate article');
-      setError(msg);
+      setError(err instanceof Error ? err.message : 'Failed to generate article');
     } finally {
       setGeneratingKeyword('');
     }
@@ -122,9 +114,9 @@ export default function SEOSniperPage() {
   const wordCount = article.split(/\s+/).filter(Boolean).length;
 
   return (
-    <div className="min-h-screen bg-[#e8e6e1] text-[#2a2a2a]">
+    <div className="min-h-screen bg-gray-950 text-white">
       {/* Header */}
-      <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]/80 backdrop-blur sticky top-0 z-50">
+      <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2">
             <span className="text-xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">AgentAI Brief</span>
@@ -134,7 +126,6 @@ export default function SEOSniperPage() {
         </div>
       </header>
 
-      <PaywallGate requiredTier="inner_circle" featureName="SEO Sniper">
       <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero */}
         <div className="text-center mb-12">
@@ -147,7 +138,7 @@ export default function SEOSniperPage() {
               No Agent Ranks For
             </span>
           </h1>
-          <p className="text-[#666] text-lg max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Discover untapped keyword opportunities in your market and generate ready-to-publish SEO content that captures organic traffic.
           </p>
         </div>
@@ -160,12 +151,12 @@ export default function SEOSniperPage() {
               value={marketArea}
               onChange={(e) => setMarketArea(e.target.value)}
               placeholder='Enter your market area (e.g., "Arlington VA", "Fairfax County")'
-              className="flex-1 px-4 py-3 rounded-lg bg-[#f0ece4] border border-[#d8d4cc] text-[#2a2a2a] placeholder-gray-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+              className="flex-1 px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
             />
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 rounded-lg bg-teal-600 hover:bg-teal-500 text-[#2a2a2a] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="px-6 py-3 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -185,8 +176,8 @@ export default function SEOSniperPage() {
           <div className="text-center py-16">
             <div className="inline-flex flex-col items-center gap-4">
               <div className="w-12 h-12 border-4 border-teal-500/30 border-t-teal-500 rounded-full animate-spin" />
-              <p className="text-[#666]">Scanning SemRush for keyword gaps in {marketArea}...</p>
-              <div className="w-64 h-2 bg-[#f0ece4] rounded-full overflow-hidden">
+              <p className="text-gray-400">Scanning SemRush for keyword gaps in {marketArea}...</p>
+              <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
                 <div className="h-full bg-teal-500 rounded-full animate-pulse" style={{ width: '60%' }} />
               </div>
             </div>
@@ -198,12 +189,12 @@ export default function SEOSniperPage() {
           <div className="mb-12">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
               🎯 Keyword Opportunities
-              <span className="text-sm font-normal text-[#666]">({keywords.length} found)</span>
+              <span className="text-sm font-normal text-gray-400">({keywords.length} found)</span>
             </h2>
-            <div className="overflow-x-auto rounded-lg border border-[#e0dcd4]">
+            <div className="overflow-x-auto rounded-lg border border-gray-800">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-[#f0ece4]/50 text-[#666] text-left">
+                  <tr className="bg-gray-900/50 text-gray-400 text-left">
                     <th className="px-4 py-3 font-medium">Keyword</th>
                     <th className="px-4 py-3 font-medium text-right">Volume/mo</th>
                     <th className="px-4 py-3 font-medium text-center">Competition</th>
@@ -214,13 +205,13 @@ export default function SEOSniperPage() {
                 </thead>
                 <tbody>
                   {keywords.map((kw, i) => (
-                    <tr key={i} className="border-t border-[#e0dcd4] hover:bg-[#f0ece4]/30 transition-colors">
-                      <td className="px-4 py-3 font-medium text-[#2a2a2a]">{kw.keyword}</td>
-                      <td className="px-4 py-3 text-right text-[#555]">{kw.volume.toLocaleString()}</td>
+                    <tr key={i} className="border-t border-gray-800 hover:bg-gray-900/30 transition-colors">
+                      <td className="px-4 py-3 font-medium text-white">{kw.keyword}</td>
+                      <td className="px-4 py-3 text-right text-gray-300">{kw.volume.toLocaleString()}</td>
                       <td className="px-4 py-3 text-center"><CompetitionBadge score={kw.competition} /></td>
-                      <td className="px-4 py-3 text-right text-[#555]">${kw.cpc.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-right text-gray-300">${kw.cpc.toFixed(2)}</td>
                       <td className="px-4 py-3 text-center">
-                        <span className={`px-2 py-0.5 rounded text-xs ${kw.type === 'question' ? 'bg-purple-500/20 text-purple-400' : 'bg-[#e85d26]/20 text-[#e85d26]'}`}>
+                        <span className={`px-2 py-0.5 rounded text-xs ${kw.type === 'question' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/20 text-blue-400'}`}>
                           {kw.type === 'question' ? '❓ Question' : '🔗 Related'}
                         </span>
                       </td>
@@ -228,7 +219,7 @@ export default function SEOSniperPage() {
                         <button
                           onClick={() => handleGenerate(kw.keyword)}
                           disabled={!!generatingKeyword}
-                          className="px-3 py-1.5 rounded bg-teal-600 hover:bg-teal-500 text-[#2a2a2a] text-xs font-medium transition-colors disabled:opacity-50"
+                          className="px-3 py-1.5 rounded bg-teal-600 hover:bg-teal-500 text-white text-xs font-medium transition-colors disabled:opacity-50"
                         >
                           {generatingKeyword === kw.keyword ? 'Generating...' : 'Generate Article'}
                         </button>
@@ -240,12 +231,12 @@ export default function SEOSniperPage() {
             </div>
 
             {/* Tips */}
-            <div className="mt-6 p-4 rounded-lg bg-[#f0ece4]/50 border border-[#e0dcd4]">
+            <div className="mt-6 p-4 rounded-lg bg-gray-900/50 border border-gray-800">
               <h3 className="font-semibold text-teal-400 mb-2">💡 Why These Keywords Matter</h3>
-              <ul className="text-sm text-[#666] space-y-1">
-                <li>• <strong className="text-[#555]">Low competition</strong> (&lt;0.5) means fewer agents are targeting these terms — easier to rank</li>
-                <li>• <strong className="text-[#555]">Question keywords</strong> are perfect for FAQ content and featured snippets</li>
-                <li>• <strong className="text-[#555]">Higher CPC</strong> indicates commercial intent — these searchers are closer to buying</li>
+              <ul className="text-sm text-gray-400 space-y-1">
+                <li>• <strong className="text-gray-300">Low competition</strong> (&lt;0.5) means fewer agents are targeting these terms — easier to rank</li>
+                <li>• <strong className="text-gray-300">Question keywords</strong> are perfect for FAQ content and featured snippets</li>
+                <li>• <strong className="text-gray-300">Higher CPC</strong> indicates commercial intent — these searchers are closer to buying</li>
                 <li>• Publishing optimized content for these gaps can drive organic leads within 30-90 days</li>
               </ul>
             </div>
@@ -258,27 +249,27 @@ export default function SEOSniperPage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold">📝 Generated Article</h2>
               <div className="flex items-center gap-3">
-                <span className="text-sm text-[#666]">{wordCount.toLocaleString()} words • Target: {articleKeyword}</span>
+                <span className="text-sm text-gray-400">{wordCount.toLocaleString()} words • Target: {articleKeyword}</span>
                 <button
                   onClick={copyArticle}
-                  className="px-4 py-2 rounded-lg bg-[#f0ece4] hover:bg-gray-700 text-[#2a2a2a] text-sm font-medium transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium transition-colors flex items-center gap-2"
                 >
                   {copied ? '✅ Copied!' : '📋 Copy to Clipboard'}
                 </button>
               </div>
             </div>
-            <div className="p-8 rounded-lg bg-[#f0ece4] border border-[#e0dcd4] prose prose-invert prose-teal max-w-none">
+            <div className="p-8 rounded-lg bg-gray-900 border border-gray-800 prose prose-invert prose-teal max-w-none">
               <div dangerouslySetInnerHTML={{ __html: articleToHtml(article) }} />
             </div>
           </div>
         )}
 
         {generatingKeyword && !article && (
-          <div id="generated-article" className="text-center py-16">
+          <div className="text-center py-16">
             <div className="inline-flex flex-col items-center gap-4">
               <div className="w-12 h-12 border-4 border-teal-500/30 border-t-teal-500 rounded-full animate-spin" />
-              <p className="text-[#666]">Generating SEO article for &quot;{generatingKeyword}&quot;...</p>
-              <p className="text-[#888] text-sm">This takes 15-30 seconds</p>
+              <p className="text-gray-400">Generating SEO article for &quot;{generatingKeyword}&quot;...</p>
+              <p className="text-gray-500 text-sm">This takes 15-30 seconds</p>
             </div>
           </div>
         )}
@@ -286,48 +277,47 @@ export default function SEOSniperPage() {
         {/* Pricing */}
         <div className="mt-20 mb-12">
           <h2 className="text-3xl font-bold text-center mb-3">Pricing</h2>
-          <p className="text-[#666] text-center mb-10">Find gaps. Generate content. Dominate local SEO.</p>
+          <p className="text-gray-400 text-center mb-10">Find gaps. Generate content. Dominate local SEO.</p>
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {/* Free */}
-            <div className="rounded-xl border border-[#e0dcd4] bg-[#f0ece4]/50 p-6">
+            <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-6">
               <h3 className="text-lg font-semibold mb-1">Free</h3>
-              <p className="text-3xl font-bold mb-4">$0<span className="text-sm text-[#666] font-normal">/mo</span></p>
-              <ul className="text-sm text-[#666] space-y-2 mb-6">
+              <p className="text-3xl font-bold mb-4">$0<span className="text-sm text-gray-400 font-normal">/mo</span></p>
+              <ul className="text-sm text-gray-400 space-y-2 mb-6">
                 <li className="flex items-center gap-2">✅ View 5 keyword gaps</li>
                 <li className="flex items-center gap-2">❌ No article generation</li>
                 <li className="flex items-center gap-2">✅ Competition analysis</li>
               </ul>
-              <button className="w-full py-2 rounded-lg border border-[#d8d4cc] text-[#555] hover:bg-[#f0ece4] transition-colors text-sm font-medium">Get Started</button>
+              <button className="w-full py-2 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 transition-colors text-sm font-medium">Get Started</button>
             </div>
             {/* Pro */}
-            <div className="rounded-xl border-2 border-teal-500 bg-[#f0ece4]/50 p-6 relative">
+            <div className="rounded-xl border-2 border-teal-500 bg-gray-900/50 p-6 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-teal-500 text-xs font-bold text-black">POPULAR</div>
               <h3 className="text-lg font-semibold mb-1">Pro</h3>
-              <p className="text-3xl font-bold mb-4">$19<span className="text-sm text-[#666] font-normal">/mo</span></p>
-              <ul className="text-sm text-[#666] space-y-2 mb-6">
+              <p className="text-3xl font-bold mb-4">$19<span className="text-sm text-gray-400 font-normal">/mo</span></p>
+              <ul className="text-sm text-gray-400 space-y-2 mb-6">
                 <li className="flex items-center gap-2">✅ 15 keyword gaps</li>
                 <li className="flex items-center gap-2">✅ 5 articles/month</li>
                 <li className="flex items-center gap-2">✅ Competition analysis</li>
                 <li className="flex items-center gap-2">✅ Question keywords</li>
               </ul>
-              <button className="w-full py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-[#2a2a2a] text-sm font-medium transition-colors">Subscribe</button>
+              <button className="w-full py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-sm font-medium transition-colors">Subscribe</button>
             </div>
             {/* Inner Circle */}
-            <div className="rounded-xl border border-[#e0dcd4] bg-[#f0ece4]/50 p-6">
+            <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-6">
               <h3 className="text-lg font-semibold mb-1">Inner Circle</h3>
-              <p className="text-3xl font-bold mb-4">$99<span className="text-sm text-[#666] font-normal">/mo</span></p>
-              <ul className="text-sm text-[#666] space-y-2 mb-6">
+              <p className="text-3xl font-bold mb-4">$99<span className="text-sm text-gray-400 font-normal">/mo</span></p>
+              <ul className="text-sm text-gray-400 space-y-2 mb-6">
                 <li className="flex items-center gap-2">✅ Unlimited keyword gaps</li>
                 <li className="flex items-center gap-2">✅ Unlimited articles</li>
                 <li className="flex items-center gap-2">✅ All AI tools access</li>
                 <li className="flex items-center gap-2">✅ Priority generation</li>
               </ul>
-              <button className="w-full py-2 rounded-lg border border-[#d8d4cc] text-[#555] hover:bg-[#f0ece4] transition-colors text-sm font-medium">Subscribe</button>
+              <button className="w-full py-2 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 transition-colors text-sm font-medium">Subscribe</button>
             </div>
           </div>
         </div>
       </main>
-      </PaywallGate>
     </div>
   );
 }
@@ -335,12 +325,12 @@ export default function SEOSniperPage() {
 function articleToHtml(markdown: string): string {
   return markdown
     .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold text-teal-400 mt-6 mb-2">$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-[#2a2a2a] mt-8 mb-3">$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-[#2a2a2a] mb-4">$1</h1>')
+    .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-white mt-8 mb-3">$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-white mb-4">$1</h1>')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/\n\n/g, '</p><p class="text-[#555] leading-relaxed mb-4">')
+    .replace(/\n\n/g, '</p><p class="text-gray-300 leading-relaxed mb-4">')
     .replace(/\n/g, '<br />')
-    .replace(/^/, '<p class="text-[#555] leading-relaxed mb-4">')
+    .replace(/^/, '<p class="text-gray-300 leading-relaxed mb-4">')
     .replace(/$/, '</p>');
 }
