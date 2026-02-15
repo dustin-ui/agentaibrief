@@ -1,8 +1,6 @@
-// Constant Contact V3 API integration
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+// Constant Contact V3 API integration — Supabase-backed token storage
+import { supabaseAdmin } from './supabase';
 
-const TOKEN_PATH = join(process.cwd(), '.cc-tokens.json');
 const CC_API_BASE = 'https://api.cc.email/v3';
 
 interface CCTokens {
@@ -13,17 +11,37 @@ interface CCTokens {
   saved_at: string;
 }
 
-function loadTokens(): CCTokens | null {
+async function loadTokens(): Promise<CCTokens | null> {
   try {
-    if (!existsSync(TOKEN_PATH)) return null;
-    return JSON.parse(readFileSync(TOKEN_PATH, 'utf-8'));
+    const sb = supabaseAdmin();
+    const { data, error } = await sb.from('cc_tokens').select('*').eq('id', 1).single();
+    if (error || !data) return null;
+    return {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      token_type: data.token_type,
+      expires_in: data.expires_in,
+      saved_at: data.saved_at,
+    };
   } catch {
     return null;
   }
 }
 
+async function saveTokens(tokens: CCTokens): Promise<void> {
+  const sb = supabaseAdmin();
+  await sb.from('cc_tokens').upsert({
+    id: 1,
+    access_token: tokens.access_token,
+    refresh_token: tokens.refresh_token,
+    token_type: tokens.token_type,
+    expires_in: tokens.expires_in,
+    saved_at: new Date().toISOString(),
+  });
+}
+
 async function refreshAccessToken(): Promise<string | null> {
-  const tokens = loadTokens();
+  const tokens = await loadTokens();
   if (!tokens?.refresh_token) return null;
 
   const clientId = process.env.CC_CLIENT_ID;
@@ -48,14 +66,14 @@ async function refreshAccessToken(): Promise<string | null> {
     if (!res.ok) return null;
 
     const data = await res.json();
-    writeFileSync(TOKEN_PATH, JSON.stringify({
+    const newTokens: CCTokens = {
       access_token: data.access_token,
       refresh_token: data.refresh_token || tokens.refresh_token,
       token_type: data.token_type,
       expires_in: data.expires_in,
       saved_at: new Date().toISOString(),
-    }, null, 2));
-
+    };
+    await saveTokens(newTokens);
     return data.access_token;
   } catch {
     return null;
@@ -63,7 +81,7 @@ async function refreshAccessToken(): Promise<string | null> {
 }
 
 async function getAccessToken(): Promise<string | null> {
-  const tokens = loadTokens();
+  const tokens = await loadTokens();
   if (!tokens) return null;
 
   // Check if token is expired (with 5 min buffer)
@@ -133,7 +151,6 @@ export async function addSubscriber(
     body.first_name = firstName;
   }
 
-  // Use create-or-update endpoint (upsert by email)
   const res = await ccFetch('/contacts/sign_up_form', {
     method: 'POST',
     body: JSON.stringify(body),
@@ -149,12 +166,12 @@ export async function addSubscriber(
   return {
     success: true,
     contactId: data.contact_id,
-    action: data.action, // 'created' or 'updated'
+    action: data.action,
   };
 }
 
 // Check if CC is configured and authorized
 export async function isConfigured(): Promise<boolean> {
-  const tokens = loadTokens();
+  const tokens = await loadTokens();
   return !!tokens?.access_token;
 }

@@ -1,16 +1,14 @@
-import { promises as fs } from 'fs';
-import { join } from 'path';
+// Referral system — Supabase-backed
+import { supabaseAdmin } from './supabase';
 import crypto from 'crypto';
-
-const REFERRAL_DB = join(process.cwd(), 'referrals.json');
 
 export interface Referral {
   email: string;
   code: string;
-  referredBy?: string; // code of referrer
-  referrals: string[]; // emails of people they referred
+  referredBy?: string;
+  referrals: string[];
   createdAt: string;
-  rewardsClaimed: string[]; // tier names already claimed
+  rewardsClaimed: string[];
 }
 
 export const REWARD_TIERS = [
@@ -21,60 +19,81 @@ export const REWARD_TIERS = [
 ];
 
 function generateCode(): string {
-  return crypto.randomBytes(4).toString('hex'); // 8-char hex code
-}
-
-async function loadDB(): Promise<Referral[]> {
-  try {
-    const data = await fs.readFile(REFERRAL_DB, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function saveDB(referrals: Referral[]): Promise<void> {
-  await fs.writeFile(REFERRAL_DB, JSON.stringify(referrals, null, 2));
+  return crypto.randomBytes(4).toString('hex');
 }
 
 export async function getOrCreateReferral(email: string, referrerCode?: string): Promise<Referral> {
-  const db = await loadDB();
-  
-  let entry = db.find(r => r.email === email);
-  if (entry) return entry;
+  const sb = supabaseAdmin();
+
+  // Check if exists
+  const { data: existing } = await sb.from('referrals').select('*').eq('email', email).single();
+  if (existing) {
+    return {
+      email: existing.email,
+      code: existing.code,
+      referredBy: existing.referred_by || undefined,
+      referrals: existing.referrals || [],
+      createdAt: existing.created_at,
+      rewardsClaimed: existing.rewards_claimed || [],
+    };
+  }
 
   // Create new entry
-  entry = {
+  const code = generateCode();
+  const entry: { email: string; code: string; referred_by?: string; referrals: string[]; rewards_claimed: string[] } = {
     email,
-    code: generateCode(),
-    referredBy: undefined,
+    code,
     referrals: [],
-    createdAt: new Date().toISOString(),
-    rewardsClaimed: [],
+    rewards_claimed: [],
   };
 
   // Track referral if valid code provided
   if (referrerCode) {
-    const referrer = db.find(r => r.code === referrerCode);
+    const { data: referrer } = await sb.from('referrals').select('*').eq('code', referrerCode).single();
     if (referrer && referrer.email !== email) {
-      entry.referredBy = referrerCode;
-      referrer.referrals.push(email);
+      entry.referred_by = referrerCode;
+      // Add to referrer's referrals array
+      const updatedReferrals = [...(referrer.referrals || []), email];
+      await sb.from('referrals').update({ referrals: updatedReferrals }).eq('code', referrerCode);
     }
   }
 
-  db.push(entry);
-  await saveDB(db);
-  return entry;
+  const { error } = await sb.from('referrals').insert(entry);
+  if (error) {
+    console.error('Failed to create referral:', error.message);
+    // Return a default even on error
+    return { email, code, referrals: [], createdAt: new Date().toISOString(), rewardsClaimed: [] };
+  }
+
+  return { email, code, referredBy: entry.referred_by, referrals: [], createdAt: new Date().toISOString(), rewardsClaimed: [] };
 }
 
 export async function getReferralByEmail(email: string): Promise<Referral | null> {
-  const db = await loadDB();
-  return db.find(r => r.email === email) || null;
+  const sb = supabaseAdmin();
+  const { data } = await sb.from('referrals').select('*').eq('email', email).single();
+  if (!data) return null;
+  return {
+    email: data.email,
+    code: data.code,
+    referredBy: data.referred_by || undefined,
+    referrals: data.referrals || [],
+    createdAt: data.created_at,
+    rewardsClaimed: data.rewards_claimed || [],
+  };
 }
 
 export async function getReferralByCode(code: string): Promise<Referral | null> {
-  const db = await loadDB();
-  return db.find(r => r.code === code) || null;
+  const sb = supabaseAdmin();
+  const { data } = await sb.from('referrals').select('*').eq('code', code).single();
+  if (!data) return null;
+  return {
+    email: data.email,
+    code: data.code,
+    referredBy: data.referred_by || undefined,
+    referrals: data.referrals || [],
+    createdAt: data.created_at,
+    rewardsClaimed: data.rewards_claimed || [],
+  };
 }
 
 export function getUnlockedRewards(referralCount: number) {

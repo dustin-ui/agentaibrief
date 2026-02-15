@@ -12,7 +12,7 @@ import { StickySubscribeBar } from '@/components/StickySubscribeBar';
 import { useAuth } from '@/lib/auth-context';
 
 export default function Home() {
-  const { user, isLoggedIn, isPro, logout } = useAuth();
+  const { user, isLoggedIn, isPro, isInnerCircle, signOut: logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [subEmail, setSubEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -80,7 +80,7 @@ export default function Home() {
                     {user?.email}
                   </span>
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium uppercase">
-                    {user?.tier === 'inner-circle' ? 'Inner Circle' : 'Pro'}
+                    {isInnerCircle ? 'Inner Circle' : 'Pro'}
                   </span>
                   <button
                     onClick={logout}

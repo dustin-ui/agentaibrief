@@ -47,7 +47,7 @@ function MetricCard({ label, value, change, changeSuffix = '' }: { label: string
 }
 
 export default function ProDashboard() {
-  const { isLoggedIn: _isLoggedIn, isPro: _isPro, isInnerCircle: _isInnerCircle, user: _user, logout } = useAuth();
+  const { isLoggedIn, isPro, isInnerCircle, user, signOut: logout } = useAuth();
   // Auth vars prefixed with _ — reserved for future paywall gate
   const [report, setReport] = useState<SEOReport | null>(null);
   const [loading, setLoading] = useState(true);
@@ -102,7 +102,7 @@ export default function ProDashboard() {
             <MobileNav />
             <span className="text-sm text-gray-400 hidden sm:inline">{user?.email}</span>
             <span className="text-xs bg-[#37b0c9]/20 text-[#37b0c9] px-2 py-1 rounded-full font-medium">
-              {user?.tier === 'inner-circle' ? 'Inner Circle' : 'Pro'}
+              {isInnerCircle ? 'Inner Circle' : 'Pro'}
             </span>
             <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-300">Log out</button>
           </div>
@@ -289,7 +289,7 @@ export default function ProDashboard() {
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8">
                 <h3 className="text-lg font-semibold text-white mb-4">🎯 Your Top 3 Priorities This Week</h3>
                 <div className="space-y-4">
-                  {report.priorities.map((p: { text: string; priority: string }, i: number) => (
+                  {report.priorities.map((p: Record<string, string>, i: number) => (
                     <div key={i} className="flex gap-4 p-4 bg-gray-900/50 border border-gray-700/50 rounded-lg">
                       <div className="text-2xl flex-shrink-0 mt-0.5">{p.icon}</div>
                       <div className="flex-1">
