@@ -100,7 +100,7 @@ export default function PricingPage() {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId, userId: user?.id }),
+      body: JSON.stringify({ priceId, userId: user?.id, referral: typeof window !== 'undefined' && (window as any).Rewardful?.referral || undefined }),
     });
     const data = await res.json();
     setLoadingTier(null);

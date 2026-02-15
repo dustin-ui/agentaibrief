@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -87,6 +88,10 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className}`}>
         <Providers>{children}</Providers>
+        <Script src="https://r.wdfl.co/rw.js" data-rewardful="8c937e" />
+        <Script id="rewardful-queue" strategy="beforeInteractive">
+          {`(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`}
+        </Script>
       </body>
     </html>
   );

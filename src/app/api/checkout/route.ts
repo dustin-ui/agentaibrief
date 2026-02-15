@@ -3,7 +3,7 @@ import { getStripe } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
-    const { priceId, userId } = await request.json();
+    const { priceId, userId, referral } = await request.json();
 
     if (!priceId) {
       return NextResponse.json({ error: 'Price ID is required' }, { status: 400 });
@@ -25,7 +25,10 @@ export async function POST(request: NextRequest) {
       cancel_url: `${origin}/pricing`,
     };
 
-    if (userId) {
+    // Rewardful uses client_reference_id to attribute referrals
+    if (referral) {
+      sessionParams.client_reference_id = referral;
+    } else if (userId) {
       sessionParams.client_reference_id = userId;
     }
 

@@ -106,7 +106,7 @@ export default function SubscribePage() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ priceId, referral: typeof window !== 'undefined' && (window as any).Rewardful?.referral || undefined }),
       });
       const data = await res.json();
       if (data.url) {
