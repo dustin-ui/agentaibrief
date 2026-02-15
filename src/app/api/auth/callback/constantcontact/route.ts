@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Save tokens to the user's newsletter profile if we have a state (user_id)
-    if (state) {
+    if (state && state !== 'admin_reauth') {
       await supabase
         .from('newsletter_profiles')
         .update({
@@ -82,8 +82,19 @@ export async function GET(request: NextRequest) {
         .eq('user_id', state);
     }
 
-    // Redirect back to newsletter builder with success
-    return NextResponse.redirect(new URL('/newsletter-builder?cc_success=true', request.url));
+    // Always update the main cc_tokens table (used by subscribe flow + email campaigns)
+    await supabase.from('cc_tokens').upsert({
+      id: 1,
+      access_token: tokenData.access_token,
+      refresh_token: tokenData.refresh_token,
+      token_type: tokenData.token_type || 'Bearer',
+      expires_in: tokenData.expires_in || 86400,
+      saved_at: new Date().toISOString(),
+    });
+
+    // Redirect back with success
+    const redirectPath = state === 'admin_reauth' ? '/?cc_reauth=success' : '/newsletter-builder?cc_success=true';
+    return NextResponse.redirect(new URL(redirectPath, request.url));
 
   } catch (err) {
     console.error('OAuth callback error:', err);
