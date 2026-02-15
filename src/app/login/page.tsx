@@ -29,7 +29,7 @@ function LoginForm() {
     setResetLoading(true);
     setResetMsg('');
     const { error: err } = await supabase.auth.resetPasswordForEmail(resetEmail.trim(), {
-      redirectTo: 'https://agentaibrief.com/login',
+      redirectTo: 'https://agentaibrief.com/reset-password',
     });
     setResetLoading(false);
     setResetMsg(err ? err.message : 'Check your email for the reset link!');
