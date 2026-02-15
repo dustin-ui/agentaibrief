@@ -179,8 +179,8 @@ export default function Home() {
                 <a href="/subscribe" className="btn-primary px-8 py-4 text-[1rem]">
                   Start Free Trial
                 </a>
-                <a href="/demo" className="btn-outline-dark px-8 py-4 text-[1rem]">
-                  Watch Demo
+                <a href="/contact" className="btn-outline-dark px-8 py-4 text-[1rem]">
+                  Contact Us
                 </a>
               </div>
 
