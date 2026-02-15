@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
+import { addSubscriber } from '@/lib/constant-contact';
 import Stripe from 'stripe';
 
 const supabaseAdmin = createClient(
@@ -23,35 +24,13 @@ const CC_LISTS = {
   'inner_circle': 'ddceae1c-054a-11f1-bdec-02425936aa0c',
 };
 
-async function getAccessToken(): Promise<string | null> {
-  const clientId = process.env.CC_CLIENT_ID;
-  const clientSecret = process.env.CC_CLIENT_SECRET;
-  const refreshToken = process.env.CC_REFRESH_TOKEN;
-  if (!clientId || !clientSecret || !refreshToken) return null;
-
-  const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-  try {
-    const res = await fetch('https://authz.constantcontact.com/oauth2/default/v1/token', {
-      method: 'POST',
-      headers: { 'Authorization': `Basic ${basicAuth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ refresh_token: refreshToken, grant_type: 'refresh_token' }),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.access_token;
-  } catch { return null; }
-}
-
 async function addToCC(email: string, listIds: string[], firstName?: string) {
-  const token = await getAccessToken();
-  if (!token) return;
-  const body: Record<string, unknown> = { email_address: email, list_memberships: listIds, create_source: 'Account' };
-  if (firstName) body.first_name = firstName;
-  await fetch('https://api.cc.email/v3/contacts/sign_up_form', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  try {
+    await addSubscriber(email, listIds, undefined, firstName);
+    console.log(`[webhook] Added ${email} to CC lists: ${listIds.join(', ')}`);
+  } catch (err) {
+    console.error('[webhook] CC add failed:', err);
+  }
 }
 
 async function notifyDustin(message: string) {
