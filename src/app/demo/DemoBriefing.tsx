@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 
 const BRIEFING_DATE = 'Monday, February 9, 2026';
 
@@ -82,12 +81,12 @@ export function DemoBriefing() {
       {/* Top bar */}
       <div className="bg-[#e8e6e1] border-b border-[#e0dcd4] sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="text-lg font-bold text-[#2a2a2a]">
+          <a href="/" className="text-lg font-bold text-[#2a2a2a]">
             Agent<span className="text-[#e85d26]">AI</span>Brief
-          </Link>
-          <Link href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
+          </a>
+          <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
             Subscribe →
-          </Link>
+          </a>
         </div>
       </div>
 
@@ -96,7 +95,7 @@ export function DemoBriefing() {
         <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-6 text-center">
           <p className="text-sm text-amber-800">
             📋 <strong>This is a sample briefing.</strong> The real one lands in your inbox every morning at 7 AM.{' '}
-            <Link href="/subscribe" className="text-[#e85d26] underline font-medium">Subscribe free →</Link>
+            <a href="/subscribe" className="text-[#e85d26] underline font-medium">Subscribe free →</a>
           </p>
         </div>
 
@@ -196,9 +195,9 @@ export function DemoBriefing() {
                           <p className="text-2xl mb-2">🔒</p>
                           <p className="text-sm font-semibold text-[#2a2a2a] mb-1">Pro Members Only</p>
                           <p className="text-xs text-[#888] mb-3">Agent Angles & action items on every story</p>
-                          <Link href="/subscribe" className="inline-block px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-xs font-semibold rounded-lg hover:bg-[#c44a1a]">
+                          <a href="/subscribe" className="inline-block px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-xs font-semibold rounded-lg hover:bg-[#c44a1a]">
                             Unlock for $19/mo →
-                          </Link>
+                          </a>
                         </div>
                       </div>
                     </div>

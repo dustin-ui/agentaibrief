@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 
@@ -79,7 +78,7 @@ export function StickySubscribeBar() {
         <form onSubmit={handleSubmit} className="max-w-[1080px] mx-auto px-4 py-2 flex items-center justify-center gap-3">
           <span className="text-[#2a2a2a] text-sm font-medium">Get the Free Daily Brief →</span>
           <span className="text-sm" style={{ color: '#c4c0b8' }}>|</span>
-          <Link href="/affiliate" className="text-sm font-medium transition-colors" style={{ color: '#e85d26' }}>Earn 30% commission →</Link>
+          <a href="/affiliate" className="text-sm font-medium transition-colors" style={{ color: '#e85d26' }}>Earn 30% commission →</a>
           <input
             type="email"
             placeholder="Enter your email"

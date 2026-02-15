@@ -1,6 +1,6 @@
 /**
  * ICS Calendar Export Utility
- * Generates .ics files from contract dates/deadlines
+ * Generates .ics files and Google Calendar links from contract dates/deadlines
  */
 
 interface CalendarEvent {
@@ -22,7 +22,7 @@ function escapeICS(text: string): string {
   });
 }
 
-export function generateICS(events: CalendarEvent[], calendarName?: string): string {
+export function generateICS(events: CalendarEvent[], calendarName?: string, options?: { emails?: string[]; reminderFlags?: boolean[] }): string {
   const lines: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -32,9 +32,9 @@ export function generateICS(events: CalendarEvent[], calendarName?: string): str
     'METHOD:PUBLISH',
   ];
 
-  for (const event of events) {
+  for (let idx = 0; idx < events.length; idx++) {
+    const event = events[idx];
     const uid = `${Date.now()}-${Math.random().toString(36).slice(2)}@agentaibrief.com`;
-    const reminderHours = event.reminderHoursBefore ?? 48;
 
     lines.push(
       'BEGIN:VEVENT',
@@ -48,15 +48,68 @@ export function generateICS(events: CalendarEvent[], calendarName?: string): str
     if (event.description) lines.push(`DESCRIPTION:${escapeICS(event.description)}`);
     if (event.location) lines.push(`LOCATION:${escapeICS(event.location)}`);
 
-    // Add reminder
+    // Add attendees (email recipients)
+    const emails = options?.emails?.filter(e => e && e.includes('@')) || [];
+    for (const email of emails) {
+      lines.push(`ATTENDEE;RSVP=FALSE;CN=${escapeICS(email)}:mailto:${email}`);
+    }
+
+    const hasReminder = options?.reminderFlags ? options.reminderFlags[idx] !== false : true;
+
+    // 24-hour reminder
     lines.push(
       'BEGIN:VALARM',
-      'TRIGGER:-PT' + reminderHours + 'H',
+      'TRIGGER:-PT24H',
       'ACTION:DISPLAY',
-      `DESCRIPTION:${escapeICS(event.title)} - deadline approaching`,
+      `DESCRIPTION:${escapeICS(event.title)} - 24 hours until deadline`,
       'END:VALARM',
-      'END:VEVENT',
     );
+
+    // 3-hour reminder
+    lines.push(
+      'BEGIN:VALARM',
+      'TRIGGER:-PT3H',
+      'ACTION:DISPLAY',
+      `DESCRIPTION:${escapeICS(event.title)} - 3 hours until deadline`,
+      'END:VALARM',
+    );
+
+    // Email reminder at 24 hours (only if checked)
+    if (hasReminder && emails.length > 0) {
+      for (const email of emails) {
+        lines.push(
+          'BEGIN:VALARM',
+          'TRIGGER:-PT24H',
+          'ACTION:EMAIL',
+          `ATTENDEE:mailto:${email}`,
+          `SUMMARY:Reminder: ${escapeICS(event.title)}`,
+          `DESCRIPTION:${escapeICS(event.title)} deadline is in 24 hours`,
+          'END:VALARM',
+        );
+      }
+    } else if (hasReminder) {
+      // Fallback email reminder without specific attendee
+      lines.push(
+        'BEGIN:VALARM',
+        'TRIGGER:-PT24H',
+        'ACTION:EMAIL',
+        `SUMMARY:Reminder: ${escapeICS(event.title)}`,
+        `DESCRIPTION:${escapeICS(event.title)} deadline is in 24 hours`,
+        'END:VALARM',
+      );
+    }
+
+    // Email reminder at 3 hours (legacy — keep for backwards compat)
+    lines.push(
+      'BEGIN:VALARM',
+      'TRIGGER:-PT3H',
+      'ACTION:EMAIL',
+      `SUMMARY:URGENT: ${escapeICS(event.title)}`,
+      `DESCRIPTION:${escapeICS(event.title)} deadline is in 3 hours`,
+      'END:VALARM',
+    );
+
+    lines.push('END:VEVENT');
   }
 
   lines.push('END:VCALENDAR');
@@ -64,17 +117,32 @@ export function generateICS(events: CalendarEvent[], calendarName?: string): str
 }
 
 /**
+ * Generate a Google Calendar link for an event
+ */
+export function generateGoogleCalendarLink(event: CalendarEvent): string {
+  const formatGCal = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const endDate = new Date(event.date.getTime() + 60 * 60 * 1000);
+  
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: event.title,
+    dates: `${formatGCal(event.date)}/${formatGCal(endDate)}`,
+    details: event.description || '',
+    location: event.location || '',
+  });
+
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+/**
  * Parse date strings from contract analysis into Date objects.
- * Handles various formats: "March 15, 2026", "10 days from ratification", etc.
  */
 export function parseContractDate(dateStr: string, ratificationDate?: Date): Date | null {
   if (!dateStr) return null;
 
-  // Try direct date parse
   const direct = new Date(dateStr);
   if (!isNaN(direct.getTime()) && direct.getFullYear() > 2000) return direct;
 
-  // Handle "X days from ratification" patterns
   const daysMatch = dateStr.match(/(\d+)\s*(?:business\s+)?days?\s+(?:from|after|of)\s+ratification/i);
   if (daysMatch && ratificationDate) {
     const days = parseInt(daysMatch[1]);
@@ -124,6 +192,33 @@ export function extractCalendarEvents(
     }
   }
 
+  // All dates and deadlines from comparison data
+  const allDates = contractData.allDatesAndDeadlines as Array<{ event: string; date: string; daysFromRatification?: number; daysFromNow?: number }>;
+  if (allDates) {
+    for (const d of allDates) {
+      let date: Date | null = null;
+
+      // First try daysFromRatification if we have a ratification date
+      if (d.daysFromRatification && ratificationDate) {
+        date = new Date(ratificationDate);
+        date.setDate(date.getDate() + d.daysFromRatification);
+      }
+
+      // Then try parsing the date string
+      if (!date && d.date) {
+        date = parseContractDate(d.date, refDate);
+      }
+
+      if (date) {
+        events.push({
+          title: `📋 ${d.event} - ${address}`,
+          date,
+          description: `${d.event} for ${address}${d.daysFromRatification ? ` (${d.daysFromRatification} days from ratification)` : ''}`,
+        });
+      }
+    }
+  }
+
   // EMD due date
   const emd = contractData.earnestMoney as { amount?: string; dueDate?: string };
   if (emd?.dueDate) {
@@ -149,5 +244,12 @@ export function extractCalendarEvents(
     }
   }
 
-  return events;
+  // Deduplicate by title
+  const seen = new Set<string>();
+  return events.filter(e => {
+    const key = `${e.title}-${e.date.toISOString()}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }

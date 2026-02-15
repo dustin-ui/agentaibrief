@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { TrendingBadge } from './TrendingBadge';
 import { ShareButtons } from './ShareButtons';
@@ -98,7 +97,7 @@ export function NewsCard({
             <div className="mt-3 p-3 bg-[#f5f0ea] rounded-lg border border-dashed border-gray-300">
               <p className="text-sm text-[#888] text-center">
                 🔒 <span className="font-medium">Agent Angle & Implementation Tips</span> — 
-                <Link href="/subscribe" className="text-[#e85d26] hover:underline ml-1">Subscribe to unlock</Link>
+                <a href="/subscribe" className="text-[#e85d26] hover:underline ml-1">Subscribe to unlock</a>
               </p>
             </div>
           )}
