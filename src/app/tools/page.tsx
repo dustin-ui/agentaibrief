@@ -139,6 +139,6 @@ function ToolCard({ tool, isDustinsPick }: { tool: AITool; isDustinsPick: boolea
           <span className="text-sm text-[#555] font-medium">{tool.rating}</span>
         </div>
       </div>
-    </Link>
+    </a>
   );
 }

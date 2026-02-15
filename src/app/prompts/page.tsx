@@ -142,7 +142,7 @@ export default function PromptLibrary() {
   const filtered = useMemo(() => {
     let results = PROMPTS;
     if (category !== 'All') results = results.filter(p => p.category === category);
-    if (toolFilter) results = results.filter(p => p.aiTools.includes(toolFilter as any));
+    if (toolFilter) results = results.filter(p => p.aiTools.includes(toolFilter));
     if (showFreeOnly) results = results.filter(p => p.isFree);
     if (search.trim()) {
       const q = search.toLowerCase();

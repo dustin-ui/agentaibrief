@@ -16,7 +16,7 @@ export default function PrivacyPage() {
         <div className="prose prose-gray max-w-none space-y-6 text-[#555] text-sm leading-relaxed">
           <section>
             <h2 className="text-xl font-semibold text-[#2a2a2a] mt-8 mb-3">1. Who We Are</h2>
-            <p>AgentAIBrief.com (&quot;AgentAIBrief,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is operated by Dustin Fox / Fox Homes Team, located in Fairfax, Virginia. You can reach us at <a href="mailto:dustin@foxhomesteam.com" className="text-[#e85d26] hover:underline">dustin@foxhomesteam.com</Link>.</p>
+            <p>AgentAIBrief.com (&quot;AgentAIBrief,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is operated by Dustin Fox / Fox Homes Team, located in Fairfax, Virginia. You can reach us at <a href="mailto:dustin@foxhomesteam.com" className="text-[#e85d26] hover:underline">dustin@foxhomesteam.com</a>.</p>
           </section>
 
           <section>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
               <li>Request deletion of your data</li>
               <li>Update your email preferences</li>
             </ul>
-            <p>Contact us at <a href="mailto:dustin@foxhomesteam.com" className="text-[#e85d26] hover:underline">dustin@foxhomesteam.com</Link> for any requests.</p>
+            <p>Contact us at <a href="mailto:dustin@foxhomesteam.com" className="text-[#e85d26] hover:underline">dustin@foxhomesteam.com</a> for any requests.</p>
           </section>
 
           <section>
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-[#2a2a2a] mt-8 mb-3">Contact</h2>
-            <p>Questions? Email us at <a href="mailto:dustin@foxhomesteam.com" className="text-[#e85d26] hover:underline">dustin@foxhomesteam.com</Link>.</p>
+            <p>Questions? Email us at <a href="mailto:dustin@foxhomesteam.com" className="text-[#e85d26] hover:underline">dustin@foxhomesteam.com</a>.</p>
           </section>
         </div>
 

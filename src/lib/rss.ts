@@ -14,15 +14,26 @@ function generateId(title: string, link: string): string {
   return createHash('md5').update(`${title}${link}`).digest('hex').slice(0, 12);
 }
 
+interface RSSItem {
+  title?: string;
+  link?: string;
+  pubDate?: string;
+  isoDate?: string;
+  contentSnippet?: string;
+  content?: string;
+  creator?: string;
+  categories?: string[];
+}
+
 // Max age: articles older than this are filtered out entirely
 const MAX_AGE_HOURS = 72; // 3 days
 
-function getArticleAgeHours(item: any): number {
+function getArticleAgeHours(item: RSSItem): number {
   const pubDate = new Date(item.pubDate || item.isoDate || Date.now());
   return (Date.now() - pubDate.getTime()) / (1000 * 60 * 60);
 }
 
-function calculateBaseTrendingScore(item: any, source: string): number {
+function calculateBaseTrendingScore(item: RSSItem, source: string): number {
   const hoursAgo = getArticleAgeHours(item);
   
   // Hard filter: skip anything older than MAX_AGE_HOURS

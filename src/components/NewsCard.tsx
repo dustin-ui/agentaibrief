@@ -63,7 +63,7 @@ export function NewsCard({
             <h2 className="text-lg font-semibold text-[#2a2a2a] group-hover:text-[#e85d26] transition-colors line-clamp-2">
               {title}
             </h2>
-          </Link>
+          </a>
           
           {/* Summary */}
           {summary && (

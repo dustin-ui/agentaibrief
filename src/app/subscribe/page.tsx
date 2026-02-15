@@ -89,7 +89,7 @@ const tiers = [
   },
 ];
 
-const testimonials: any[] = []; // Real testimonials coming soon
+const _testimonials: { name: string; role: string; text: string }[] = []; // Real testimonials coming soon
 
 export default function SubscribePage() {
   const [isAnnual, setIsAnnual] = useState(true);

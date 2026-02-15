@@ -17,6 +17,10 @@ interface SEOReport {
   backlinksChange: number;
   aiVisibilityScore: number;
   aiMentions: number;
+  semrushRank?: number;
+  trafficCost?: number;
+  referringDomains?: number;
+  priorities?: { text: string; priority: string }[];
   topKeywords: { keyword: string; position: number; traffic: number; volume: number; change: number }[];
   trafficChannels: { direct: number; ai: number; organic: number; referral: number };
   weeklyHistory: { week: string; authorityScore: number; organicTraffic: number; organicKeywords: number }[];
@@ -43,7 +47,8 @@ function MetricCard({ label, value, change, changeSuffix = '' }: { label: string
 }
 
 export default function ProDashboard() {
-  const { isLoggedIn, isPro, isInnerCircle, user, logout } = useAuth();
+  const { isLoggedIn: _isLoggedIn, isPro: _isPro, isInnerCircle: _isInnerCircle, user: _user, logout } = useAuth();
+  // Auth vars prefixed with _ — reserved for future paywall gate
   const [report, setReport] = useState<SEOReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('foxessellfaster.com');
@@ -190,15 +195,15 @@ export default function ProDashboard() {
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-300">SemRush Rank</span>
-                      <span className="text-white font-medium">#{(report as any).semrushRank?.toLocaleString() || 'N/A'}</span>
+                      <span className="text-white font-medium">#{report.semrushRank?.toLocaleString() || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-300">Traffic Value</span>
-                      <span className="text-white font-medium">${(report as any).trafficCost?.toLocaleString() || '0'}/mo</span>
+                      <span className="text-white font-medium">${report.trafficCost?.toLocaleString() || '0'}/mo</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-300">Referring Domains</span>
-                      <span className="text-white font-medium">{(report as any).referringDomains?.toLocaleString() || 'N/A'}</span>
+                      <span className="text-white font-medium">{report.referringDomains?.toLocaleString() || 'N/A'}</span>
                     </div>
                   </div>
                 )}
@@ -280,11 +285,11 @@ export default function ProDashboard() {
             </div>
 
             {/* Actionable Priorities */}
-            {(report as any).priorities && (report as any).priorities.length > 0 && (
+            {report.priorities && report.priorities.length > 0 && (
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8">
                 <h3 className="text-lg font-semibold text-white mb-4">🎯 Your Top 3 Priorities This Week</h3>
                 <div className="space-y-4">
-                  {(report as any).priorities.map((p: any, i: number) => (
+                  {report.priorities.map((p: { text: string; priority: string }, i: number) => (
                     <div key={i} className="flex gap-4 p-4 bg-gray-900/50 border border-gray-700/50 rounded-lg">
                       <div className="text-2xl flex-shrink-0 mt-0.5">{p.icon}</div>
                       <div className="flex-1">

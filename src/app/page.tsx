@@ -97,7 +97,7 @@ export default function Home() {
                   >
                     Log In
                   </button>
-                  <a 
+                  <Link 
                     href="/subscribe" 
                     className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                   >
@@ -160,14 +160,14 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center mt-4">
                 <p className="text-blue-200 text-xs">No spam. Unsubscribe anytime.</p>
                 <span className="hidden sm:inline text-blue-400">•</span>
-                <a 
+                <Link 
                   href="/demo"
                   className="text-white text-xs font-medium underline underline-offset-2 hover:text-blue-100"
                 >
                   📋 See a sample briefing first
                 </Link>
                 <span className="hidden sm:inline text-blue-400">•</span>
-                <a 
+                <Link 
                   href="/subscribe"
                   className="text-white text-xs font-medium underline underline-offset-2 hover:text-blue-100"
                 >
@@ -292,7 +292,7 @@ export default function Home() {
                 <li>✅ Weekly Deep Dives</li>
               </ul>
               {!isPro && (
-                <a 
+                <Link 
                   href="/subscribe" 
                   className="mt-4 block w-full px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded text-center hover:bg-blue-700"
                 >
@@ -313,7 +313,7 @@ export default function Home() {
                 <li>🔑 Top Keywords & Rankings</li>
               </ul>
               <p className="text-xs text-amber-600 font-semibold mb-3">⚡ Limited seats available</p>
-              <a 
+              <Link 
                 href="/subscribe" 
                 className="block w-full px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded text-center hover:bg-gray-800"
               >
