@@ -1288,9 +1288,28 @@ export default function ContractAnalyzerPage() {
           {compareResult && (
             <>
               {/* Brief Summary */}
-              {compareResult.comparison?.summary && (
-                <div className="bg-[#f0ece4]/50 border border-[#e0dcd4] rounded-lg px-5 py-3 mb-6 text-sm text-[#555]">
-                  {compareResult.comparison.summary}
+              {compareResult.comparison && (
+                <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl p-5 mb-6">
+                  {compareResult.comparison.bestOffer && (
+                    <div className="mb-4">
+                      <h3 className="text-sm font-semibold text-[#e85d26] uppercase tracking-wider mb-2">🏆 Recommended Offer</h3>
+                      <p className="text-[#2a2a2a] font-medium">{compareResult.comparison.bestOffer.label}</p>
+                      <p className="text-sm text-[#555] mt-1">{compareResult.comparison.bestOffer.reasoning}</p>
+                    </div>
+                  )}
+                  {Array.isArray(compareResult.comparison.summary) && compareResult.comparison.summary.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-[#666] uppercase tracking-wider mb-2">📊 Key Differences</h3>
+                      <ul className="space-y-1.5">
+                        {compareResult.comparison.summary.map((point: string, i: number) => (
+                          <li key={i} className="text-sm text-[#555] flex gap-2">
+                            <span className="text-[#e85d26]">•</span>
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1307,13 +1326,21 @@ export default function ContractAnalyzerPage() {
                               <span>{o.label}</span>
                               {selectedWinner === o.label && <span className="text-green-400 text-xs">✅ Selected</span>}
                             </div>
-                            <span className="text-xs text-[#888] font-normal block">{o.fileName}</span>
-                            {o.data?.buyerName && <span className="text-xs text-[#666] font-normal block">{o.data.buyerName}</span>}
+                            <span className="text-xs text-[#888] font-normal block truncate max-w-[200px]" title={o.fileName}>{o.fileName}</span>
                           </th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800/50">
+                      {/* Purchasers row - always at top */}
+                      <tr className="bg-[#e85d26]/5">
+                        <td className="px-4 py-3 font-semibold text-[#e85d26] sticky left-0 bg-[#e85d26]/5">Purchasers</td>
+                        {compareResult.offers.map((o) => (
+                          <td key={o.label} className="px-4 py-3 font-medium text-[#2a2a2a]">
+                            {o.data?.buyerName || '—'}
+                          </td>
+                        ))}
+                      </tr>
                       {selectedFields.has('Purchase Price') && <CompareRow label="Purchase Price" offers={compareResult.offers} render={(d) => d.purchasePriceFormatted || '—'} colorize colorField="purchasePrice" colorMode="highest" />}
                       {selectedFields.has('Earnest Money Deposit') && <CompareRow label="Earnest Money Deposit" offers={compareResult.offers} render={(d) => d.earnestMoneyDepositFormatted || '—'} colorize colorField="earnestMoneyDeposit" colorMode="highest" />}
                       {selectedFields.has('Financing Type') && <CompareRow label="Financing Type" offers={compareResult.offers} render={(d) => d.financingType || '—'} />}
