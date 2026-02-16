@@ -761,7 +761,7 @@ export default function ContractAnalyzerPage() {
         </div>
       </header>
 
-      <PaywallGate requiredTier="pro" featureName="Contract Analyzer">
+      <PaywallGate requiredTier="pro" featureName="Contract Analyzer" allowFreeTrial={true} trialKey="contract-analyzer">
       {/* Saved Comparisons Banner */}
       {savedComparisons.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 pt-4">
