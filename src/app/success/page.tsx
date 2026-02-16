@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
+import { useAuth } from '@/lib/auth-context';
 
 interface ConfettiPieceData {
   id: number;
@@ -38,7 +39,7 @@ function Confetti() {
   const [pieces, setPieces] = useState<ConfettiPieceData[]>([]);
 
   useEffect(() => {
-    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+    const colors = ['#e85d26', '#2a2a2a', '#d4d0c8', '#f0ece4', '#c44a1a', '#555'];
     setPieces(
       Array.from({ length: 50 }, (_, i) => ({
         id: i,
@@ -64,8 +65,20 @@ function Confetti() {
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const plan = searchParams.get('plan') || 'free';
-  const isPro = plan === 'pro';
+  const planParam = searchParams.get('plan') || 'free';
+  const { profile } = useAuth();
+  
+  // Determine actual tier: check profile from Supabase first, fall back to URL param
+  const actualTier = profile?.subscription_tier || planParam;
+  const isInnerCircle = actualTier === 'inner_circle';
+  const isPro = actualTier === 'pro' || isInnerCircle;
+  
+  const planLabel = isInnerCircle ? 'Inner Circle' : isPro ? 'Pro' : 'Free';
+  const planDesc = isInnerCircle 
+    ? 'Full suite + priority features + direct team access'
+    : isPro 
+    ? 'Full access including Agent Angles on every story' 
+    : 'Daily AI headlines + 1 featured story';
 
   const shareText = encodeURIComponent(
     "Just signed up for AgentAIBrief — daily AI news designed for real estate agents. Check it out!"
@@ -73,7 +86,7 @@ function SuccessContent() {
   const shareUrl = encodeURIComponent('https://agentaibrief.com');
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-[#e8e6e1]">
       <Confetti />
 
       {/* Header */}
@@ -102,26 +115,22 @@ function SuccessContent() {
         </div>
 
         {/* Plan Confirmation */}
-        <div className="bg-[#e8e6e1] rounded-2xl shadow-sm border border-[#e0dcd4] p-6 mb-8">
+        <div className="bg-[#f5f0ea] rounded-2xl shadow-sm border border-[#e0dcd4] p-6 mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[#2a2a2a] font-bold ${isPro ? 'bg-[#e85d26]' : 'bg-[#f0ece4]0'}`}>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${isPro ? 'bg-[#e85d26] text-white' : 'bg-[#f0ece4] text-[#2a2a2a]'}`}>
               {isPro ? '⚡' : '✓'}
             </div>
             <div>
               <p className="font-semibold text-[#2a2a2a]">
-                {isPro ? 'Pro Plan Confirmed' : 'Free Plan Activated'}
+                {planLabel} Plan {isPro ? 'Confirmed' : 'Activated'}
               </p>
-              <p className="text-sm text-[#888]">
-                {isPro
-                  ? 'Full access including Agent Angles on every story'
-                  : 'Daily AI headlines + 1 featured story'}
-              </p>
+              <p className="text-sm text-[#888]">{planDesc}</p>
             </div>
           </div>
         </div>
 
         {/* What to Expect */}
-        <div className="bg-[#e8e6e1] rounded-2xl shadow-sm border border-[#e0dcd4] p-6 mb-8">
+        <div className="bg-[#f5f0ea] rounded-2xl shadow-sm border border-[#e0dcd4] p-6 mb-8">
           <h3 className="text-lg font-bold text-[#2a2a2a] mb-4">📬 What to Expect</h3>
           <div className="space-y-4">
             <div className="flex gap-3">
@@ -145,6 +154,15 @@ function SuccessContent() {
                 <p className="text-sm text-[#888]">Hands-on breakdowns of AI tools tested specifically for agents</p>
               </div>
             </div>
+            {isInnerCircle && (
+              <div className="flex gap-3">
+                <div className="text-2xl">🎯</div>
+                <div>
+                  <p className="font-medium text-[#2a2a2a]">Inner Circle Access</p>
+                  <p className="text-sm text-[#888]">Priority features, direct team support, and early access to new tools</p>
+                </div>
+              </div>
+            )}
             <div className="flex gap-3">
               <div className="text-2xl">💡</div>
               <div>
@@ -155,17 +173,17 @@ function SuccessContent() {
           </div>
         </div>
 
-        {/* Upsell for free users */}
+        {/* Upsell for free users only */}
         {!isPro && (
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 mb-8 text-[#2a2a2a]">
-            <h3 className="text-lg font-bold mb-2">⚡ Want the full edge?</h3>
-            <p className="text-blue-100 mb-4">
-              Upgrade to Pro for <span className="font-semibold text-[#2a2a2a]">Agent Angles on every story</span> — 
+          <div className="bg-[#2a2a2a] rounded-2xl p-6 mb-8">
+            <h3 className="text-lg font-bold text-white mb-2">⚡ Want the full edge?</h3>
+            <p className="text-[#999] mb-4">
+              Upgrade to Pro for <span className="font-semibold text-white">Agent Angles on every story</span> — 
               specific scripts, strategies, and action items you can use today.
             </p>
             <Link
-              href="/subscribe?plan=pro"
-              className="inline-block bg-[#e8e6e1] text-[#e85d26] px-6 py-2.5 rounded-lg font-semibold hover:bg-[#f5f0ea] transition-colors"
+              href="/pricing"
+              className="inline-block bg-[#e85d26] text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-[#c44a1a] transition-colors"
             >
               Upgrade to Pro — $9.99/mo
             </Link>
@@ -173,7 +191,7 @@ function SuccessContent() {
         )}
 
         {/* Share */}
-        <div className="bg-[#e8e6e1] rounded-2xl shadow-sm border border-[#e0dcd4] p-6 mb-8 text-center">
+        <div className="bg-[#f5f0ea] rounded-2xl shadow-sm border border-[#e0dcd4] p-6 mb-8 text-center">
           <h3 className="text-lg font-bold text-[#2a2a2a] mb-2">🤝 Know another agent who&apos;d love this?</h3>
           <p className="text-sm text-[#888] mb-4">Share AgentAIBrief and help them stay ahead of the curve</p>
           <div className="flex flex-wrap gap-3 justify-center">
@@ -181,7 +199,7 @@ function SuccessContent() {
               href={`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-black text-[#2a2a2a] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#f0ece4] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#2a2a2a] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#444] transition-colors"
             >
               𝕏 Post
             </a>
@@ -189,7 +207,7 @@ function SuccessContent() {
               href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#1877F2] text-[#2a2a2a] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#1565C0] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#2a2a2a] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#444] transition-colors"
             >
               Facebook
             </a>
@@ -197,7 +215,7 @@ function SuccessContent() {
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#0A66C2] text-[#2a2a2a] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#084E96] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#2a2a2a] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#444] transition-colors"
             >
               LinkedIn
             </a>
@@ -206,7 +224,7 @@ function SuccessContent() {
                 navigator.clipboard.writeText('https://agentaibrief.com');
                 alert('Link copied!');
               }}
-              className="inline-flex items-center gap-2 bg-[#f5f0ea] text-[#555] px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-2 bg-[#f0ece4] text-[#555] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#d8d4cc] transition-colors"
             >
               📋 Copy Link
             </button>
@@ -230,8 +248,8 @@ function SuccessContent() {
 export default function SuccessPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#e8e6e1]">
+        <div className="text-2xl text-[#666]">Loading...</div>
       </div>
     }>
       <SuccessContent />
