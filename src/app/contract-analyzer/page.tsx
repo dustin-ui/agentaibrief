@@ -800,12 +800,30 @@ export default function ContractAnalyzerPage() {
                       {new Date(c.created_at).toLocaleDateString()} • {Array.isArray(c.offers) ? c.offers.length : '?'} offers
                     </p>
                   </div>
-                  <button
-                    onClick={() => loadComparison(c.id)}
-                    className="px-3 py-1.5 bg-[#e85d26]/10 border border-[#e85d26]/30 rounded-lg text-xs font-medium text-[#e85d26] hover:bg-[#e85d26]/20 transition"
-                  >
-                    Load
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => loadComparison(c.id)}
+                      className="px-3 py-1.5 bg-[#e85d26]/10 border border-[#e85d26]/30 rounded-lg text-xs font-medium text-[#e85d26] hover:bg-[#e85d26]/20 transition"
+                    >
+                      Load
+                    </button>
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (!confirm('Delete this comparison?')) return;
+                        try {
+                          const res = await fetch(`/api/comparisons?id=${c.id}`, { method: 'DELETE' });
+                          if (res.ok) {
+                            setSavedComparisons(prev => prev.filter(x => x.id !== c.id));
+                          }
+                        } catch { /* ignore */ }
+                      }}
+                      className="p-1.5 text-[#888] hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                      title="Delete comparison"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

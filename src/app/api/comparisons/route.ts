@@ -76,3 +76,21 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 });
+    const db = supabaseAdmin();
+    const { error } = await db
+      .from('comparisons')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('DELETE /api/comparisons error:', err);
+    return NextResponse.json({ error: 'Failed to delete comparison' }, { status: 500 });
+  }
+}
