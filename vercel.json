@@ -23,6 +23,12 @@
     },
     "src/app/api/newsletter/weekly-cron/route.ts": {
       "maxDuration": 300
+    },
+    "src/app/api/newsletter/generate-for-user/route.ts": {
+      "maxDuration": 180
+    },
+    "src/app/api/newsletter/generate-all/route.ts": {
+      "maxDuration": 300
     }
   }
 }
