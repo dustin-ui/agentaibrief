@@ -82,15 +82,17 @@ export async function GET(request: NextRequest) {
         .eq('user_id', state);
     }
 
-    // Always update the main cc_tokens table (used by subscribe flow + email campaigns)
-    await supabase.from('cc_tokens').upsert({
-      id: 1,
-      access_token: tokenData.access_token,
-      refresh_token: tokenData.refresh_token,
-      token_type: tokenData.token_type || 'Bearer',
-      expires_in: tokenData.expires_in || 86400,
-      saved_at: new Date().toISOString(),
-    });
+    // Only update the main cc_tokens table for admin reauth (not subscriber connections)
+    if (state === 'admin_reauth') {
+      await supabase.from('cc_tokens').upsert({
+        id: 1,
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        token_type: tokenData.token_type || 'Bearer',
+        expires_in: tokenData.expires_in || 86400,
+        saved_at: new Date().toISOString(),
+      });
+    }
 
     // Redirect back with success
     const redirectPath = state === 'admin_reauth' ? '/?cc_reauth=success' : '/newsletter-builder?cc_success=true';
