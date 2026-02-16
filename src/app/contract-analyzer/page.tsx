@@ -6,6 +6,15 @@ import { generateICS, generateGoogleCalendarLink, extractCalendarEvents } from '
 import { supabase } from '@/lib/supabase';
 import { PaywallGate } from '@/components/PaywallGate';
 
+// Helper to get auth headers for API calls
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    return { 'Authorization': `Bearer ${session.access_token}` };
+  }
+  return {};
+}
+
 // ─── Types ───────────────────────────────────────────────────────────
 type ContractData = {
   closingDate?: string | null;
@@ -198,20 +207,25 @@ export default function ContractAnalyzerPage() {
 
   // Load recent comparisons on mount
   useEffect(() => {
-    fetch('/api/comparisons?recent=10')
-      .then(r => r.ok ? r.json() : [])
-      .then(data => { if (Array.isArray(data)) setSavedComparisons(data); })
-      .catch(() => {});
+    const loadComparisons = async () => {
+      const authHeaders = await getAuthHeaders();
+      fetch('/api/comparisons?recent=10', { headers: authHeaders })
+        .then(r => r.ok ? r.json() : [])
+        .then(data => { if (Array.isArray(data)) setSavedComparisons(data); })
+        .catch(() => {});
+    };
+    loadComparisons();
   }, []);
 
   // Auto-save agent notes (debounced 1s)
   useEffect(() => {
     if (!savedId || saveStatus === 'saving') return;
     if (notesTimerRef.current) clearTimeout(notesTimerRef.current);
-    notesTimerRef.current = setTimeout(() => {
+    notesTimerRef.current = setTimeout(async () => {
+      const authHeaders = await getAuthHeaders();
       fetch('/api/comparisons', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({ id: savedId, agent_notes: agentNotes }),
       }).catch(() => {});
     }, 1000);
@@ -222,9 +236,10 @@ export default function ContractAnalyzerPage() {
   const saveToSupabase = async (result: CompareResult) => {
     setSaveStatus('saving');
     try {
+      const authHeaders = await getAuthHeaders();
       const res = await fetch('/api/comparisons', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({
           address: result.address,
           offers: result.offers,
@@ -238,7 +253,7 @@ export default function ContractAnalyzerPage() {
       setSavedShareId(share_id);
       setSaveStatus('saved');
       // Refresh saved list
-      fetch('/api/comparisons?recent=10')
+      fetch('/api/comparisons?recent=10', { headers: authHeaders })
         .then(r => r.ok ? r.json() : [])
         .then(data => { if (Array.isArray(data)) setSavedComparisons(data); })
         .catch(() => {});
@@ -250,7 +265,8 @@ export default function ContractAnalyzerPage() {
   // Load a saved comparison
   const loadComparison = async (id: string) => {
     try {
-      const res = await fetch(`/api/comparisons?id=${id}`);
+      const authHeaders = await getAuthHeaders();
+      const res = await fetch(`/api/comparisons?id=${id}`, { headers: authHeaders });
       if (!res.ok) return;
       const data = await res.json();
       setAddress(data.address);
@@ -793,7 +809,8 @@ export default function ContractAnalyzerPage() {
                         e.stopPropagation();
                         if (!confirm('Delete this comparison?')) return;
                         try {
-                          const res = await fetch(`/api/comparisons?id=${c.id}`, { method: 'DELETE' });
+                          const authHeaders = await getAuthHeaders();
+                          const res = await fetch(`/api/comparisons?id=${c.id}`, { method: 'DELETE', headers: authHeaders });
                           if (res.ok) {
                             setSavedComparisons(prev => prev.filter(x => x.id !== c.id));
                           }
