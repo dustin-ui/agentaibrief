@@ -22,7 +22,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
       {Array.from({ length: total }, (_, i) => (
         <div key={i} className="flex items-center gap-2">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
-            i < current ? 'bg-[#e85d26] text-[#2a2a2a]' : i === current ? 'bg-[#e85d26]/20 text-[#e85d26] border-2 border-[#e85d26]' : 'bg-[#f0ece4] text-[#888]'
+            i < current ? 'bg-[#e85d26] text-white' : i === current ? 'bg-[#e85d26]/20 text-[#e85d26] border-2 border-[#e85d26]' : 'bg-[#f0ece4] text-[#888]'
           }`}>{i + 1}</div>
           {i < total - 1 && <div className={`w-8 h-0.5 ${i < current ? 'bg-[#e85d26]' : 'bg-gray-700'}`} />}
         </div>
@@ -308,11 +308,11 @@ function NewsletterBuilderInner() {
               </div>
               <div className="flex gap-3 mt-6">
                 <button onClick={handleEditProfile}
-                  className="px-6 py-3 bg-gray-700 text-[#2a2a2a] rounded-xl font-semibold hover:bg-gray-600 transition-colors">
+                  className="px-6 py-3 bg-[#2a2a2a] text-white rounded-xl font-semibold hover:bg-gray-600 transition-colors">
                   ✏️ Edit Profile
                 </button>
                 <button onClick={() => router.push('/newsletter-builder/dashboard')}
-                  className="flex-1 py-3 bg-[#e85d26] text-[#2a2a2a] rounded-xl font-semibold text-lg hover:bg-[#c44a1a] transition-colors">
+                  className="flex-1 py-3 bg-[#e85d26] text-white rounded-xl font-semibold text-lg hover:bg-[#c44a1a] transition-colors">
                   Go to Dashboard →
                 </button>
               </div>
@@ -368,7 +368,7 @@ function NewsletterBuilderInner() {
                       <div className="w-20 h-20 rounded-full bg-[#f0ece4] border-2 border-dashed border-gray-600 flex items-center justify-center text-[#888] text-2xl">📷</div>
                     )}
                     <div>
-                      <label className={`px-4 py-2 bg-gray-700 text-[#2a2a2a] rounded-lg text-sm hover:bg-gray-600 cursor-pointer inline-block ${uploadingHeadshot ? 'opacity-50 pointer-events-none' : ''}`}>
+                      <label className={`px-4 py-2 bg-[#2a2a2a] text-white rounded-lg text-sm hover:bg-gray-600 cursor-pointer inline-block ${uploadingHeadshot ? 'opacity-50 pointer-events-none' : ''}`}>
                         {uploadingHeadshot ? 'Uploading...' : 'Upload Photo'}
                         <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && uploadFile(e.target.files[0], 'headshot')} />
                       </label>
@@ -384,7 +384,7 @@ function NewsletterBuilderInner() {
                       <div className="h-16 w-32 rounded-lg bg-[#f0ece4] border-2 border-dashed border-gray-600 flex items-center justify-center text-[#888] text-sm">Your Logo</div>
                     )}
                     <div>
-                      <label className={`px-4 py-2 bg-gray-700 text-[#2a2a2a] rounded-lg text-sm hover:bg-gray-600 cursor-pointer inline-block ${uploadingLogo ? 'opacity-50 pointer-events-none' : ''}`}>
+                      <label className={`px-4 py-2 bg-[#2a2a2a] text-white rounded-lg text-sm hover:bg-gray-600 cursor-pointer inline-block ${uploadingLogo ? 'opacity-50 pointer-events-none' : ''}`}>
                         {uploadingLogo ? 'Uploading...' : 'Upload Logo'}
                         <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && uploadFile(e.target.files[0], 'logo')} />
                       </label>
@@ -467,7 +467,7 @@ function NewsletterBuilderInner() {
               <div className="space-y-6">
                 <div className="bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-6 border border-[#e85d26]/20">
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-[#e85d26] flex items-center justify-center text-[#2a2a2a] font-bold text-sm shrink-0">1</div>
+                    <div className="w-8 h-8 rounded-full bg-[#e85d26] flex items-center justify-center text-white font-bold text-sm shrink-0">1</div>
                     <div className="flex-1">
                       <p className="text-[#2a2a2a] font-semibold text-lg mb-2">Activate Your Email Platform</p>
                       <p className="text-[#555] text-sm mb-4">
@@ -498,7 +498,7 @@ function NewsletterBuilderInner() {
                       </div>
                       <a href="https://www.constantcontact.com/partner-offer?pn=sixweekstorealestatesuccess&cc=invite"
                         target="_blank" rel="noopener noreferrer"
-                        className="inline-block px-6 py-3 bg-[#e85d26] text-[#2a2a2a] rounded-lg font-semibold hover:bg-[#c44a1a] transition-colors">
+                        className="inline-block px-6 py-3 bg-[#e85d26] text-white rounded-lg font-semibold hover:bg-[#c44a1a] transition-colors">
                         Start Your Free Trial →
                       </a>
                       <p className="text-[#888] text-xs mt-2">Free 14-day trial • No credit card required to start • Cancel anytime</p>
@@ -508,7 +508,7 @@ function NewsletterBuilderInner() {
 
                 <div className="bg-[#f0ece4] rounded-xl p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-[#2a2a2a] font-bold text-sm shrink-0">2</div>
+                    <div className="w-8 h-8 rounded-full bg-[#555] flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
                     <div>
                       <p className="text-[#2a2a2a] font-medium mb-1">Connect your account to AgentAIBrief</p>
                       <p className="text-[#666] text-sm mb-3">
@@ -516,7 +516,7 @@ function NewsletterBuilderInner() {
                         You&apos;ll get a preview 24 hours before each send to review and edit.
                       </p>
                       <a href={`https://authz.constantcontact.com/oauth2/default/v1/authorize?client_id=4012da91-493c-4f46-9093-b01eff0b8f53&redirect_uri=https://agentaibrief.com/api/auth/callback/constantcontact&response_type=code&scope=contact_data+campaign_data&state=${session?.user?.id || 'newsletter'}`}
-                        className="inline-block px-5 py-2.5 bg-gray-700 text-[#2a2a2a] rounded-lg font-medium hover:bg-gray-600 transition-colors text-sm border border-gray-600">
+                        className="inline-block px-5 py-2.5 bg-[#2a2a2a] text-white rounded-lg font-medium hover:bg-[#444] transition-colors text-sm">
                         Connect Constant Contact →
                       </a>
                     </div>
@@ -557,7 +557,7 @@ function NewsletterBuilderInner() {
                 </div>
               </div>
               <button onClick={launch} disabled={saving}
-                className="w-full mt-6 py-3 bg-[#e85d26] text-[#2a2a2a] rounded-xl font-semibold text-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50">
+                className="w-full mt-6 py-3 bg-[#e85d26] text-white rounded-xl font-semibold text-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50">
                 {saving ? 'Saving...' : editMode ? '💾 Save Changes' : '🚀 Launch My Newsletter'}
               </button>
             </Card>
@@ -566,17 +566,17 @@ function NewsletterBuilderInner() {
           {/* Navigation */}
           <div className="flex justify-between mt-6">
             {step > 0 ? (
-              <button onClick={() => setStep(step - 1)} className="px-6 py-2.5 bg-[#f0ece4] text-[#2a2a2a] rounded-lg hover:bg-gray-700 transition-colors">
+              <button onClick={() => setStep(step - 1)} className="px-6 py-2.5 bg-[#f0ece4] text-[#2a2a2a] rounded-lg hover:bg-[#d8d4cc] transition-colors">
                 ← Back
               </button>
             ) : editMode ? (
-              <button onClick={() => { setShowSummary(true); setEditMode(false); }} className="px-6 py-2.5 bg-[#f0ece4] text-[#2a2a2a] rounded-lg hover:bg-gray-700 transition-colors">
+              <button onClick={() => { setShowSummary(true); setEditMode(false); }} className="px-6 py-2.5 bg-[#f0ece4] text-[#2a2a2a] rounded-lg hover:bg-[#d8d4cc] transition-colors">
                 ← Cancel
               </button>
             ) : <div />}
             {step < 5 && (
               <button onClick={handleNext} disabled={!canNext()}
-                className="px-6 py-2.5 bg-[#e85d26] text-[#2a2a2a] rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-30 font-medium">
+                className="px-6 py-2.5 bg-[#e85d26] text-white rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-30 font-medium">
                 Next →
               </button>
             )}
