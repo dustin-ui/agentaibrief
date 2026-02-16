@@ -86,9 +86,16 @@ export async function POST(request: NextRequest) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
-      const userId = session.client_reference_id;
+      let userId = session.client_reference_id;
       const email = session.customer_details?.email;
       const firstName = session.customer_details?.name?.split(' ')[0];
+
+      // If no client_reference_id, look up user by email
+      if (!userId && email) {
+        const { data } = await supabaseAdmin.from('profiles').select('id').eq('email', email).single();
+        if (data) userId = data.id;
+        else console.log(`[webhook] No profile found for email: ${email}`);
+      }
 
       if (session.subscription) {
         const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
