@@ -157,8 +157,11 @@ export async function POST(req: NextRequest) {
     const contentType = req.headers.get('content-type') || '';
     const client = new Anthropic({ apiKey });
 
+    console.log('Contract compare request - Content-Type:', contentType);
+
     // Handle JSON request (with file URLs from Supabase Storage)
     if (contentType.includes('application/json')) {
+      console.log('Processing as JSON request');
       const body = await req.json();
       
       // Handle summary-only request
@@ -206,6 +209,8 @@ export async function POST(req: NextRequest) {
       for (const offerInput of offerInputs) {
         const { label, fileUrls } = offerInput;
         
+        console.log(`Processing offer ${label} with ${fileUrls?.length || 0} file URLs`);
+        
         if (!fileUrls || fileUrls.length === 0) {
           offers.push({ label, fileName: '', data: null, error: 'No files provided for this offer' });
           continue;
@@ -217,9 +222,12 @@ export async function POST(req: NextRequest) {
           const fileNames: string[] = [];
 
           for (const url of fileUrls) {
+            console.log(`Fetching file from URL: ${url}`);
             try {
               const { buffer, mimeType, fileName } = await fetchFileFromUrl(url);
+              console.log(`Fetched ${fileName}, size: ${buffer.length}, type: ${mimeType}`);
               const blocks = await extractContentFromBuffer(buffer, mimeType, fileName);
+              console.log(`Extracted ${blocks.length} content blocks from ${fileName}`);
               allContentBlocks.push(...blocks);
               fileNames.push(fileName);
             } catch (fetchErr) {
@@ -239,16 +247,22 @@ export async function POST(req: NextRequest) {
             text: COMPARISON_PROMPT + (address ? `\n\nProperty address: ${address}` : ''),
           });
 
+          console.log(`Sending ${allContentBlocks.length} content blocks to Claude for ${label}`);
+
           const response = await client.messages.create({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 4096,
             messages: [{ role: 'user', content: allContentBlocks }],
           });
 
+          console.log(`Claude response received for ${label}, stop_reason: ${response.stop_reason}`);
+
           const text = response.content
             .filter((b): b is Anthropic.Messages.TextBlock => b.type === 'text')
             .map((b) => b.text)
             .join('');
+          
+          console.log(`Response text length for ${label}: ${text.length}`);
 
           try {
             // Try to parse JSON, handling potential markdown fences
@@ -353,6 +367,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ address, offers, comparison });
   } catch (error) {
     console.error('Contract comparison error:', error);
-    return NextResponse.json({ error: 'Comparison failed' }, { status: 500 });
+    const errMsg = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: `Comparison failed: ${errMsg}` }, { status: 500 });
   }
 }
