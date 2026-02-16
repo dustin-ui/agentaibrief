@@ -215,7 +215,7 @@ export default function Home() {
                 </form>
               )}
               {subStatus === 'error' && (
-                <p className="text-red-600 text-sm mt-2">Something went wrong. Try again.</p>
+                <p className="text-red-800 text-sm mt-2">Something went wrong. Try again.</p>
               )}
               <p className="text-xs mt-3" style={{ color: '#888' }}>No spam. Unsubscribe anytime. Join 2,400+ agents.</p>
             </div>

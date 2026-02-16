@@ -122,7 +122,7 @@ export default function PreferencesPage() {
             </button>
 
             {status === 'error' && (
-              <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>
+              <p className="text-red-800 text-sm text-center">Something went wrong. Please try again.</p>
             )}
           </form>
         )}

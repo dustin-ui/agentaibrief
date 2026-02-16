@@ -147,7 +147,7 @@ export default function SEOCommandPage() {
               className="mt-4 px-8 py-3 bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-50 text-white font-bold rounded-xl transition-colors">
               {loading ? '⏳ Analyzing...' : '🚀 Generate My SEO Action Plan'}
             </button>
-            {error && <p className="text-red-400 mt-3 text-sm">{error}</p>}
+            {error && <p className="text-red-800 mt-3 text-sm">{error}</p>}
           </form>
 
           {hasResults && (

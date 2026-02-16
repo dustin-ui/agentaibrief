@@ -52,7 +52,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Community': 'bg-green-500/20 text-green-400 border-green-500/30',
   'Safety': 'bg-red-600/20 text-red-300 border-red-600/30',
   'Real Estate': 'bg-[#e85d26]/20 text-[#e85d26] border-[#e85d26]/30',
-  'Transportation': 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
+  'Transportation': 'bg-[#e85d26]/20 text-[#e85d26] border-[#e85d26]/30',
   'Entertainment': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
 };
 

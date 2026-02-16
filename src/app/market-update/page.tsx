@@ -168,7 +168,7 @@ function MarketUpdateTool() {
                 placeholder="e.g. Virginia"
                 className="w-full px-4 py-3 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:border-[#e85d26] focus:outline-none transition" />
             </div>
-            {error && <p className="text-red-400 text-sm">{error}</p>}
+            {error && <p className="text-red-800 text-sm">{error}</p>}
             <button onClick={handleGetReport} disabled={!canSubmitReport}
               className="w-full py-3 rounded-lg font-semibold text-white bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-40 disabled:cursor-not-allowed transition">
               🏠 Get Market Update
@@ -257,7 +257,7 @@ function MarketUpdateTool() {
             </div>
           </div>
 
-          {scriptError && <p className="text-red-400 text-sm">{scriptError}</p>}
+          {scriptError && <p className="text-red-800 text-sm">{scriptError}</p>}
 
           <button onClick={handleGenerateScripts} disabled={!canSubmitScript || scriptLoading}
             className="w-full py-3 rounded-lg font-semibold text-[#2a2a2a] bg-[#2a2a2a] hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition">

@@ -32,7 +32,7 @@ export const PROMPT_CATEGORIES = [
 export const AI_TOOL_COLORS: Record<string, string> = {
   ChatGPT: 'bg-green-900/50 text-green-300 border-green-700/50',
   Claude: 'bg-orange-900/50 text-orange-300 border-orange-700/50',
-  Gemini: 'bg-blue-900/50 text-blue-300 border-blue-700/50',
+  Gemini: 'bg-[#e85d26]/10 text-[#e85d26] border-[#e85d26]/30',
   Perplexity: 'bg-purple-900/50 text-purple-300 border-purple-700/50',
 };
 

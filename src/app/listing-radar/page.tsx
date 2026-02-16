@@ -277,7 +277,7 @@ export default function ListingRadarPage() {
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">{error}</div>
+            <div className="mb-6 p-4 bg-red-50 border border-red-300 rounded-xl text-red-800 text-sm">{error}</div>
           )}
 
           {/* Results area */}
