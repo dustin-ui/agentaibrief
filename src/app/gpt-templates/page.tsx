@@ -844,7 +844,7 @@ Day 7: [task]
 
 /* ───────────────── helpers ───────────────── */
 const platformColors: Record<string, string> = {
-  'ChatGPT Custom GPT': 'bg-green-900/60 text-green-300',
+  'ChatGPT Custom GPT': 'bg-green-50 text-green-800',
   'Claude Project': 'bg-orange-900/60 text-orange-300',
   'Gemini Gem': 'bg-[#2a2a2a]/60 text-[#e85d26]',
 };
@@ -982,7 +982,7 @@ export default function GPTTemplatesPage() {
                           {categoryIcons[tpl.category] || ''} {tpl.category}
                         </span>
                         {tpl.isFree ? (
-                          <span className="text-xs bg-green-900/60 text-green-400 px-2 py-0.5 rounded-full font-medium">
+                          <span className="text-xs bg-green-50 text-green-800 px-2 py-0.5 rounded-full font-medium">
                             Free
                           </span>
                         ) : (

@@ -34,13 +34,13 @@ export function generateSEOReportEmail(data: {
 
   <!-- Header -->
   <div style="text-align:center;padding:30px 0;border-bottom:1px solid #1f2937">
-    <h1 style="margin:0;color:#fff;font-size:24px">Agent<span style="color:#37b0c9">AI</span>Brief</h1>
+    <h1 style="margin:0;color:#fff;font-size:24px">Agent<span style="color:#e85d26">AI</span>Brief</h1>
     <p style="margin:8px 0 0;color:#9ca3af;font-size:14px">Weekly SEO Performance Report</p>
   </div>
 
   <!-- Domain Overview -->
   <div style="padding:24px 0;border-bottom:1px solid #1f2937">
-    <h2 style="margin:0 0 4px;color:#37b0c9;font-size:18px">📊 Domain Overview</h2>
+    <h2 style="margin:0 0 4px;color:#e85d26;font-size:18px">📊 Domain Overview</h2>
     <p style="margin:0 0 16px;color:#9ca3af;font-size:13px">${data.domain} • ${date}</p>
     <table style="width:100%;border-collapse:collapse">
       <tr>
@@ -72,12 +72,12 @@ export function generateSEOReportEmail(data: {
 
   <!-- AI Search Visibility -->
   <div style="padding:24px 0;border-bottom:1px solid #1f2937">
-    <h2 style="margin:0 0 16px;color:#37b0c9;font-size:18px">🤖 AI Search Visibility</h2>
+    <h2 style="margin:0 0 16px;color:#e85d26;font-size:18px">🤖 AI Search Visibility</h2>
     <table style="width:100%;border-collapse:collapse">
       <tr>
         <td style="padding:16px;background:#111827;border-radius:8px;text-align:center;width:50%">
           <div style="color:#9ca3af;font-size:12px;margin-bottom:4px">Visibility Score</div>
-          <div style="color:#37b0c9;font-size:36px;font-weight:700">${data.aiVisibilityScore}<span style="font-size:16px;color:#9ca3af">/100</span></div>
+          <div style="color:#e85d26;font-size:36px;font-weight:700">${data.aiVisibilityScore}<span style="font-size:16px;color:#9ca3af">/100</span></div>
         </td>
         <td style="width:8px"></td>
         <td style="padding:16px;background:#111827;border-radius:8px;text-align:center;width:50%">
@@ -91,8 +91,8 @@ export function generateSEOReportEmail(data: {
 
   <!-- Traffic Channels -->
   <div style="padding:24px 0;border-bottom:1px solid #1f2937">
-    <h2 style="margin:0 0 16px;color:#37b0c9;font-size:18px">📈 Traffic Channels</h2>
-    ${['Organic Search|organic|#10b981', 'Direct|direct|#3b82f6', 'AI Search|ai|#a855f7', 'Referral|referral|#f59e0b'].map(ch => {
+    <h2 style="margin:0 0 16px;color:#e85d26;font-size:18px">📈 Traffic Channels</h2>
+    ${['Organic Search|organic|#10b981', 'Direct|direct|#e85d26', 'AI Search|ai|#a855f7', 'Referral|referral|#f59e0b'].map(ch => {
       const [label, key, color] = ch.split('|');
       const val = data.trafficChannels[key as keyof typeof data.trafficChannels];
       return `<div style="margin-bottom:12px">
@@ -109,7 +109,7 @@ export function generateSEOReportEmail(data: {
 
   <!-- Top Keywords -->
   <div style="padding:24px 0;border-bottom:1px solid #1f2937">
-    <h2 style="margin:0 0 16px;color:#37b0c9;font-size:18px">🔑 Top Keywords</h2>
+    <h2 style="margin:0 0 16px;color:#e85d26;font-size:18px">🔑 Top Keywords</h2>
     <table style="width:100%;border-collapse:collapse">
       <thead>
         <tr style="border-bottom:1px solid #374151">
@@ -125,11 +125,11 @@ export function generateSEOReportEmail(data: {
 
   <!-- Takeaways -->
   <div style="padding:24px 0;border-bottom:1px solid #1f2937">
-    <h2 style="margin:0 0 16px;color:#37b0c9;font-size:18px">💡 Key Takeaways</h2>
+    <h2 style="margin:0 0 16px;color:#e85d26;font-size:18px">💡 Key Takeaways</h2>
     <ul style="margin:0;padding:0 0 0 20px;color:#d1d5db;font-size:14px;line-height:1.8">
       <li>Organic traffic is <strong style="color:#10b981">up ${data.trafficChange}%</strong> week-over-week — your content strategy is working.</li>
       <li>AI search now drives <strong style="color:#a855f7">${data.trafficChannels.ai}%</strong> of your traffic. This channel is growing fast.</li>
-      <li>Your AI Visibility Score of <strong style="color:#37b0c9">${data.aiVisibilityScore}/100</strong> means you appear in most relevant AI responses.</li>
+      <li>Your AI Visibility Score of <strong style="color:#e85d26">${data.aiVisibilityScore}/100</strong> means you appear in most relevant AI responses.</li>
       <li>Focus on keywords ranked #4-10 — small improvements here unlock significant traffic gains.</li>
     </ul>
   </div>
@@ -137,12 +137,12 @@ export function generateSEOReportEmail(data: {
   <!-- Footer -->
   <div style="padding:24px 0;text-align:center">
     <p style="color:#9ca3af;font-size:12px;margin:0 0 8px">
-      Powered by <strong style="color:#fff">AgentAIBrief</strong> × <strong style="color:#37b0c9">Fox Homes</strong>
+      Powered by <strong style="color:#fff">AgentAIBrief</strong> × <strong style="color:#e85d26">Fox Homes</strong>
     </p>
     <p style="color:#6b7280;font-size:11px;margin:0">
       You're receiving this because you're subscribed to the Inner Circle plan.<br>
-      <a href="https://agentaibrief.com/preferences" style="color:#37b0c9;text-decoration:none">Manage preferences</a> · 
-      <a href="https://agentaibrief.com/pro-dashboard" style="color:#37b0c9;text-decoration:none">View full dashboard</a>
+      <a href="https://agentaibrief.com/preferences" style="color:#e85d26;text-decoration:none">Manage preferences</a> · 
+      <a href="https://agentaibrief.com/pro-dashboard" style="color:#e85d26;text-decoration:none">View full dashboard</a>
     </p>
   </div>
 

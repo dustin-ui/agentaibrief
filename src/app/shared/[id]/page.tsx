@@ -113,7 +113,7 @@ export default function SharedComparisonPage() {
             <h4 className="font-semibold text-sm text-[#666] uppercase tracking-wider mb-3">⚠️ Risk Flags</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {data.comparison.riskAnalysis.map(r => (
-                <div key={r.offer} className={`rounded-lg p-3 border ${r.risks.length > 3 ? 'bg-red-900/20 border-red-700/30' : r.risks.length > 0 ? 'bg-yellow-900/15 border-yellow-700/25' : 'bg-green-900/15 border-green-700/25'}`}>
+                <div key={r.offer} className={`rounded-lg p-3 border ${r.risks.length > 3 ? 'bg-red-50 border-red-300' : r.risks.length > 0 ? 'bg-yellow-50 border-yellow-300' : 'bg-green-50 border-green-300'}`}>
                   <h5 className="font-semibold text-sm mb-2">{r.risks.length > 3 ? '🔴' : r.risks.length > 0 ? '🟡' : '🟢'} {r.offer}</h5>
                   {r.risks.length === 0 ? <p className="text-xs text-green-400">✅ No risks</p> : (
                     <ul className="space-y-1">{r.risks.map((ri, i) => <li key={i} className="text-xs text-[#555] flex gap-1"><span className="text-red-400">⚠</span>{ri}</li>)}</ul>

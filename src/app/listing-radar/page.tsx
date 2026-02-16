@@ -46,7 +46,7 @@ const SIGNAL_META: Record<string, { emoji: string; label: string; color: string 
   'expired-listing': { emoji: '📋', label: 'Expired Listing', color: '#6b7280' },
   'vacancy': { emoji: '🏚️', label: 'Vacancy', color: '#78716c' },
   'high-equity': { emoji: '💰', label: 'High Equity', color: '#22c55e' },
-  'fsbo': { emoji: '📦', label: 'FSBO', color: '#3b82f6' },
+  'fsbo': { emoji: '📦', label: 'FSBO', color: '#e85d26' },
   'investor-flip': { emoji: '🏗️', label: 'Investor Flip', color: '#f97316' },
   'tax-delinquent': { emoji: '📉', label: 'Tax Delinquent', color: '#dc2626' },
 };

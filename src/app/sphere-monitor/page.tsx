@@ -315,7 +315,7 @@ function SphereMonitorContent() {
             <button onClick={() => setShowImportModal(true)} className="px-3 py-2 bg-[#f0ece4] hover:bg-[#d8d4cc] rounded-lg text-sm font-medium transition flex items-center gap-1.5">
               📥 Import CSV
             </button>
-            <button onClick={() => setShowAddModal(true)} className="px-3 py-2 bg-[#e85d26] hover:bg-[#2d98af] rounded-lg text-sm font-medium transition flex items-center gap-1.5">
+            <button onClick={() => setShowAddModal(true)} className="px-3 py-2 bg-[#e85d26] hover:bg-[#d05020] rounded-lg text-sm font-medium text-white transition flex items-center gap-1.5">
               ➕ Add Contact
             </button>
           </div>
@@ -598,7 +598,7 @@ function SphereMonitorContent() {
                 </select>
               </div>
               <button onClick={handleAddSubmit} disabled={!newContact.name}
-                className="w-full py-2.5 bg-[#e85d26] hover:bg-[#2d98af] disabled:opacity-40 rounded-lg font-medium transition">
+                className="w-full py-2.5 bg-[#e85d26] hover:bg-[#d05020] disabled:opacity-40 rounded-lg font-medium text-white transition">
                 Add Contact
               </button>
             </div>

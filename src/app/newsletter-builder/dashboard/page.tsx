@@ -99,10 +99,10 @@ export default function NewsletterDashboard() {
 
   const STATUS_COLORS: Record<string, string> = {
     draft: 'bg-gray-700 text-[#555]',
-    preview_sent: 'bg-yellow-900/50 text-yellow-400',
+    preview_sent: 'bg-yellow-50 text-yellow-800',
     approved: 'bg-[#e85d26]/20 text-[#e85d26]',
-    sent: 'bg-green-900/50 text-green-400',
-    failed: 'bg-red-900/50 text-red-400',
+    sent: 'bg-green-50 text-green-800',
+    failed: 'bg-red-50 text-red-800',
   };
 
   return (

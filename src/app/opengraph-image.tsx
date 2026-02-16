@@ -16,7 +16,7 @@ export default async function Image() {
           justifyContent: 'center',
           width: '100%',
           height: '100%',
-          background: 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #1e40af 100%)',
+          background: 'linear-gradient(135deg, #2a2a2a 0%, #e85d26 50%, #c44a1a 100%)',
           fontFamily: 'sans-serif',
           padding: '60px',
         }}

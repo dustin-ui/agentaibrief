@@ -269,7 +269,7 @@ function NewsletterBuilderInner() {
             <p className="text-[#666] mb-8">Your newsletter profile is set up and active.</p>
 
             {toast && (
-              <div className={`mb-6 px-4 py-3 rounded-lg text-sm font-medium ${toast.type === 'success' ? 'bg-green-900/50 text-green-300 border border-green-700' : 'bg-red-900/50 text-red-300 border border-red-700'}`}>
+              <div className={`mb-6 px-4 py-3 rounded-lg text-sm font-medium ${toast.type === 'success' ? 'bg-green-50 text-green-800 border border-green-300' : 'bg-red-50 text-red-800 border border-red-300'}`}>
                 {toast.message}
               </div>
             )}
@@ -331,7 +331,7 @@ function NewsletterBuilderInner() {
           <p className="text-[#666] mb-8">{editMode ? 'Edit your newsletter profile.' : 'Set up your branded weekly newsletter in minutes.'}</p>
 
           {toast && (
-            <div className={`mb-6 px-4 py-3 rounded-lg text-sm font-medium ${toast.type === 'success' ? 'bg-green-900/50 text-green-300 border border-green-700' : 'bg-red-900/50 text-red-300 border border-red-700'}`}>
+            <div className={`mb-6 px-4 py-3 rounded-lg text-sm font-medium ${toast.type === 'success' ? 'bg-green-50 text-green-800 border border-green-300' : 'bg-red-50 text-red-800 border border-red-300'}`}>
               {toast.message}
             </div>
           )}

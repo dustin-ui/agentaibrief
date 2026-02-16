@@ -48,7 +48,7 @@ export function generateNewsletterHTML(
     sellerCTA?: { headline: string; body: string; buttonText: string; buttonUrl: string };
   }
 ): string {
-  const c = profile.brand_color || '#37b0c9';
+  const c = profile.brand_color || '#e85d26';
   const cLight = c + '18';
   const date = edition_date || new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const teamLine = profile.team_name ? `${profile.team_name} · ` : '';

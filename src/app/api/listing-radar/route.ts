@@ -32,7 +32,7 @@ const SIGNAL_TYPES: Record<string, { emoji: string; color: string }> = {
   'expired-listing': { emoji: '📋', color: '#6b7280' },
   'vacancy': { emoji: '🏚️', color: '#78716c' },
   'high-equity': { emoji: '💰', color: '#22c55e' },
-  'fsbo': { emoji: '📦', color: '#3b82f6' },
+  'fsbo': { emoji: '📦', color: '#e85d26' },
   'investor-flip': { emoji: '🏗️', color: '#f97316' },
   'tax-delinquent': { emoji: '📉', color: '#dc2626' },
 };

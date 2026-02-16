@@ -301,7 +301,7 @@ export default function VideoLibraryPage() {
             </form>
 
             {accessError && (
-              <div className="mt-4 p-3 bg-red-900/30 border border-red-800 rounded-lg text-sm text-red-300">
+              <div className="mt-4 p-3 bg-red-50 border border-red-300 rounded-lg text-sm text-red-800">
                 {accessError}
               </div>
             )}

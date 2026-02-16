@@ -89,9 +89,9 @@ function getBestWorst(offers: CompareOffer[], field: string, mode: 'highest' | '
 }
 
 function cellColor(idx: number, best: number, worst: number): string {
-  if (idx === best) return 'bg-green-900/30 border-green-700/30';
-  if (idx === worst) return 'bg-red-900/30 border-red-700/30';
-  return 'bg-yellow-900/20 border-yellow-700/20';
+  if (idx === best) return 'bg-green-50 border-green-300';
+  if (idx === worst) return 'bg-red-50 border-red-300';
+  return 'bg-yellow-50 border-yellow-300';
 }
 
 function calcSellerNet(d: CompareOfferData): string {
@@ -1167,19 +1167,19 @@ export default function ContractAnalyzerPage() {
 
           {/* Save status */}
           {saveStatus === 'saved' && (
-            <div className="bg-green-900/20 border border-green-700/30 rounded-lg p-2 mb-4 flex items-center gap-2">
+            <div className="bg-green-50 border border-green-300 rounded-lg p-2 mb-4 flex items-center gap-2">
               <span className="text-green-400 text-sm">✅ Saved to database</span>
             </div>
           )}
           {saveStatus === 'saving' && (
-            <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-2 mb-4 flex items-center gap-2">
+            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-2 mb-4 flex items-center gap-2">
               <span className="text-yellow-400 text-sm">💾 Saving...</span>
             </div>
           )}
 
           {/* Share toast */}
           {shareUrl && (
-            <div className="bg-green-900/20 border border-green-700/30 rounded-lg p-3 mb-4 flex items-center gap-2">
+            <div className="bg-green-50 border border-green-300 rounded-lg p-3 mb-4 flex items-center gap-2">
               <span className="text-green-400 text-sm">🔗 Share link copied: {shareUrl}</span>
             </div>
           )}
@@ -1359,7 +1359,7 @@ export default function ContractAnalyzerPage() {
                   {compareResult.offers.map((o) => (
                     <button key={o.label}
                       onClick={() => handleSelectWinner(o.label)}
-                      className={`p-4 rounded-lg border text-left transition ${selectedWinner === o.label ? 'border-green-500 bg-green-900/20' : 'border-[#d8d4cc] hover:border-[#e85d26] hover:bg-[#e85d26]/5'}`}>
+                      className={`p-4 rounded-lg border text-left transition ${selectedWinner === o.label ? 'border-green-500 bg-green-50' : 'border-[#d8d4cc] hover:border-[#e85d26] hover:bg-[#e85d26]/5'}`}>
                       <p className="font-bold text-sm">{o.label}</p>
                       <p className="text-xs text-[#666]">{o.data?.buyerName || o.fileName}</p>
                       <p className="text-sm text-[#e85d26] mt-1">{o.data?.purchasePriceFormatted || '—'}</p>
@@ -1380,7 +1380,7 @@ export default function ContractAnalyzerPage() {
                         type="date"
                         value={ratificationDate}
                         onChange={(e) => setRatificationDate(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border-2 border-[#d8d4cc] rounded-lg text-[#2a2a2a] focus:outline-none focus:border-[#e85d26] text-lg"
+                        className="w-full px-4 py-3 bg-[#f5f0ea] border-2 border-[#d8d4cc] rounded-lg text-[#2a2a2a] focus:outline-none focus:border-[#e85d26] text-lg"
                       />
                     </div>
                     <button
@@ -1442,7 +1442,7 @@ export default function ContractAnalyzerPage() {
                       !removedEventIndices.has(i) && (
                         <div
                           key={i}
-                          className="flex items-center bg-white rounded-lg px-4 py-3 border border-[#e0dcd4] animate-fade-in group gap-3"
+                          className="flex items-center bg-[#f5f0ea] rounded-lg px-4 py-3 border border-[#e0dcd4] animate-fade-in group gap-3"
                           style={{ animationDelay: `${i * 50}ms` }}
                         >
                           <div
@@ -1497,7 +1497,7 @@ export default function ContractAnalyzerPage() {
                                 setReminderEmails(updated);
                               }}
                               placeholder="email@example.com"
-                              className="flex-1 px-3 py-2 bg-white border border-[#d8d4cc] rounded-lg text-sm text-[#2a2a2a] placeholder-[#aaa] focus:outline-none focus:border-[#e85d26]"
+                              className="flex-1 px-3 py-2 bg-[#f5f0ea] border border-[#d8d4cc] rounded-lg text-sm text-[#2a2a2a] placeholder-[#aaa] focus:outline-none focus:border-[#e85d26]"
                             />
                             {reminderEmails.length > 1 && (
                               <button
@@ -1519,7 +1519,7 @@ export default function ContractAnalyzerPage() {
 
               {/* Calendar Actions for Selected Winner */}
               {selectedWinner && !showCalendarModal && !calculatingDates && discoveredEvents.length > 0 && (
-                <div className="bg-green-900/20 border border-green-700/30 rounded-xl p-6 mb-6 animate-fade-in">
+                <div className="bg-green-50 border border-green-300 rounded-xl p-6 mb-6 animate-fade-in">
                   <h3 className="text-lg font-bold text-green-600 mb-3">✅ {selectedWinner} Selected — {discoveredEvents.length - removedEventIndices.size} deadlines ready</h3>
                   <div className="flex flex-wrap gap-3">
                     <button onClick={() => {
@@ -1534,7 +1534,7 @@ export default function ContractAnalyzerPage() {
                       const a = document.createElement('a'); a.href = url;
                       a.download = `contract-deadlines-${compareResult.address.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40)}.ics`;
                       a.click(); URL.revokeObjectURL(url);
-                    }} className="px-4 py-2 bg-white border border-[#d8d4cc] rounded-lg text-sm font-medium hover:border-[#e85d26] transition">
+                    }} className="px-4 py-2 bg-[#f5f0ea] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:border-[#e85d26] transition">
                       📅 Download .ics Calendar
                     </button>
                     <button onClick={() => {
@@ -1544,7 +1544,7 @@ export default function ContractAnalyzerPage() {
                         const link = generateGoogleCalendarLink(event);
                         window.open(link, '_blank');
                       }
-                    }} className="px-4 py-2 bg-white border border-[#d8d4cc] rounded-lg text-sm font-medium hover:border-[#e85d26] transition">
+                    }} className="px-4 py-2 bg-[#f5f0ea] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:border-[#e85d26] transition">
                       🗓️ Add to Google Calendar
                     </button>
                   </div>
