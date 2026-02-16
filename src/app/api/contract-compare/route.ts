@@ -236,8 +236,26 @@ export async function POST(req: NextRequest) {
               allContentBlocks.push(...blocks);
               fileNames.push(fileName);
             } catch (fetchErr) {
-              console.error(`Failed to fetch file from ${url}:`, fetchErr);
-              // Continue with other files
+              const errMsg = fetchErr instanceof Error ? fetchErr.message : String(fetchErr);
+              console.error(`Failed to fetch/process file from ${url}: ${errMsg}`);
+              // If fetch worked but extraction failed, still add as document
+              try {
+                console.log('Attempting direct fetch fallback...');
+                const response = await fetch(url);
+                if (response.ok) {
+                  const arrayBuffer = await response.arrayBuffer();
+                  const buffer = Buffer.from(arrayBuffer);
+                  console.log(`Fallback fetch succeeded, size: ${buffer.length}`);
+                  // Send as base64 document
+                  allContentBlocks.push({
+                    type: 'document',
+                    source: { type: 'base64', media_type: 'application/pdf', data: buffer.toString('base64') },
+                  } as Anthropic.Messages.ContentBlockParam);
+                  fileNames.push(url.split('/').pop() || 'document');
+                }
+              } catch (fallbackErr) {
+                console.error('Fallback fetch also failed:', fallbackErr);
+              }
             }
           }
 
