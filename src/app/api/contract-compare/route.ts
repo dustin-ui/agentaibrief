@@ -304,7 +304,49 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      return NextResponse.json({ address, offers, comparison: null });
+      // Generate comparison summary if we have 2+ valid offers
+      let comparison = null;
+      const validOffers = offers.filter((o) => o.data);
+      if (validOffers.length >= 2) {
+        try {
+          console.log(`Generating comparison summary for ${validOffers.length} offers`);
+          const comparisonInput = validOffers.map((o) => ({
+            label: o.label,
+            ...o.data,
+          }));
+
+          const summaryResponse = await client.messages.create({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 2048,
+            messages: [
+              {
+                role: 'user',
+                content: `${SUMMARY_PROMPT}\n\nOffers data:\n${JSON.stringify(comparisonInput, null, 2)}`,
+              },
+            ],
+          });
+
+          const summaryText = summaryResponse.content
+            .filter((b): b is Anthropic.Messages.TextBlock => b.type === 'text')
+            .map((b) => b.text)
+            .join('');
+
+          try {
+            let jsonText = summaryText.trim();
+            if (jsonText.startsWith('```')) {
+              jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+            }
+            comparison = JSON.parse(jsonText);
+            console.log('Comparison summary generated successfully');
+          } catch {
+            console.error('Failed to parse comparison summary');
+          }
+        } catch (summaryErr) {
+          console.error('Summary generation error:', summaryErr);
+        }
+      }
+
+      return NextResponse.json({ address, offers, comparison });
     }
 
     // Handle FormData request (legacy - direct file uploads)
