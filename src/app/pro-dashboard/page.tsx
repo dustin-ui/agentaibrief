@@ -137,7 +137,7 @@ export default function ProDashboard() {
                   className="w-full px-4 py-3 bg-[#f0ece4] border border-gray-600 rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:outline-none focus:border-[#e85d26] mb-4"
                 />
                 <div className="flex gap-3">
-                  <button type="submit" className="flex-1 px-4 py-2 bg-[#e85d26] text-[#2a2a2a] font-medium rounded-lg hover:bg-[#c44a1a]">
+                  <button type="submit" className="flex-1 px-4 py-2 bg-[#e85d26] text-white font-medium rounded-lg hover:bg-[#c44a1a]">
                     Save & Refresh
                   </button>
                   <button type="button" onClick={() => setShowSetup(false)} className="px-4 py-2 border border-gray-600 text-[#666] rounded-lg hover:text-[#2a2a2a]">

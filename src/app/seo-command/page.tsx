@@ -144,7 +144,7 @@ export default function SEOCommandPage() {
               </div>
             </div>
             <button type="submit" disabled={loading}
-              className="mt-4 px-8 py-3 bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-50 text-[#2a2a2a] font-bold rounded-xl transition-colors">
+              className="mt-4 px-8 py-3 bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-50 text-white font-bold rounded-xl transition-colors">
               {loading ? '⏳ Analyzing...' : '🚀 Generate My SEO Action Plan'}
             </button>
             {error && <p className="text-red-400 mt-3 text-sm">{error}</p>}

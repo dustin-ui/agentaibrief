@@ -221,13 +221,13 @@ export default function ContentBriefingPage() {
           <div className="flex gap-3 mb-4">
             <button
               onClick={() => setType('county')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${type === 'county' ? 'bg-[#e85d26] text-[#2a2a2a]' : 'bg-[#f0ece4] text-[#666] hover:text-[#2a2a2a]'}`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${type === 'county' ? 'bg-[#e85d26] text-white' : 'bg-[#f0ece4] text-[#666] hover:text-[#2a2a2a]'}`}
             >
               County
             </button>
             <button
               onClick={() => setType('city')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${type === 'city' ? 'bg-[#e85d26] text-[#2a2a2a]' : 'bg-[#f0ece4] text-[#666] hover:text-[#2a2a2a]'}`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${type === 'city' ? 'bg-[#e85d26] text-white' : 'bg-[#f0ece4] text-[#666] hover:text-[#2a2a2a]'}`}
             >
               City
             </button>
@@ -246,7 +246,7 @@ export default function ContentBriefingPage() {
           <button
             onClick={generateBriefing}
             disabled={!area.trim() || !state || loading}
-            className="w-full py-3 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-[#e85d26] text-white font-bold rounded-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed"
           >
             🔍 Generate Briefing
           </button>
@@ -255,7 +255,7 @@ export default function ContentBriefingPage() {
 
         {/* Error */}
         {error && (
-          <div className="max-w-xl mx-auto mb-8 bg-red-900/20 border border-red-700/30 rounded-lg p-4 text-red-400 text-sm">
+          <div className="max-w-xl mx-auto mb-8 bg-red-50 border border-red-300 rounded-lg p-4 text-red-800 text-sm">
             {error}
           </div>
         )}

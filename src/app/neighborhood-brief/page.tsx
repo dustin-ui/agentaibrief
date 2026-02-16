@@ -189,7 +189,7 @@ export default function NeighborhoodBriefPage() {
             <button
               onClick={generateBrief}
               disabled={loading || !address.trim()}
-              className="px-6 py-3 bg-[#e85d26] hover:bg-[#2d9bb3] disabled:opacity-50 disabled:cursor-not-allowed text-[#2a2a2a] font-semibold rounded-lg transition-colors whitespace-nowrap"
+              className="px-6 py-3 bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors whitespace-nowrap"
             >
               {loading ? 'Generating...' : 'Generate Brief'}
             </button>
@@ -228,7 +228,7 @@ export default function NeighborhoodBriefPage() {
 
         {/* Error */}
         {error && (
-          <div className="max-w-2xl mx-auto mb-8 p-4 bg-red-900/30 border border-red-700 rounded-lg text-red-300">
+          <div className="max-w-2xl mx-auto mb-8 p-4 bg-red-50 border border-red-300 rounded-lg text-red-800">
             ⚠️ {error}
           </div>
         )}
@@ -244,10 +244,10 @@ export default function NeighborhoodBriefPage() {
                 )}
               </div>
               <div className="flex gap-2">
-                <button onClick={exportPDF} className="px-3 py-1.5 text-sm bg-[#f0ece4] hover:bg-gray-700 border border-gray-600 rounded-lg transition-colors">
+                <button onClick={exportPDF} className="px-3 py-1.5 text-sm bg-[#f0ece4] hover:bg-[#d8d4cc] border border-gray-600 rounded-lg transition-colors">
                   📄 Export PDF
                 </button>
-                <button onClick={copyShareLink} className="px-3 py-1.5 text-sm bg-[#f0ece4] hover:bg-gray-700 border border-gray-600 rounded-lg transition-colors">
+                <button onClick={copyShareLink} className="px-3 py-1.5 text-sm bg-[#f0ece4] hover:bg-[#d8d4cc] border border-gray-600 rounded-lg transition-colors">
                   🔗 Share Link
                 </button>
               </div>

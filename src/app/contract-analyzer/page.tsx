@@ -820,7 +820,7 @@ export default function ContractAnalyzerPage() {
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center gap-2 flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all ${
-                  s < step ? 'bg-[#e85d26] text-[#2a2a2a]' : s === step ? 'bg-[#e85d26]/20 border-2 border-[#e85d26] text-[#e85d26]' : 'bg-[#f0ece4] text-[#888]'
+                  s < step ? 'bg-[#e85d26] text-white' : s === step ? 'bg-[#e85d26]/20 border-2 border-[#e85d26] text-[#e85d26]' : 'bg-[#f0ece4] text-[#888]'
                 }`}>
                   {s < step ? '✓' : s}
                 </div>
@@ -926,7 +926,7 @@ export default function ContractAnalyzerPage() {
             <button
               onClick={goNext}
               disabled={!address.trim()}
-              className="w-full mt-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full mt-6 py-3 bg-[#e85d26] text-white font-bold rounded-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Next →
             </button>
@@ -980,7 +980,7 @@ export default function ContractAnalyzerPage() {
               </p>
               <button
                 onClick={goNext}
-                className="mt-4 px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-lg hover:bg-[#e85d26]/80 transition"
+                className="mt-4 px-8 py-3 bg-[#e85d26] text-white font-bold rounded-lg hover:bg-[#e85d26]/80 transition"
               >
                 Continue →
               </button>
@@ -1069,7 +1069,7 @@ export default function ContractAnalyzerPage() {
 
           {/* Error */}
           {error && (
-            <div className="mt-4 bg-red-900/20 border border-red-700/30 rounded-lg p-3 text-red-400 text-sm">
+            <div className="mt-4 bg-red-50 border border-red-300 rounded-lg p-3 text-red-800 text-sm">
               {error}
             </div>
           )}
@@ -1078,7 +1078,7 @@ export default function ContractAnalyzerPage() {
           <button
             onClick={runAnalysis}
             disabled={!allOffersHaveFiles || analyzing}
-            className="w-full mt-6 py-4 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-lg text-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full mt-6 py-4 bg-[#e85d26] text-white font-bold rounded-lg text-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {offerCount === 1
               ? `Analyze ${totalFiles} Document${totalFiles !== 1 ? 's' : ''}`

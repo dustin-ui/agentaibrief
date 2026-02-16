@@ -61,7 +61,7 @@ function LoginForm() {
 
         <form onSubmit={handleSubmit} className="bg-[#f0ece4]/60 border border-[#e0dcd4] rounded-2xl p-8 space-y-4">
           {error && (
-            <div className="p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-300 text-sm">{error}</div>
+            <div className="p-3 bg-red-50 border border-red-300 rounded-lg text-red-800 text-sm">{error}</div>
           )}
           <div>
             <label className="block text-sm font-medium text-[#555] mb-1">Email</label>
@@ -74,7 +74,7 @@ function LoginForm() {
               className="w-full px-4 py-2.5 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-[#e85d26] focus:border-[#e85d26] outline-none" placeholder="••••••••" />
           </div>
           <button type="submit" disabled={loading}
-            className="w-full py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50">
+            className="w-full py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50">
             {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
@@ -100,7 +100,7 @@ function LoginForm() {
                 className="w-full px-4 py-2.5 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-[#e85d26] outline-none mb-3" />
               {resetMsg && <p className={`text-sm mb-3 ${resetMsg.includes('Check') ? 'text-green-400' : 'text-red-400'}`}>{resetMsg}</p>}
               <button onClick={handleReset} disabled={resetLoading}
-                className="w-full py-2.5 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition disabled:opacity-50">
+                className="w-full py-2.5 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition disabled:opacity-50">
                 {resetLoading ? 'Sending...' : 'Send Reset Link'}
               </button>
             </div>

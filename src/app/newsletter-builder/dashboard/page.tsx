@@ -100,7 +100,7 @@ export default function NewsletterDashboard() {
   const STATUS_COLORS: Record<string, string> = {
     draft: 'bg-gray-700 text-[#555]',
     preview_sent: 'bg-yellow-900/50 text-yellow-400',
-    approved: 'bg-blue-900/50 text-[#e85d26]',
+    approved: 'bg-[#e85d26]/20 text-[#e85d26]',
     sent: 'bg-green-900/50 text-green-400',
     failed: 'bg-red-900/50 text-red-400',
   };
@@ -115,7 +115,7 @@ export default function NewsletterDashboard() {
               <h1 className="text-3xl font-bold text-[#2a2a2a]">📧 Newsletter Dashboard</h1>
               <p className="text-[#666] mt-1">{profile?.agent_name} · {profile?.brokerage}</p>
             </div>
-            <Link href="/newsletter-builder" className="px-4 py-2 bg-[#f0ece4] text-[#2a2a2a] rounded-lg text-sm hover:bg-gray-700">
+            <Link href="/newsletter-builder" className="px-4 py-2 bg-[#f0ece4] text-[#2a2a2a] rounded-lg text-sm hover:bg-[#d8d4cc]">
               ✏️ Edit Profile
             </Link>
           </div>

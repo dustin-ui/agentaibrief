@@ -73,7 +73,7 @@ const tiers = [
     annualSavings: 'Save $198',
     description: 'Everything in Pro — plus direct access to Dustin Fox for AI & real estate coaching.',
     cta: 'Join the Inner Circle',
-    ctaStyle: 'bg-[#e85d26] text-[#2a2a2a] hover:bg-[#c44a1a] shadow-lg shadow-blue-200',
+    ctaStyle: 'bg-[#e85d26] text-white hover:bg-[#c44a1a] shadow-lg shadow-[#e85d26]/20',
     highlighted: true,
     badge: 'Recommended',
     scarcity: 'Limited seats available',
@@ -203,13 +203,13 @@ export default function SubscribePage() {
                 key={tier.name}
                 className={`relative rounded-2xl p-8 flex flex-col ${
                   tier.highlighted
-                    ? 'border-2 border-[#e85d26] shadow-xl shadow-blue-100 bg-[#e8e6e1] z-10'
+                    ? 'border-2 border-[#e85d26] shadow-xl shadow-[#e85d26]/10 bg-[#e8e6e1] z-10'
                     : 'border border-[#e0dcd4] bg-[#e8e6e1]'
                 }`}
               >
                 {tier.badge && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="bg-[#e85d26] text-[#2a2a2a] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wide">
+                    <span className="bg-[#e85d26] text-white text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wide">
                       {tier.badge}
                     </span>
                   </div>
@@ -329,11 +329,11 @@ export default function SubscribePage() {
                 name="email"
                 placeholder="Enter your email for the free digest"
                 required
-                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#2a2a2a]"
+                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#e85d26] text-[#2a2a2a]"
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold text-sm rounded-lg hover:bg-[#c44a1a] transition-colors"
+                className="px-6 py-3 bg-[#e85d26] text-white font-semibold text-sm rounded-lg hover:bg-[#c44a1a] transition-colors"
               >
                 Start Free
               </button>
@@ -444,12 +444,12 @@ export default function SubscribePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-800 text-[#2a2a2a]">
+      <section className="py-16 bg-[#2a2a2a] text-white">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h3 className="text-3xl font-bold mb-4">
             The agents who adopt AI first will win.
           </h3>
-          <p className="text-blue-100 text-lg mb-8">
+          <p className="text-gray-300 text-lg mb-8">
             The team lead behind $277M in volume is sharing exactly how AI got him there.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -463,7 +463,7 @@ export default function SubscribePage() {
             <button 
               onClick={() => handleCheckout('inner-circle')}
               disabled={!!loading}
-              className="px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#e85d26] transition-colors border border-[#e85d26] disabled:opacity-50"
+              className="px-8 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#e85d26] transition-colors border border-[#e85d26] disabled:opacity-50"
             >
               {loading === 'inner-circle' ? 'Redirecting...' : `Join Inner Circle — $${isAnnual ? '990/yr' : '99/mo'}`}
             </button>

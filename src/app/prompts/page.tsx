@@ -96,7 +96,7 @@ function PromptCard({ prompt }: { prompt: Prompt }) {
 
               <button
                 onClick={handleCopy}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#e85d26] text-[#2a2a2a] text-sm font-semibold rounded-lg hover:bg-[#2d9db5] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#2d9db5] transition-colors"
               >
                 {copied ? (
                   <>✓ Copied!</>
@@ -120,7 +120,7 @@ function PromptCard({ prompt }: { prompt: Prompt }) {
                   <div className="text-4xl mb-3">🔒</div>
                   <p className="font-bold text-[#2a2a2a] text-lg mb-1">Inner Circle Prompt</p>
                   <p className="text-sm text-[#666] mb-5">Join the Inner Circle to unlock all {PROMPTS.length}+ prompts</p>
-                  <Link href="/subscribe" className="inline-flex px-6 py-2.5 bg-[#e85d26] text-[#2a2a2a] text-sm font-semibold rounded-lg hover:bg-[#2d9db5] transition-colors">
+                  <Link href="/subscribe" className="inline-flex px-6 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#2d9db5] transition-colors">
                     Unlock All Prompts →
                   </Link>
                 </div>
@@ -172,7 +172,7 @@ export default function PromptLibrary() {
             <Link href="/tools" className="text-sm text-[#666] hover:text-[#2a2a2a] transition-colors">AI Tools</Link>
             <Link href="/prompts" className="text-sm text-[#2a2a2a] font-medium border-b-2 border-[#e85d26] pb-0.5">Prompts</Link>
             <Link href="/videos" className="text-sm text-[#666] hover:text-[#2a2a2a] transition-colors">Videos</Link>
-            <Link href="/subscribe" className="text-sm bg-[#e85d26] text-[#2a2a2a] px-4 py-1.5 rounded-lg hover:bg-[#2d9db5] transition-colors font-medium">Subscribe</Link>
+            <Link href="/subscribe" className="text-sm bg-[#e85d26] text-white px-4 py-1.5 rounded-lg hover:bg-[#2d9db5] transition-colors font-medium">Subscribe</Link>
           </nav>
         </div>
       </header>
@@ -216,7 +216,7 @@ export default function PromptLibrary() {
                 onClick={() => setCategory(cat)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   category === cat
-                    ? 'bg-[#e85d26] text-[#2a2a2a]'
+                    ? 'bg-[#e85d26] text-white'
                     : 'bg-[#f0ece4] text-[#666] hover:bg-[#f0ece4] hover:text-[#2a2a2a] border border-[#e0dcd4]'
                 }`}
               >
@@ -273,7 +273,7 @@ export default function PromptLibrary() {
           <p className="text-[#666] mb-6 max-w-xl mx-auto text-lg">
             Inner Circle members get all {PROMPTS.length}+ prompts, daily AI briefings, tool reviews, and implementation guides.
           </p>
-          <Link href="/subscribe" className="inline-flex px-8 py-3.5 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-xl hover:bg-[#2d9db5] transition-colors text-lg">
+          <Link href="/subscribe" className="inline-flex px-8 py-3.5 bg-[#e85d26] text-white font-semibold rounded-xl hover:bg-[#2d9db5] transition-colors text-lg">
             Join the Inner Circle →
           </Link>
           <p className="text-sm text-[#888] mt-3">Cancel anytime · New prompts added weekly</p>

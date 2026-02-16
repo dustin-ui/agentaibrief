@@ -32,10 +32,10 @@ export function PaywallGate({ requiredTier, children, featureName }: PaywallGate
           This is a {TIER_LABELS[requiredTier]} feature. Create a free account to get started, then upgrade to unlock it.
         </p>
         <div className="flex gap-3 justify-center">
-          <Link href="/login" className="px-6 py-2.5 bg-gray-700 text-[#2a2a2a] rounded-lg hover:bg-gray-600 transition-colors font-medium">
+          <Link href="/login" className="px-6 py-2.5 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium">
             Log In
           </Link>
-          <Link href="/signup" className="px-6 py-2.5 bg-[#e85d26] text-[#2a2a2a] rounded-lg hover:bg-[#c44a1a] transition-colors font-medium">
+          <Link href="/signup" className="px-6 py-2.5 bg-[#e85d26] text-white rounded-lg hover:bg-[#c44a1a] transition-colors font-medium">
             Sign Up
           </Link>
         </div>
@@ -51,7 +51,7 @@ export function PaywallGate({ requiredTier, children, featureName }: PaywallGate
         <p className="text-[#666] mb-6">
           {featureName || 'This feature'} requires a {TIER_LABELS[requiredTier]} subscription. You&apos;re currently on the <span className="text-[#2a2a2a] font-medium capitalize">{tier.replace('_', ' ')}</span> plan.
         </p>
-        <Link href="/pricing" className="inline-block px-6 py-2.5 bg-[#e85d26] text-[#2a2a2a] rounded-lg hover:bg-[#c44a1a] transition-colors font-medium">
+        <Link href="/pricing" className="inline-block px-6 py-2.5 bg-[#e85d26] text-white rounded-lg hover:bg-[#c44a1a] transition-colors font-medium">
           View Pricing
         </Link>
       </div>

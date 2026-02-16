@@ -14,7 +14,7 @@ export default function AboutPage() {
           <a href="/" className="text-2xl font-bold text-[#2a2a2a]">
             Agent<span className="text-[#e85d26]">AI</span>Brief
           </a>
-          <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
+          <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-white text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
             Subscribe
           </a>
         </div>
@@ -122,7 +122,7 @@ export default function AboutPage() {
           </p>
 
           {/* CTA */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-8 text-center text-[#2a2a2a]">
+          <div className="bg-[#2a2a2a] rounded-xl p-8 text-center text-white">
             <h3 className="text-2xl font-bold mb-3">The agents who adopt AI first will win.</h3>
             <p className="text-[#888] mb-6">
               I&apos;m sharing everything I&apos;ve learned — the tools, the workflows, the strategies. Let me help you stay ahead.
@@ -131,7 +131,7 @@ export default function AboutPage() {
               <a href="/subscribe" className="px-8 py-3 bg-[#e8e6e1] text-[#c44a1a] font-bold rounded-lg hover:bg-[#f5f0ea]">
                 Get the Free Daily Brief →
               </a>
-              <a href="/demo" className="px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#e85d26] border border-[#e85d26]">
+              <a href="/demo" className="px-8 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#e85d26] border border-[#e85d26]">
                 See a Sample First →
               </a>
             </div>

@@ -250,7 +250,7 @@ export default function ListingGeneratorPage() {
             <button
               onClick={generate}
               disabled={!address.trim() || !price.trim() || loading}
-              className="w-full py-3 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed text-lg"
+              className="w-full py-3 bg-[#e85d26] text-white font-bold rounded-lg hover:bg-[#e85d26]/80 transition disabled:opacity-40 disabled:cursor-not-allowed text-lg"
             >
               🚀 Generate All Content
             </button>
@@ -259,7 +259,7 @@ export default function ListingGeneratorPage() {
 
           {/* Error */}
           {error && (
-            <div className="max-w-2xl mx-auto mb-8 bg-red-900/20 border border-red-700/30 rounded-lg p-4 text-red-400 text-sm">
+            <div className="max-w-2xl mx-auto mb-8 bg-red-50 border border-red-300 rounded-lg p-4 text-red-800 text-sm">
               {error}
             </div>
           )}

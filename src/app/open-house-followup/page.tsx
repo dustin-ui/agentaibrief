@@ -113,38 +113,38 @@ export default function OpenHouseFollowUpPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold text-[#555] mb-2">Property Address</label>
-                <input type="text" value={propertyAddress} onChange={e => setPropertyAddress(e.target.value)} placeholder="123 Main St, Arlington, VA 22201" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input type="text" value={propertyAddress} onChange={e => setPropertyAddress(e.target.value)} placeholder="123 Main St, Arlington, VA 22201" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Your Name</label>
-                <input type="text" value={agentName} onChange={e => setAgentName(e.target.value)} placeholder="Jane Smith" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input type="text" value={agentName} onChange={e => setAgentName(e.target.value)} placeholder="Jane Smith" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Phone</label>
-                <input type="text" value={agentPhone} onChange={e => setAgentPhone(e.target.value)} placeholder="(703) 555-0123" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input type="text" value={agentPhone} onChange={e => setAgentPhone(e.target.value)} placeholder="(703) 555-0123" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Visitor Name <span className="text-[#666] font-normal">(optional)</span></label>
-                <input type="text" value={visitorName} onChange={e => setVisitorName(e.target.value)} placeholder="John & Sarah" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input type="text" value={visitorName} onChange={e => setVisitorName(e.target.value)} placeholder="John & Sarah" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Interest Level</label>
-                <select value={interestLevel} onChange={e => setInterestLevel(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <select value={interestLevel} onChange={e => setInterestLevel(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none">
                   {INTEREST_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Follow-Up Channel</label>
-                <select value={channel} onChange={e => setChannel(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <select value={channel} onChange={e => setChannel(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none">
                   {FOLLOW_UP_CHANNELS.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Notes About Visitor <span className="text-[#666] font-normal">(optional)</span></label>
-                <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Loved the kitchen, has a dog, moving from Reston" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Loved the kitchen, has a dog, moving from Reston" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none" />
               </div>
             </div>
-            <button onClick={handleGenerate} disabled={loading} className="mt-6 w-full py-4 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-xl hover:bg-[#c44a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg">
+            <button onClick={handleGenerate} disabled={loading} className="mt-6 w-full py-4 bg-[#e85d26] text-white font-bold rounded-xl hover:bg-[#c44a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg">
               {loading ? '⏳ Generating Follow-Ups...' : '🏠 Generate Follow-Up Sequence'}
             </button>
           </div>
@@ -161,9 +161,9 @@ export default function OpenHouseFollowUpPage() {
               {renderMessage('Day 7 — Soft Close', '🎯', result.daySevenFollowUp)}
 
               {result.bonusTip && (
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-2xl p-6">
+                <div className="bg-[#f5f0ea] border border-[#d8d4cc] rounded-2xl p-6">
                   <h4 className="font-bold text-[#2a2a2a] mb-2">💡 Pro Tip</h4>
-                  <p className="text-sm text-blue-800 leading-relaxed">{result.bonusTip}</p>
+                  <p className="text-sm text-[#2a2a2a] leading-relaxed">{result.bonusTip}</p>
                 </div>
               )}
             </div>

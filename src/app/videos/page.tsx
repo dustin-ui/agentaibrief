@@ -113,7 +113,7 @@ export default function VideoLibraryPage() {
                   </button>
                   <a
                     href="/subscribe"
-                    className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a] transition-colors"
+                    className="px-4 py-2 bg-[#e85d26] text-white text-sm font-medium rounded-lg hover:bg-[#c44a1a] transition-colors"
                   >
                     Subscribe
                   </a>
@@ -126,7 +126,7 @@ export default function VideoLibraryPage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#e85d26]/10 to-transparent" />
         <div className="max-w-7xl mx-auto px-4 py-16 relative">
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 mb-4">
@@ -158,8 +158,8 @@ export default function VideoLibraryPage() {
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
               filter === 'all'
-                ? 'bg-[#e85d26] text-[#2a2a2a]'
-                : 'bg-[#f0ece4] text-[#666] hover:bg-gray-700 hover:text-gray-200'
+                ? 'bg-[#e85d26] text-white'
+                : 'bg-[#f0ece4] text-[#666] hover:bg-[#d8d4cc] hover:text-[#2a2a2a]'
             }`}
           >
             All Videos
@@ -170,8 +170,8 @@ export default function VideoLibraryPage() {
               onClick={() => setFilter(tag)}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all capitalize ${
                 filter === tag
-                  ? 'bg-[#e85d26] text-[#2a2a2a]'
-                  : 'bg-[#f0ece4] text-[#666] hover:bg-gray-700 hover:text-gray-200'
+                  ? 'bg-[#e85d26] text-white'
+                  : 'bg-[#f0ece4] text-[#666] hover:bg-[#d8d4cc] hover:text-[#2a2a2a]'
               }`}
             >
               {tag}
@@ -219,7 +219,7 @@ export default function VideoLibraryPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/subscribe"
-                className="inline-flex items-center justify-center px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors"
+                className="inline-flex items-center justify-center px-8 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors"
               >
                 Join Inner Circle — $99/mo
               </a>
@@ -289,12 +289,12 @@ export default function VideoLibraryPage() {
                 onChange={(e) => setAccessEmail(e.target.value)}
                 placeholder="your@email.com"
                 required
-                className="w-full px-4 py-3 bg-[#f0ece4] border border-gray-600 rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-[#e85d26] outline-none text-sm"
+                className="w-full px-4 py-3 bg-[#f0ece4] border border-gray-600 rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-[#e85d26] focus:border-[#e85d26] outline-none text-sm"
               />
               <button
                 type="submit"
                 disabled={verifying}
-                className="w-full mt-4 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50"
+                className="w-full mt-4 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50"
               >
                 {verifying ? 'Verifying...' : 'Verify Access'}
               </button>
@@ -365,7 +365,7 @@ function CardContent({
       className={`bg-[#f0ece4] rounded-xl overflow-hidden border border-[#e0dcd4] transition-all duration-300 ${
         isLocked
           ? 'opacity-75 hover:opacity-90'
-          : 'hover:border-gray-600 hover:shadow-xl hover:shadow-blue-900/10 hover:scale-[1.02]'
+          : 'hover:border-gray-600 hover:shadow-xl hover:shadow-gray-900/10 hover:scale-[1.02]'
       }`}
     >
       {/* Thumbnail */}
@@ -422,7 +422,7 @@ function CardContent({
 
         {/* Tier badge */}
         <div className="absolute top-2 left-2">
-          <span className="bg-[#e85d26]/90 text-[#2a2a2a] text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">
+          <span className="bg-[#e85d26]/90 text-white text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">
             INNER CIRCLE
           </span>
         </div>

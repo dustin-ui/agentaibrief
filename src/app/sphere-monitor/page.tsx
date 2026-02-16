@@ -312,7 +312,7 @@ function SphereMonitorContent() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setShowImportModal(true)} className="px-3 py-2 bg-[#f0ece4] hover:bg-gray-700 rounded-lg text-sm font-medium transition flex items-center gap-1.5">
+            <button onClick={() => setShowImportModal(true)} className="px-3 py-2 bg-[#f0ece4] hover:bg-[#d8d4cc] rounded-lg text-sm font-medium transition flex items-center gap-1.5">
               📥 Import CSV
             </button>
             <button onClick={() => setShowAddModal(true)} className="px-3 py-2 bg-[#e85d26] hover:bg-[#2d98af] rounded-lg text-sm font-medium transition flex items-center gap-1.5">
@@ -363,8 +363,8 @@ function SphereMonitorContent() {
               <option value="C">C Score</option>
             </select>
             <div className="flex bg-[#f0ece4] border border-[#d8d4cc] rounded-lg overflow-hidden">
-              <button onClick={() => setViewMode('grid')} className={`px-3 py-2 text-sm ${viewMode === 'grid' ? 'bg-[#e85d26] text-[#2a2a2a]' : 'text-[#666] hover:text-[#2a2a2a]'}`}>▦</button>
-              <button onClick={() => setViewMode('list')} className={`px-3 py-2 text-sm ${viewMode === 'list' ? 'bg-[#e85d26] text-[#2a2a2a]' : 'text-[#666] hover:text-[#2a2a2a]'}`}>☰</button>
+              <button onClick={() => setViewMode('grid')} className={`px-3 py-2 text-sm ${viewMode === 'grid' ? 'bg-[#e85d26] text-white' : 'text-[#666] hover:text-[#2a2a2a]'}`}>▦</button>
+              <button onClick={() => setViewMode('list')} className={`px-3 py-2 text-sm ${viewMode === 'list' ? 'bg-[#e85d26] text-white' : 'text-[#666] hover:text-[#2a2a2a]'}`}>☰</button>
             </div>
           </div>
 
@@ -520,7 +520,7 @@ function SphereMonitorContent() {
                 <div className="flex gap-2 mt-2">
                   {['birthday', 'anniversary', 'default'].map(occ => (
                     <button key={occ} onClick={() => generateCardMessage(contact, occ)}
-                      className="text-xs px-2 py-1 bg-[#f0ece4] hover:bg-gray-700 rounded transition capitalize">{occ}</button>
+                      className="text-xs px-2 py-1 bg-[#f0ece4] hover:bg-[#d8d4cc] rounded transition capitalize">{occ}</button>
                   ))}
                 </div>
               </div>
@@ -530,7 +530,7 @@ function SphereMonitorContent() {
                 <span className="text-sm text-[#666]">Budget:</span>
                 {(['all', 25, 50, 100] as const).map(p => (
                   <button key={p} onClick={() => setSelectedPriceRange(p)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition ${selectedPriceRange === p ? 'bg-[#e85d26] text-[#2a2a2a]' : 'bg-[#f0ece4] text-[#666] hover:text-[#2a2a2a]'}`}>
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition ${selectedPriceRange === p ? 'bg-[#e85d26] text-white' : 'bg-[#f0ece4] text-[#666] hover:text-[#2a2a2a]'}`}>
                     {p === 'all' ? 'All' : `≤$${p}`}
                   </button>
                 ))}

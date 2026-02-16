@@ -80,7 +80,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
         <p className="text-red-500">{error}</p>
         <button 
           onClick={() => window.location.reload()} 
-          className="mt-4 px-4 py-2 bg-[#e85d26] text-[#2a2a2a] rounded hover:bg-[#c44a1a]"
+          className="mt-4 px-4 py-2 bg-[#e85d26] text-white rounded hover:bg-[#c44a1a]"
         >
           Retry
         </button>
@@ -98,7 +98,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
             onClick={() => setFilter(cat.id)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               filter === cat.id
-                ? 'bg-[#e85d26] text-[#2a2a2a]'
+                ? 'bg-[#e85d26] text-white'
                 : 'bg-[#f5f0ea] text-[#666] hover:bg-gray-200'
             }`}
           >

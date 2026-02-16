@@ -43,7 +43,7 @@ export default function VideoPlayerPage() {
           </p>
           <Link
             href="/videos"
-            className="px-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-medium rounded-lg hover:bg-[#c44a1a] transition-colors"
+            className="px-6 py-3 bg-[#e85d26] text-white font-medium rounded-lg hover:bg-[#c44a1a] transition-colors"
           >
             ← Back to Video Library
           </Link>
@@ -166,7 +166,7 @@ export default function VideoPlayerPage() {
                   </button>
                   <a
                     href="/subscribe"
-                    className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a] transition-colors"
+                    className="px-4 py-2 bg-[#e85d26] text-white text-sm font-medium rounded-lg hover:bg-[#c44a1a] transition-colors"
                   >
                     Subscribe
                   </a>
@@ -251,7 +251,7 @@ export default function VideoPlayerPage() {
                     <div className="flex flex-col gap-3">
                       <a
                         href="/subscribe"
-                        className="px-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors text-sm"
+                        className="px-6 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors text-sm"
                       >
                         Join Inner Circle — $99/mo
                       </a>
@@ -304,7 +304,7 @@ export default function VideoPlayerPage() {
             {/* About the Host */}
             <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-xl p-6 mb-8">
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-full bg-[#e85d26] flex items-center justify-center text-xl font-bold text-[#2a2a2a] shrink-0">
+                <div className="w-14 h-14 rounded-full bg-[#e85d26] flex items-center justify-center text-xl font-bold text-white shrink-0">
                   DF
                 </div>
                 <div>
@@ -390,7 +390,7 @@ export default function VideoPlayerPage() {
 
             {/* CTA in sidebar */}
             {!hasAccess && (
-              <div className="mt-8 bg-gradient-to-b from-blue-900/30 to-gray-900 border border-blue-800/30 rounded-xl p-6">
+              <div className="mt-8 bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] border border-[#444] rounded-xl p-6">
                 <h4 className="text-[#2a2a2a] font-semibold mb-2">
                   🔥 Inner Circle
                 </h4>
@@ -400,7 +400,7 @@ export default function VideoPlayerPage() {
                 </p>
                 <a
                   href="/subscribe"
-                  className="block w-full px-4 py-2.5 bg-[#e85d26] text-[#2a2a2a] text-sm font-semibold rounded-lg text-center hover:bg-[#c44a1a] transition-colors"
+                  className="block w-full px-4 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg text-center hover:bg-[#c44a1a] transition-colors"
                 >
                   Join — $99/mo
                 </a>
@@ -465,12 +465,12 @@ export default function VideoPlayerPage() {
                 onChange={(e) => setAccessEmail(e.target.value)}
                 placeholder="your@email.com"
                 required
-                className="w-full px-4 py-3 bg-[#f0ece4] border border-gray-600 rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-[#e85d26] outline-none text-sm"
+                className="w-full px-4 py-3 bg-[#f0ece4] border border-gray-600 rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-[#e85d26] focus:border-[#e85d26] outline-none text-sm"
               />
               <button
                 type="submit"
                 disabled={verifying}
-                className="w-full mt-4 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50"
+                className="w-full mt-4 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50"
               >
                 {verifying ? 'Verifying...' : 'Verify Access'}
               </button>

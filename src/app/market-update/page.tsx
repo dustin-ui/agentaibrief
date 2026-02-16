@@ -170,7 +170,7 @@ function MarketUpdateTool() {
             </div>
             {error && <p className="text-red-400 text-sm">{error}</p>}
             <button onClick={handleGetReport} disabled={!canSubmitReport}
-              className="w-full py-3 rounded-lg font-semibold text-[#2a2a2a] bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-40 disabled:cursor-not-allowed transition">
+              className="w-full py-3 rounded-lg font-semibold text-white bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-40 disabled:cursor-not-allowed transition">
               🏠 Get Market Update
             </button>
           </div>
@@ -233,7 +233,7 @@ function MarketUpdateTool() {
                 <button key={d} onClick={() => setDuration(d)}
                   className={`px-5 py-2.5 rounded-lg text-sm font-medium transition border ${
                     duration === d
-                      ? 'bg-[#e85d26] border-[#e85d26] text-[#2a2a2a]'
+                      ? 'bg-[#e85d26] border-[#e85d26] text-white'
                       : 'bg-[#f0ece4] border-[#d8d4cc] text-[#666] hover:border-gray-600'
                   }`}>
                   {d}s

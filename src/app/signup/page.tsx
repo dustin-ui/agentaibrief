@@ -60,7 +60,7 @@ export default function SignupPage() {
 
         <form onSubmit={handleSubmit} className="bg-[#f0ece4]/60 border border-[#e0dcd4] rounded-2xl p-8 space-y-4">
           {error && (
-            <div className="p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-300 text-sm">{error}</div>
+            <div className="p-3 bg-red-50 border border-red-300 rounded-lg text-red-800 text-sm">{error}</div>
           )}
           <div>
             <label className="block text-sm font-medium text-[#555] mb-1">Full Name</label>
@@ -78,7 +78,7 @@ export default function SignupPage() {
               className="w-full px-4 py-2.5 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-[#e85d26] focus:border-[#e85d26] outline-none" placeholder="Min 6 characters" />
           </div>
           <button type="submit" disabled={loading}
-            className="w-full py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50">
+            className="w-full py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50">
             {loading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>

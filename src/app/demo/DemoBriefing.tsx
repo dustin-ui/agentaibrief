@@ -84,7 +84,7 @@ export function DemoBriefing() {
           <a href="/" className="text-lg font-bold text-[#2a2a2a]">
             Agent<span className="text-[#e85d26]">AI</span>Brief
           </a>
-          <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
+          <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-white text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
             Subscribe →
           </a>
         </div>
@@ -104,7 +104,7 @@ export function DemoBriefing() {
           {/* Email header */}
           <div className="bg-[#f0ece4] border-b border-[#e0dcd4] px-6 py-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-[#e85d26] flex items-center justify-center text-[#2a2a2a] font-bold text-sm shrink-0">AI</div>
+              <div className="w-10 h-10 rounded-full bg-[#e85d26] flex items-center justify-center text-white font-bold text-sm shrink-0">AI</div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-[#2a2a2a]">AgentAIBrief <span className="font-normal text-[#666]">&lt;daily@agentaibrief.com&gt;</span></p>
                 <p className="text-xs text-[#888]">to me</p>
@@ -195,7 +195,7 @@ export function DemoBriefing() {
                           <p className="text-2xl mb-2">🔒</p>
                           <p className="text-sm font-semibold text-[#2a2a2a] mb-1">Pro Members Only</p>
                           <p className="text-xs text-[#888] mb-3">Agent Angles & action items on every story</p>
-                          <a href="/subscribe" className="inline-block px-4 py-2 bg-[#e85d26] text-[#2a2a2a] text-xs font-semibold rounded-lg hover:bg-[#c44a1a]">
+                          <a href="/subscribe" className="inline-block px-4 py-2 bg-[#e85d26] text-white text-xs font-semibold rounded-lg hover:bg-[#c44a1a]">
                             Unlock for $19/mo →
                           </a>
                         </div>
@@ -212,7 +212,7 @@ export function DemoBriefing() {
 
             {/* Email footer */}
             <div className="mt-10 pt-6 border-t border-[#e0dcd4]">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 text-center text-[#2a2a2a]">
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-center text-white">
                 <h3 className="text-lg font-bold mb-2">Want this every morning?</h3>
                 <p className="text-[#888] text-sm mb-4">
                   Free subscribers get headlines + summaries. Pro gets Agent Angles on every story.

@@ -29,7 +29,7 @@ function ToolCard({ tool, compact = false }: { tool: AITool; compact?: boolean }
         rel="noopener noreferrer"
         className="flex items-center gap-3 p-3 rounded-lg border border-[#e0dcd4] hover:border-[#e85d26] hover:shadow-sm transition-all group"
       >
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-[#2a2a2a] font-bold text-sm shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-[#e85d26] flex items-center justify-center text-white font-bold text-sm shrink-0">
           {tool.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
@@ -59,7 +59,7 @@ function ToolCard({ tool, compact = false }: { tool: AITool; compact?: boolean }
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-[#2a2a2a] font-bold text-lg shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-[#e85d26] flex items-center justify-center text-white font-bold text-lg shrink-0">
             {tool.name.charAt(0)}
           </div>
           <div>

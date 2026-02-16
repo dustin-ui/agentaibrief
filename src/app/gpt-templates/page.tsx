@@ -846,7 +846,7 @@ Day 7: [task]
 const platformColors: Record<string, string> = {
   'ChatGPT Custom GPT': 'bg-green-900/60 text-green-300',
   'Claude Project': 'bg-orange-900/60 text-orange-300',
-  'Gemini Gem': 'bg-blue-900/60 text-blue-300',
+  'Gemini Gem': 'bg-[#2a2a2a]/60 text-[#e85d26]',
 };
 
 const categoryIcons: Record<string, string> = {
@@ -938,8 +938,8 @@ export default function GPTTemplatesPage() {
               onClick={() => setCategory(cat)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 category === cat
-                  ? 'bg-[#e85d26] text-[#2a2a2a]'
-                  : 'bg-[#f0ece4] text-[#666] hover:bg-gray-700 hover:text-gray-200'
+                  ? 'bg-[#e85d26] text-white'
+                  : 'bg-[#f0ece4] text-[#666] hover:bg-[#d8d4cc] hover:text-[#2a2a2a]'
               }`}
             >
               {cat !== 'All' && `${categoryIcons[cat] || ''} `}
@@ -1049,7 +1049,7 @@ export default function GPTTemplatesPage() {
                             </p>
                             <a
                               href="/subscribe"
-                              className="inline-flex px-5 py-2.5 bg-[#e85d26] text-[#2a2a2a] text-sm font-semibold rounded-lg hover:bg-[#2d97ae] transition-colors"
+                              className="inline-flex px-5 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#2d97ae] transition-colors"
                             >
                               Unlock All Templates →
                             </a>
@@ -1066,7 +1066,7 @@ export default function GPTTemplatesPage() {
                         </pre>
                         <button
                           onClick={() => handleCopy(tpl)}
-                          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#e85d26] text-[#2a2a2a] text-sm font-semibold rounded-lg hover:bg-[#2d97ae] transition-colors"
+                          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#2d97ae] transition-colors"
                         >
                           {copied === tpl.id ? (
                             <>✓ Copied!</>

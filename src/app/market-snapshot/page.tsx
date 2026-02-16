@@ -123,10 +123,10 @@ export default function MarketSnapshotPage() {
                 onChange={e => setZipCode(e.target.value.replace(/\D/g, '').slice(0, 5))}
                 placeholder="20170"
                 maxLength={5}
-                className="flex-1 max-w-xs px-4 py-3 border border-gray-300 rounded-lg text-lg font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                className="flex-1 max-w-xs px-4 py-3 border border-gray-300 rounded-lg text-lg font-mono focus:ring-2 focus:ring-[#e85d26] outline-none"
                 onKeyDown={e => e.key === 'Enter' && handleGenerate()}
               />
-              <button onClick={handleGenerate} disabled={loading} className="px-8 py-3 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-xl hover:bg-[#c44a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+              <button onClick={handleGenerate} disabled={loading} className="px-8 py-3 bg-[#e85d26] text-white font-bold rounded-xl hover:bg-[#c44a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? '⏳ Generating...' : '📊 Generate Snapshot'}
               </button>
             </div>
@@ -155,11 +155,11 @@ export default function MarketSnapshotPage() {
                 <StatCard label="Months of Supply" value={data.stats.monthsOfSupply} change={data.stats.marketType} />
               </div>
 
-              <div className="bg-[#f5f0ea] border border-blue-200 rounded-2xl p-6">
+              <div className="bg-[#f5f0ea] border border-[#d8d4cc] rounded-2xl p-6">
                 <h4 className="font-bold text-[#2a2a2a] mb-3">🔥 Key Trends</h4>
                 <ul className="space-y-2">
                   {data.trends.map((t, i) => (
-                    <li key={i} className="text-sm text-blue-800 flex items-start gap-2">
+                    <li key={i} className="text-sm text-[#2a2a2a] flex items-start gap-2">
                       <span className="mt-0.5">•</span><span>{t}</span>
                     </li>
                   ))}

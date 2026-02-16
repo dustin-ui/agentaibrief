@@ -100,46 +100,46 @@ export default function DripCampaignPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Campaign Type</label>
-                <select value={campaignType} onChange={e => setCampaignType(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <select value={campaignType} onChange={e => setCampaignType(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none">
                   {CAMPAIGN_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Channel</label>
-                <select value={channel} onChange={e => setChannel(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <select value={channel} onChange={e => setChannel(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none">
                   {CHANNELS.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Sequence Length</label>
-                <select value={sequenceLength} onChange={e => setSequenceLength(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <select value={sequenceLength} onChange={e => setSequenceLength(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none">
                   {SEQUENCE_LENGTHS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Tone</label>
-                <select value={tone} onChange={e => setTone(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <select value={tone} onChange={e => setTone(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none">
                   {TONES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Your Name</label>
-                <input type="text" value={agentName} onChange={e => setAgentName(e.target.value)} placeholder="Jane Smith" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input type="text" value={agentName} onChange={e => setAgentName(e.target.value)} placeholder="Jane Smith" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-[#555] mb-2">Phone</label>
-                <input type="text" value={agentPhone} onChange={e => setAgentPhone(e.target.value)} placeholder="(703) 555-0123" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input type="text" value={agentPhone} onChange={e => setAgentPhone(e.target.value)} placeholder="(703) 555-0123" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none" />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold text-[#555] mb-2">Market Area</label>
-                <input type="text" value={marketArea} onChange={e => setMarketArea(e.target.value)} placeholder="Northern Virginia, DC Metro" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input type="text" value={marketArea} onChange={e => setMarketArea(e.target.value)} placeholder="Northern Virginia, DC Metro" className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none" />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold text-[#555] mb-2">Additional Context <span className="text-[#666] font-normal">(optional)</span></label>
-                <textarea value={additionalContext} onChange={e => setAdditionalContext(e.target.value)} placeholder="Any specific details, value props, or talking points to include..." rows={3} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none" />
+                <textarea value={additionalContext} onChange={e => setAdditionalContext(e.target.value)} placeholder="Any specific details, value props, or talking points to include..." rows={3} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#e85d26] outline-none resize-none" />
               </div>
             </div>
-            <button onClick={handleGenerate} disabled={loading} className="mt-6 w-full py-4 bg-[#e85d26] text-[#2a2a2a] font-bold rounded-xl hover:bg-[#c44a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg">
+            <button onClick={handleGenerate} disabled={loading} className="mt-6 w-full py-4 bg-[#e85d26] text-white font-bold rounded-xl hover:bg-[#c44a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg">
               {loading ? '⏳ Generating Campaign...' : '✨ Generate Drip Campaign'}
             </button>
           </div>

@@ -127,7 +127,7 @@ export default function SEOSniperPage() {
       <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">AgentAI Brief</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-[#e85d26] to-[#c44a1a] bg-clip-text text-transparent">AgentAI Brief</span>
           </a>
           <SiteNav variant="dark" />
           <MobileNav />
@@ -261,7 +261,7 @@ export default function SEOSniperPage() {
                 <span className="text-sm text-[#666]">{wordCount.toLocaleString()} words • Target: {articleKeyword}</span>
                 <button
                   onClick={copyArticle}
-                  className="px-4 py-2 rounded-lg bg-[#f0ece4] hover:bg-gray-700 text-[#2a2a2a] text-sm font-medium transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-lg bg-[#f0ece4] hover:bg-[#d8d4cc] text-[#2a2a2a] text-sm font-medium transition-colors flex items-center gap-2"
                 >
                   {copied ? '✅ Copied!' : '📋 Copy to Clipboard'}
                 </button>

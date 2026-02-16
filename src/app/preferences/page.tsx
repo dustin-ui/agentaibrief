@@ -62,7 +62,7 @@ export default function PreferencesPage() {
                 onChange={e => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#e85d26]"
               />
             </div>
 
@@ -116,7 +116,7 @@ export default function PreferencesPage() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="w-full px-4 py-3 bg-[#e85d26] text-[#2a2a2a] font-medium rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50"
+              className="w-full px-4 py-3 bg-[#e85d26] text-white font-medium rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50"
             >
               {status === 'loading' ? 'Saving...' : 'Save Preferences'}
             </button>

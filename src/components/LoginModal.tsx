@@ -42,7 +42,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
         </p>
 
         <form onSubmit={handleSubmit}>
-          {error && <div className="mb-4 p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-300 text-sm">{error}</div>}
+          {error && <div className="mb-4 p-3 bg-red-50 border border-red-300 rounded-lg text-red-800 text-sm">{error}</div>}
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[#555] mb-1">Email</label>
@@ -56,7 +56,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
             </div>
           </div>
           <button type="submit" disabled={loading}
-            className="w-full mt-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50">
+            className="w-full mt-6 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50">
             {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>

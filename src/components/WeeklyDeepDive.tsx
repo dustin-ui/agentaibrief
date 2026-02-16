@@ -41,7 +41,7 @@ export function WeeklyDeepDive({ isPremium }: DeepDiveProps) {
       {/* Header */}
       <div className="px-6 pt-6 pb-4">
         <div className="flex items-center gap-3 mb-3">
-          <span className="bg-[#e85d26] text-[#2a2a2a] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+          <span className="bg-[#e85d26] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
             🔬 Weekly Deep Dive
           </span>
           <span className="text-[#666] text-xs">{CURRENT_DEEP_DIVE.date}</span>
@@ -52,7 +52,7 @@ export function WeeklyDeepDive({ isPremium }: DeepDiveProps) {
         <h2 className="text-xl md:text-2xl font-bold text-[#2a2a2a] mb-2 leading-tight">
           {CURRENT_DEEP_DIVE.title}
         </h2>
-        <p className="text-blue-300 text-sm font-medium">
+        <p className="text-[#e85d26] text-sm font-medium">
           {CURRENT_DEEP_DIVE.subtitle}
         </p>
       </div>
@@ -84,7 +84,7 @@ export function WeeklyDeepDive({ isPremium }: DeepDiveProps) {
       {/* CTA */}
       <div className="px-6 pb-6">
         {isPremium ? (
-          <button className="w-full py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
+          <button className="w-full py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
             Read Full Deep Dive →
           </button>
         ) : (
@@ -94,7 +94,7 @@ export function WeeklyDeepDive({ isPremium }: DeepDiveProps) {
             </p>
             <a 
               href="/subscribe"
-              className="inline-block px-6 py-2.5 bg-[#e85d26] text-[#2a2a2a] text-sm font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors"
+              className="inline-block px-6 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors"
             >
               Unlock for $19/mo
             </a>

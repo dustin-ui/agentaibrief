@@ -69,7 +69,7 @@ export default function BlogIndex() {
         <div className="mt-16 bg-[#f5f0ea] border border-[#e0dcd4] rounded-2xl p-8 text-center">
           <h3 className="text-2xl font-bold text-[#2a2a2a] mb-3">Never Miss an Update</h3>
           <p className="text-[#666] mb-6">Get AI strategies for real estate delivered to your inbox every morning.</p>
-          <a href="/subscribe" className="inline-flex px-6 py-3 bg-[#e85d26] text-[#2a2a2a] font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
+          <a href="/subscribe" className="inline-flex px-6 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
             Subscribe Free →
           </a>
         </div>

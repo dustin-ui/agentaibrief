@@ -263,7 +263,7 @@ export default function ListingRadarPage() {
             <button
               onClick={search}
               disabled={loading || !query.trim()}
-              className="bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-50 text-[#2a2a2a] font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
+              className="bg-[#e85d26] hover:bg-[#c44a1a] disabled:opacity-50 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -344,7 +344,7 @@ export default function ListingRadarPage() {
                   {filteredResults.length > 0 && (
                     <button
                       onClick={() => exportToCSV(filteredResults, data.location)}
-                      className="text-sm bg-[#f0ece4] hover:bg-gray-700 text-[#555] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                      className="text-sm bg-[#f0ece4] hover:bg-[#d8d4cc] text-[#555] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                     >
                       📥 Export CSV
                     </button>
