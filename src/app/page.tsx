@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { NewsFeed } from '@/components/NewsFeed';
 import { TrendingBar } from '@/components/TrendingBar';
 import { LoginModal } from '@/components/LoginModal';
@@ -95,6 +95,7 @@ export default function Home() {
   const [subEmail, setSubEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [showDemo, setShowDemo] = useState(false);
 
   const refCode = typeof window !== 'undefined'
     ? new URLSearchParams(window.location.search).get('ref')
@@ -179,9 +180,9 @@ export default function Home() {
                 <a href="/subscribe" className="btn-primary px-8 py-4 text-[1rem]">
                   Start Free Trial
                 </a>
-                <a href="/contact" className="btn-outline-dark px-8 py-4 text-[1rem]">
-                  Contact Us
-                </a>
+                <button onClick={() => setShowDemo(true)} className="btn-outline-dark px-8 py-4 text-[1rem] cursor-pointer">
+                  ▶ Watch Demo
+                </button>
               </div>
 
               {/* Inline email subscribe */}
@@ -445,6 +446,29 @@ export default function Home() {
 
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
       <StickySubscribeBar />
+
+      {/* Demo Video Modal */}
+      {showDemo && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowDemo(false)}>
+          <div className="relative w-full max-w-4xl mx-4" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setShowDemo(false)}
+              className="absolute -top-10 right-0 text-white text-3xl font-light hover:text-[#e85d26] transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+            <div className="rounded-2xl overflow-hidden shadow-2xl bg-black">
+              <video
+                src="/demo.mp4"
+                controls
+                autoPlay
+                className="w-full"
+                style={{ maxHeight: '80vh' }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
