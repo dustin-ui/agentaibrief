@@ -515,7 +515,7 @@ function NewsletterBuilderInner() {
                         After signing up, click below to authorize us to create and schedule newsletters in your account. 
                         You&apos;ll get a preview 24 hours before each send to review and edit.
                       </p>
-                      <a href={`https://authz.constantcontact.com/oauth2/default/v1/authorize?client_id=4012da91-493c-4f46-9093-b01eff0b8f53&redirect_uri=https://agentaibrief.com/api/auth/callback/constantcontact&response_type=code&scope=contact_data+campaign_data&state=${session?.user?.id || 'newsletter'}`}
+                      <a href={`https://authz.constantcontact.com/oauth2/default/v1/authorize?client_id=4012da91-493c-4f46-9093-b01eff0b8f53&redirect_uri=https://agentaibrief.com/api/auth/callback/constantcontact&response_type=code&scope=contact_data+campaign_data+offline_access&state=${session?.user?.id || 'newsletter'}`}
                         className="inline-block px-5 py-2.5 bg-[#2a2a2a] text-white rounded-lg font-medium hover:bg-[#444] transition-colors text-sm">
                         Connect Constant Contact →
                       </a>
