@@ -79,15 +79,30 @@ export async function POST(req: NextRequest) {
       const contentBlocks: Anthropic.Messages.ContentBlockParam[] = [];
 
       if (file.type === 'application/pdf') {
-        // Use pdf-parse for PDF text extraction
+        // Use pdf-parse v2 for PDF text extraction
         // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const pdfParse = require('pdf-parse');
+        const { PDFParse } = require('pdf-parse');
         try {
-          const pdfData = await pdfParse(buffer);
-          contentBlocks.push({
-            type: 'text',
-            text: `Contract text from PDF "${file.name}":\n\n${pdfData.text}`,
-          });
+          const parser = new PDFParse({ data: buffer });
+          const result = await parser.getText();
+          const text = result.text || '';
+          
+          if (text.trim().length > 100) {
+            contentBlocks.push({
+              type: 'text',
+              text: `Contract text from PDF "${file.name}":\n\n${text}`,
+            });
+          } else {
+            // PDF has no extractable text - send as document
+            contentBlocks.push({
+              type: 'document',
+              source: {
+                type: 'base64',
+                media_type: 'application/pdf',
+                data: buffer.toString('base64'),
+              },
+            } as Anthropic.Messages.ContentBlockParam);
+          }
         } catch {
           // If pdf-parse fails, try sending as base64 document
           contentBlocks.push({

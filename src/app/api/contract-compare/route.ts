@@ -75,12 +75,16 @@ async function extractContentFromBuffer(
   const contentBlocks: Anthropic.Messages.ContentBlockParam[] = [];
 
   if (mimeType === 'application/pdf') {
+    // pdf-parse v2 API
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfParse = require('pdf-parse');
+    const { PDFParse } = require('pdf-parse');
     try {
-      const pdfData = await pdfParse(buffer);
-      if (pdfData.text && pdfData.text.trim().length > 100) {
-        contentBlocks.push({ type: 'text', text: `Contract text from "${fileName}":\n\n${pdfData.text}` });
+      const parser = new PDFParse({ data: buffer });
+      const result = await parser.getText();
+      const text = result.text || '';
+      
+      if (text.trim().length > 100) {
+        contentBlocks.push({ type: 'text', text: `Contract text from "${fileName}":\n\n${text}` });
       } else {
         // PDF has no extractable text (likely scanned) - send as document
         contentBlocks.push({
@@ -88,7 +92,8 @@ async function extractContentFromBuffer(
           source: { type: 'base64', media_type: 'application/pdf', data: buffer.toString('base64') },
         } as Anthropic.Messages.ContentBlockParam);
       }
-    } catch {
+    } catch (pdfErr) {
+      console.error('pdf-parse error:', pdfErr);
       // If pdf-parse fails, try sending as base64 document
       contentBlocks.push({
         type: 'document',
@@ -140,8 +145,8 @@ async function fetchFileFromUrl(url: string): Promise<{ buffer: Buffer; mimeType
   return { buffer, mimeType, fileName };
 }
 
-// Extract text from a File object (for FormData requests)
-async function extractTextFromFile(file: File): Promise<{ contentBlocks: Anthropic.Messages.ContentBlockParam[] }> {
+// Extract content from a File object (for FormData requests)
+async function extractContentFromFile(file: File): Promise<{ contentBlocks: Anthropic.Messages.ContentBlockParam[] }> {
   const buffer = Buffer.from(await file.arrayBuffer());
   const contentBlocks = await extractContentFromBuffer(buffer, file.type, file.name);
   return { contentBlocks };
@@ -305,7 +310,7 @@ export async function POST(req: NextRequest) {
       const label = labels[i] || `Offer ${String.fromCharCode(65 + i)}`;
 
       try {
-        const { contentBlocks } = await extractTextFromFile(file);
+        const { contentBlocks } = await extractContentFromFile(file);
         contentBlocks.push({
           type: 'text',
           text: COMPARISON_PROMPT + (address ? `\n\nProperty address: ${address}` : ''),
