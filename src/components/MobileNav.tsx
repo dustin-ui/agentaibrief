@@ -43,6 +43,8 @@ export function MobileNav() {
             <a href="/videos" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🎬 Video Library</a>
             <a href="/pricing" className="text-sm text-[#e85d26] hover:text-[#c44a1a] font-semibold transition-colors" onClick={() => setOpen(false)}>💎 Pricing</a>
             <a href="/affiliate" className="text-sm text-[#e85d26] hover:text-[#c44a1a] font-semibold transition-colors" onClick={() => setOpen(false)}>💰 Affiliate Program</a>
+            <a href="mailto:dustin@foxhomesteam.com?subject=AgentAIBrief Support" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📧 Support</a>
+            <a href="/unsubscribe" className="text-sm text-[#888] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🚫 Unsubscribe</a>
 
             <div className="border-t pt-3 mt-2" style={{ borderColor: '#d8d4cc' }}>
               {isLoggedIn ? (

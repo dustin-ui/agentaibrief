@@ -112,6 +112,7 @@ export default function Home() {
               <a href="/videos" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Videos</a>
               <a href="/pricing" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Pricing</a>
               <a href="/affiliate" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Affiliate</a>
+              <a href="mailto:dustin@foxhomesteam.com?subject=AgentAIBrief Support" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Support</a>
             </nav>
           </div>
           <div className="flex items-center gap-3">
@@ -406,10 +407,12 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-10 text-center text-xs border-t-2" style={{ color: '#888', borderColor: '#d4d0c8' }}>
         <div>© 2026 AgentAIBrief.com</div>
-        <div className="mt-2 flex justify-center gap-6">
+        <div className="mt-2 flex justify-center flex-wrap gap-4 sm:gap-6">
+          <a href="mailto:dustin@foxhomesteam.com?subject=AgentAIBrief Support" className="transition-colors text-[#888] hover:text-[#e85d26]">Support</a>
           <a href="/privacy" className="transition-colors text-[#888] hover:text-[#e85d26]">Privacy Policy</a>
           <a href="/terms" className="transition-colors text-[#888] hover:text-[#e85d26]">Terms of Service</a>
           <a href="/preferences" className="transition-colors text-[#888] hover:text-[#e85d26]">Manage Preferences</a>
+          <a href="/unsubscribe" className="transition-colors text-[#888] hover:text-[#e85d26]">Unsubscribe</a>
         </div>
       </footer>
 
