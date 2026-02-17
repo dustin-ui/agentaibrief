@@ -126,14 +126,14 @@ export default function AdminPage() {
         <div className="bg-[#f5f0ea] rounded-2xl p-6 border border-[#e0dcd4]">
           <h3 className="text-lg font-bold text-[#2a2a2a] mb-4">⚡ Quick Actions</h3>
           <div className="space-y-3">
-            <Link href="/newsletter-builder/dashboard" className="block px-4 py-3 bg-[#e8e6e1] rounded-lg hover:bg-[#d8d4cc] transition-colors text-[#2a2a2a] text-sm font-medium">
-              📊 Newsletter Dashboard
-            </Link>
-            <Link href="/newsletter-builder" className="block px-4 py-3 bg-[#e8e6e1] rounded-lg hover:bg-[#d8d4cc] transition-colors text-[#2a2a2a] text-sm font-medium">
-              ✏️ Newsletter Builder
-            </Link>
             <Link href="/pro-dashboard" className="block px-4 py-3 bg-[#e8e6e1] rounded-lg hover:bg-[#d8d4cc] transition-colors text-[#2a2a2a] text-sm font-medium">
               🛠️ Pro Dashboard
+            </Link>
+            <Link href="/content-briefing" className="block px-4 py-3 bg-[#e8e6e1] rounded-lg hover:bg-[#d8d4cc] transition-colors text-[#2a2a2a] text-sm font-medium">
+              📋 Content Briefing
+            </Link>
+            <Link href="/contract-analyzer" className="block px-4 py-3 bg-[#e8e6e1] rounded-lg hover:bg-[#d8d4cc] transition-colors text-[#2a2a2a] text-sm font-medium">
+              📄 Contract Analyzer
             </Link>
           </div>
         </div>

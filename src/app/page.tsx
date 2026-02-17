@@ -25,13 +25,6 @@ const tools = [
     badge: 'PRO',
   },
   {
-    name: 'Newsletter Builder',
-    href: '/newsletter-builder',
-    description: 'Branded weekly newsletter on autopilot',
-    icon: '📰',
-    badge: 'PRO',
-  },
-  {
     name: 'Prompt Library',
     href: '/prompts',
     description: '53 battle-tested prompts for every scenario',
@@ -66,28 +59,7 @@ const tools = [
     icon: '📡',
     badge: 'IC',
   },
-  {
-    name: 'Neighborhood Market Brief',
-    href: '/neighborhood-brief',
-    description: 'Hyperlocal market data for any neighborhood',
-    icon: '📊',
-    badge: 'PRO',
-  },
-  {
-    name: 'Listing Launch Radar',
-    href: '/listing-radar',
-    description: 'Detect pre-listing sell signals before anyone else',
-    icon: '📡',
-    badge: 'PRO',
-  },
-  {
-    name: 'Sphere Seismograph',
-    href: '/sphere-monitor',
-    description: 'Track life events in your sphere — never miss a move signal',
-    icon: '🔮',
-    badge: 'PRO',
-  },
-];
+  ];
 
 export default function Home() {
   const { user, isLoggedIn, isPro, signOut, profile } = useAuth();
@@ -348,11 +320,8 @@ export default function Home() {
               <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#666' }}>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Everything in Free</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Listing Content Factory</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Newsletter Builder</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Contract Analyzer</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Neighborhood Market Brief</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Listing Launch Radar</li>
-                <li><span style={{ color: '#e85d26' }}>→ </span>Sphere Seismograph</li>
+                <li><span style={{ color: '#e85d26' }}>→ </span>Content Briefing</li>
               </ul>
               <a href="/subscribe" className="block w-full py-3 text-white font-semibold rounded-lg text-sm transition-all" style={{ background: '#e85d26', boxShadow: '0 3px 0 #c44a1a' }}>
                 Start Pro →

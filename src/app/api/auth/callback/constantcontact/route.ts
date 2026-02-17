@@ -13,11 +13,11 @@ export async function GET(request: NextRequest) {
   const error = searchParams.get('error');
 
   if (error) {
-    return NextResponse.redirect(new URL('/newsletter-builder?cc_error=' + encodeURIComponent(error), request.url));
+    return NextResponse.redirect(new URL('/?cc_error=' + encodeURIComponent(error), request.url));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL('/newsletter-builder?cc_error=no_code', request.url));
+    return NextResponse.redirect(new URL('/?cc_error=no_code', request.url));
   }
 
   const clientId = process.env.CC_CLIENT_ID;
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   const redirectUri = 'https://agentaibrief.com/api/auth/callback/constantcontact';
 
   if (!clientId || !clientSecret) {
-    return NextResponse.redirect(new URL('/newsletter-builder?cc_error=not_configured', request.url));
+    return NextResponse.redirect(new URL('/?cc_error=not_configured', request.url));
   }
 
   try {
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       });
 
       if (!retryResponse.ok) {
-        return NextResponse.redirect(new URL('/newsletter-builder?cc_error=token_exchange_failed', request.url));
+        return NextResponse.redirect(new URL('/?cc_error=token_exchange_failed', request.url));
       }
       tokenData = await retryResponse.json();
     }
@@ -95,11 +95,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Redirect back with success
-    const redirectPath = state === 'admin_reauth' ? '/?cc_reauth=success' : '/newsletter-builder?cc_success=true';
+    const redirectPath = '/?cc_success=true';
     return NextResponse.redirect(new URL(redirectPath, request.url));
 
   } catch (err) {
     console.error('OAuth callback error:', err);
-    return NextResponse.redirect(new URL('/newsletter-builder?cc_error=unknown', request.url));
+    return NextResponse.redirect(new URL('/?cc_error=unknown', request.url));
   }
 }

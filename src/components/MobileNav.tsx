@@ -34,11 +34,7 @@ export function MobileNav() {
             <a href="/listing-generator" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🏠 Listing Generator</a>
             <a href="/listing-description" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>✍️ Listing Description</a>
             <a href="/content-briefing" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📋 Content Briefing</a>
-            <a href="/newsletter-builder" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📧 Newsletter</a>
             <a href="/contract-analyzer" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📄 Contract Analyzer</a>
-            <a href="/neighborhood-brief" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📊 Market Brief</a>
-            <a href="/listing-radar" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📡 Listing Radar</a>
-            <a href="/sphere-monitor" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🔮 Sphere Seismograph</a>
             <a href="/seo-sniper" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🎯 SEO Sniper</a>
             <a href="/seo-command" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📡 SEO Command</a>
             <a href="/prompts" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>💬 Prompts</a>
