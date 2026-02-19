@@ -25,11 +25,13 @@ export async function POST(request: NextRequest) {
       cancel_url: `${origin}/pricing`,
     };
 
-    // Rewardful uses client_reference_id to attribute referrals
-    if (referral) {
-      sessionParams.client_reference_id = referral;
-    } else if (userId) {
+    // client_reference_id is ALWAYS the Supabase user ID (so webhook can reliably find the user)
+    // Referral code goes in metadata so it doesn't get confused with a user ID
+    if (userId) {
       sessionParams.client_reference_id = userId;
+    }
+    if (referral) {
+      sessionParams.metadata = { referral };
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams as Parameters<typeof stripe.checkout.sessions.create>[0]);
