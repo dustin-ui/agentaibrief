@@ -49,7 +49,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .select('*')
       .eq('id', userId)
       .single();
-    if (data) setProfile(data as Profile);
+    if (data) {
+      setProfile(data as Profile);
+      // If tier looks wrong (free but has Stripe data), fire a background sync.
+      // This self-heals any webhook-missed signups without manual intervention.
+      if (data.subscription_tier === 'free' && (data.stripe_customer_id || data.stripe_subscription_id)) {
+        fetch('/api/sync-subscription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId }),
+        })
+          .then(res => res.json())
+          .then(result => {
+            if (result.synced) {
+              // Tier was corrected — re-fetch profile so UI updates immediately
+              supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single()
+                .then(({ data: updated }) => {
+                  if (updated) setProfile(updated as Profile);
+                });
+            }
+          })
+          .catch(() => { /* non-critical, ignore */ });
+      }
+    }
   }, []);
 
   const refreshProfile = useCallback(async () => {
