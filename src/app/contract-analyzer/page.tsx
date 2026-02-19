@@ -899,7 +899,7 @@ export default function ContractAnalyzerPage() {
                       onChange={() => toggleField(field)}
                       className="w-3.5 h-3.5 rounded accent-[#e85d26] bg-[#f0ece4] border-gray-600"
                     />
-                    <span className="text-xs text-[#666] group-hover:text-gray-200 transition select-none">{field}</span>
+                    <span className="text-xs text-[#666] group-hover:text-[#e85d26] transition select-none">{field}</span>
                   </label>
                 ))}
                 {customFields.map(field => (
@@ -1033,7 +1033,7 @@ export default function ContractAnalyzerPage() {
                     </span>
                     <span className="text-xs text-[#888] ml-auto">
                       {hasExistingResult ? (
-                        <span className="text-green-400">✅ Already analyzed</span>
+                        <span className="text-green-700">✅ Already analyzed</span>
                       ) : (
                         `${offer.files.length} file${offer.files.length !== 1 ? 's' : ''}`
                       )}
@@ -1158,25 +1158,25 @@ export default function ContractAnalyzerPage() {
               </p>
             </div>
             <div className="flex gap-2 flex-wrap">
-              <button onClick={startOver} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">
+              <button onClick={startOver} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 hover:text-white transition">
                 🔄 New Analysis
               </button>
               {compareResult && (
-                <button onClick={handleAddOffer} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">
+                <button onClick={handleAddOffer} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 hover:text-white transition">
                   ➕ Add Offer
                 </button>
               )}
               {compareResult ? (
                 <>
-                  <button onClick={exportCompareCSV} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">📥 CSV</button>
-                  <button onClick={exportComparePDF} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">📄 PDF</button>
+                  <button onClick={exportCompareCSV} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 hover:text-white transition">📥 CSV</button>
+                  <button onClick={exportComparePDF} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 hover:text-white transition">📄 PDF</button>
                   <button onClick={shareComparison} disabled={sharing}
                     className="px-4 py-2 bg-[#e85d26]/10 border border-[#e85d26]/30 rounded-lg text-sm font-medium text-[#e85d26] hover:bg-[#e85d26]/20 transition disabled:opacity-50">
                     {sharing ? '...' : '🔗 Share'}
                   </button>
                 </>
               ) : (
-                <button onClick={exportSingleCSV} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 transition">📥 Export CSV</button>
+                <button onClick={exportSingleCSV} className="px-4 py-2 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-sm font-medium hover:bg-gray-700 hover:text-white transition">📥 Export CSV</button>
               )}
             </div>
           </div>
@@ -1184,19 +1184,19 @@ export default function ContractAnalyzerPage() {
           {/* Save status */}
           {saveStatus === 'saved' && (
             <div className="bg-green-50 border border-green-300 rounded-lg p-2 mb-4 flex items-center gap-2">
-              <span className="text-green-400 text-sm">✅ Saved to database</span>
+              <span className="text-green-700 text-sm">✅ Saved to database</span>
             </div>
           )}
           {saveStatus === 'saving' && (
             <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-2 mb-4 flex items-center gap-2">
-              <span className="text-yellow-400 text-sm">💾 Saving...</span>
+              <span className="text-yellow-700 text-sm">💾 Saving...</span>
             </div>
           )}
 
           {/* Share toast */}
           {shareUrl && (
             <div className="bg-green-50 border border-green-300 rounded-lg p-3 mb-4 flex items-center gap-2">
-              <span className="text-green-400 text-sm">🔗 Share link copied: {shareUrl}</span>
+              <span className="text-green-700 text-sm">🔗 Share link copied: {shareUrl}</span>
             </div>
           )}
 
@@ -1322,7 +1322,7 @@ export default function ContractAnalyzerPage() {
                           <th key={o.label} className="px-4 py-3 text-left font-semibold text-[#e85d26] min-w-[180px]">
                             <div className="flex items-center gap-2">
                               <span>{o.label}</span>
-                              {selectedWinner === o.label && <span className="text-green-400 text-xs">✅ Selected</span>}
+                              {selectedWinner === o.label && <span className="text-green-700 text-xs">✅ Selected</span>}
                             </div>
                             <span className="text-xs text-[#888] font-normal block truncate max-w-[200px]" title={o.fileName}>{o.fileName}</span>
                           </th>

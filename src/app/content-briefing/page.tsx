@@ -44,22 +44,22 @@ const LOADING_MESSAGES = [
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
-  'Restaurant Opening': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  'Business Closing': 'bg-red-500/20 text-red-400 border-red-500/30',
+  'Restaurant Opening': 'bg-orange-500/20 text-orange-700 border-orange-500/30',
+  'Business Closing': 'bg-red-500/20 text-red-700 border-red-500/30',
   'Development': 'bg-[#e85d26]/20 text-[#e85d26] border-[#e85d26]/30',
-  'Government': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+  'Government': 'bg-purple-500/20 text-purple-700 border-purple-500/30',
   'Schools': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
   'Community': 'bg-green-500/20 text-green-400 border-green-500/30',
-  'Safety': 'bg-red-600/20 text-red-300 border-red-600/30',
+  'Safety': 'bg-red-600/20 text-red-700 border-red-600/30',
   'Real Estate': 'bg-[#e85d26]/20 text-[#e85d26] border-[#e85d26]/30',
   'Transportation': 'bg-[#e85d26]/20 text-[#e85d26] border-[#e85d26]/30',
-  'Entertainment': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
+  'Entertainment': 'bg-pink-500/20 text-pink-700 border-pink-500/30',
 };
 
 function viralScoreBadge(score: number) {
   if (score >= 80) return 'bg-green-500/20 text-green-400 border-green-500/40';
   if (score >= 60) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40';
-  return 'bg-[#f0ece4]0/20 text-[#666] border-gray-500/40';
+  return 'bg-[#f0ece4] text-[#666] border-[#d8d4cc]';
 }
 
 function CopyButton({ text, label }: { text: string; label: string }) {

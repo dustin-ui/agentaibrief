@@ -887,7 +887,7 @@ export default function GPTTemplatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#e8e6e1] text-gray-100">
+    <div className="min-h-screen bg-[#e8e6e1] text-[#2a2a2a]">
       {/* ── Header ── */}
       <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]/90 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -926,7 +926,7 @@ export default function GPTTemplatesPage() {
             placeholder="Search templates..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-96 px-4 py-2.5 rounded-lg bg-[#f0ece4] border border-[#d8d4cc] text-gray-100 placeholder-gray-500 focus:outline-none focus:border-[#e85d26] focus:ring-1 focus:ring-[#e85d26] transition-colors"
+            className="w-full md:w-96 px-4 py-2.5 rounded-lg bg-[#f0ece4] border border-[#d8d4cc] text-[#2a2a2a] placeholder-gray-500 focus:outline-none focus:border-[#e85d26] focus:ring-1 focus:ring-[#e85d26] transition-colors"
           />
         </div>
 
@@ -1049,7 +1049,7 @@ export default function GPTTemplatesPage() {
                             </p>
                             <a
                               href="/subscribe"
-                              className="inline-flex px-5 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#2d97ae] transition-colors"
+                              className="inline-flex px-5 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors"
                             >
                               Unlock All Templates →
                             </a>
@@ -1066,7 +1066,7 @@ export default function GPTTemplatesPage() {
                         </pre>
                         <button
                           onClick={() => handleCopy(tpl)}
-                          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#2d97ae] transition-colors"
+                          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors"
                         >
                           {copied === tpl.id ? (
                             <>✓ Copied!</>

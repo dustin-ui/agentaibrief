@@ -34,14 +34,14 @@ const LOADING_MESSAGES = [
 function RenderMarkdown({ text }: { text: string }) {
   const html = text
     .replace(/^### (.+)$/gm, '<h3 class="text-lg font-bold text-[#2a2a2a] mt-6 mb-2">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold text-[#e85d26] mt-8 mb-3">$2</h2>')
+    .replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold text-[#e85d26] mt-8 mb-3">$1</h2>')
     .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold text-[#2a2a2a] mt-8 mb-4">$1</h1>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-[#2a2a2a]">$1</strong>')
     .replace(/^\- (.+)$/gm, '<li class="ml-4 text-[#555]">• $1</li>')
     .replace(/^\* (.+)$/gm, '<li class="ml-4 text-[#555]">• $1</li>')
     .replace(/\n\n/g, '<br/><br/>')
     .replace(/\n/g, '<br/>');
-  return <div className="prose prose-invert max-w-none text-[#555] leading-relaxed" dangerouslySetInnerHTML={{ __html: html }} />;
+  return <div className="prose max-w-none text-[#555] leading-relaxed" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 /* ───── Main Page ───── */
@@ -260,7 +260,7 @@ function MarketUpdateTool() {
           {scriptError && <p className="text-red-800 text-sm">{scriptError}</p>}
 
           <button onClick={handleGenerateScripts} disabled={!canSubmitScript || scriptLoading}
-            className="w-full py-3 rounded-lg font-semibold text-[#2a2a2a] bg-[#2a2a2a] hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition">
+            className="w-full py-3 rounded-lg font-semibold text-white bg-[#2a2a2a] hover:bg-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition">
             {scriptLoading ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -38,9 +38,13 @@ Agent: ${agentName || 'N/A'} | Phone: ${agentPhone || 'N/A'}
         // BATCH 1: MLS Description, Email Blast, Schema Markup
         send('progress', { pct: 5, msg: 'Generating MLS description & email blast...' });
 
+        const fairHousing = `CRITICAL - Fair Housing Act Compliance: All content must describe PROPERTY FEATURES only. Never use language targeting protected classes or demographics. Banned phrases include: "family-friendly", "great for families", "perfect for retirees", "ideal for young professionals", "kid-friendly", "empty nesters", "adult community", "walking distance to church". Describe what the home HAS, not who it is FOR.`;
+
         const batch1Text = await runBatch(client, `You are an expert real estate copywriter. Generate content for this listing:
 
 ${listingContext}
+
+${fairHousing}
 
 Return ONLY a JSON object with these keys:
 {
@@ -63,6 +67,8 @@ Return ONLY a JSON object with these keys:
         const batch2Text = await runBatch(client, `You are a social media expert for real estate. Create posts for this listing:
 
 ${listingContext}
+
+${fairHousing}
 
 MLS Description (for context): ${batch1.mlsDescription?.slice(0, 200)}...
 
@@ -88,6 +94,8 @@ Return ONLY a JSON object with these keys:
         const batch3Text = await runBatch(client, `You are a real estate video content creator. Create video scripts for this listing:
 
 ${listingContext}
+
+${fairHousing}
 
 Return ONLY a JSON object with these keys:
 {

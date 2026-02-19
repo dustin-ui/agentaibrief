@@ -8,13 +8,12 @@ const TARGET_BUYERS = [
   'General / All Buyers',
   'First-Time Home Buyers',
   'Move-Up Buyers',
-  'Downsizers / Empty Nesters',
+  'Downsizers',
   'Luxury Buyers',
   'Investors',
   'Military / VA Buyers',
-  'Young Professionals',
-  'Families with Kids',
-  'Retirees',
+  'Remote Workers / Home Office',
+  'Single-Level Living Focus',
 ];
 
 const SECTION_META: Record<string, { label: string; icon: string }> = {

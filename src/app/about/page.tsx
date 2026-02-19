@@ -21,7 +21,7 @@ export default function AboutPage() {
       </header>
 
       {/* Hero */}
-      <section className="bg-gradient-to-b from-gray-900 to-gray-800 text-[#2a2a2a]">
+      <section className="bg-gradient-to-b from-gray-900 to-gray-800 text-white">
         <div className="max-w-4xl mx-auto px-4 py-16">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <img
@@ -31,23 +31,23 @@ export default function AboutPage() {
             />
             <div className="text-center md:text-left">
               <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Dustin Fox</h1>
-              <p className="text-[#555] text-lg mb-4">Team Lead, Fox Homes • Fairfax, VA</p>
+              <p className="text-gray-300 text-lg mb-4">Team Lead, Fox Homes • Fairfax, VA</p>
               <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                 <div className="bg-[#e8e6e1]/10 rounded-lg px-4 py-2 text-center">
                   <p className="text-xl font-bold text-[#e85d26]">$277M</p>
-                  <p className="text-xs text-[#666]">2025 Volume</p>
+                  <p className="text-xs text-gray-400">2025 Volume</p>
                 </div>
                 <div className="bg-[#e8e6e1]/10 rounded-lg px-4 py-2 text-center">
                   <p className="text-xl font-bold text-[#e85d26]">2,102+</p>
-                  <p className="text-xs text-[#666]">5-Star Reviews</p>
+                  <p className="text-xs text-gray-400">5-Star Reviews</p>
                 </div>
                 <div className="bg-[#e8e6e1]/10 rounded-lg px-4 py-2 text-center">
                   <p className="text-xl font-bold text-[#e85d26]">36</p>
-                  <p className="text-xs text-[#666]">Agents</p>
+                  <p className="text-xs text-gray-400">Agents</p>
                 </div>
                 <div className="bg-[#e8e6e1]/10 rounded-lg px-4 py-2 text-center">
                   <p className="text-xl font-bold text-[#e85d26]">115%</p>
-                  <p className="text-xs text-[#666]">Growth Since AI</p>
+                  <p className="text-xs text-gray-400">Growth Since AI</p>
                 </div>
               </div>
             </div>
@@ -124,7 +124,7 @@ export default function AboutPage() {
           {/* CTA */}
           <div className="bg-[#2a2a2a] rounded-xl p-8 text-center text-white">
             <h3 className="text-2xl font-bold mb-3">The agents who adopt AI first will win.</h3>
-            <p className="text-[#888] mb-6">
+            <p className="text-gray-300 mb-6">
               I&apos;m sharing everything I&apos;ve learned — the tools, the workflows, the strategies. Let me help you stay ahead.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
