@@ -84,14 +84,33 @@ export async function GET(request: NextRequest) {
 
     // Only update the main cc_tokens table for admin reauth (not subscriber connections)
     if (state === 'admin_reauth') {
-      await supabase.from('cc_tokens').upsert({
-        id: 1,
-        access_token: tokenData.access_token,
-        refresh_token: tokenData.refresh_token,
-        token_type: tokenData.token_type || 'Bearer',
-        expires_in: tokenData.expires_in || 86400,
-        saved_at: new Date().toISOString(),
-      });
+      const { error: updateError } = await supabase
+        .from('cc_tokens')
+        .update({
+          access_token: tokenData.access_token,
+          refresh_token: tokenData.refresh_token,
+          token_type: tokenData.token_type || 'Bearer',
+          expires_in: tokenData.expires_in || 86400,
+          saved_at: new Date().toISOString(),
+        })
+        .eq('id', 1);
+
+      if (updateError) {
+        console.error('cc_tokens update error:', JSON.stringify(updateError));
+        // Try upsert as fallback
+        const { error: upsertError } = await supabase.from('cc_tokens').upsert({
+          id: 1,
+          access_token: tokenData.access_token,
+          refresh_token: tokenData.refresh_token,
+          token_type: tokenData.token_type || 'Bearer',
+          expires_in: tokenData.expires_in || 86400,
+          saved_at: new Date().toISOString(),
+        }, { onConflict: 'id' });
+        if (upsertError) {
+          console.error('cc_tokens upsert fallback error:', JSON.stringify(upsertError));
+          return NextResponse.redirect(new URL('/?cc_error=db_save_failed', request.url));
+        }
+      }
     }
 
     // Redirect back with success

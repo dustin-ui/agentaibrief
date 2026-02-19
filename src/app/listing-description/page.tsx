@@ -1,5 +1,7 @@
 'use client';
 
+// Page: /listing-description — "3x Listing Writer" (Pro feature, formerly Inner Circle only)
+
 import { useState } from 'react';
 import Link from 'next/link';
 import { PaywallGate } from '@/components/PaywallGate';
@@ -90,22 +92,22 @@ export default function ListingDescriptionPage() {
             <Link href="/" className="text-[#666] hover:text-[#2a2a2a]">Home</Link>
             <Link href="/tools" className="text-[#666] hover:text-[#2a2a2a]">AI Tools</Link>
             <Link href="/listing-generator" className="text-[#666] hover:text-[#2a2a2a]">Content Factory</Link>
-            <span className="text-[#e85d26] font-semibold">Listing Description</span>
+            <span className="text-[#e85d26] font-semibold">Listing Attraction</span>
           </nav>
         </div>
       </header>
 
-      <PaywallGate requiredTier="inner_circle" featureName="AI Listing Description Generator">
+      <PaywallGate requiredTier="pro" featureName="Listing Attraction" allowFreeTrial={true} trialKey="listing-attraction">
         <section className="max-w-4xl mx-auto px-4 py-12">
           <div className="text-center mb-8">
             <div className="inline-block px-3 py-1 bg-[#e85d26]/10 border border-[#e85d26]/30 rounded-full text-[#e85d26] text-xs font-medium mb-4">
-              INNER CIRCLE FEATURE
+              PRO FEATURE
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold mb-3">
-              AI Listing <span className="text-[#e85d26]">Description</span> Generator
+              <span className="text-[#e85d26]">Listing</span> Attraction
             </h1>
             <p className="text-[#666] max-w-lg mx-auto">
-              Generate a compelling, Fair Housing-compliant listing description (3,800–4,000 characters) with one click. Powered by the same prompts top producers use.
+              Listing descriptions so good, the neighbors will call you. Generates a Fair Housing-compliant description (3,800–4,000 characters) with a split-tested headline — in under 30 seconds.
             </p>
           </div>
 
@@ -205,7 +207,7 @@ export default function ListingDescriptionPage() {
                     </button>
                   </div>
                 </div>
-                <div className="bg-[#f0ece4]/50 rounded-lg p-6 text-gray-200 leading-relaxed whitespace-pre-wrap text-[15px]">
+                <div className="bg-[#f0ece4]/50 rounded-lg p-6 text-gray-800 leading-relaxed whitespace-pre-wrap text-[15px]">
                   {description}
                 </div>
               </div>
@@ -233,7 +235,7 @@ export default function ListingDescriptionPage() {
                     <h2 className="text-xl font-bold">📬 Postcard Copy</h2>
                     <CopyButton text={postcardCopy} />
                   </div>
-                  <div className="bg-[#f0ece4]/50 rounded-lg p-6 text-gray-200 leading-relaxed whitespace-pre-wrap text-[15px]">
+                  <div className="bg-[#f0ece4]/50 rounded-lg p-6 text-gray-800 leading-relaxed whitespace-pre-wrap text-[15px]">
                     {postcardCopy}
                   </div>
                 </div>

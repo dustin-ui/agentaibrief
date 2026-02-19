@@ -292,7 +292,7 @@ export default function ContentBriefingPage() {
                     <span className="text-xs font-semibold text-[#666]">🎬 Green Screen Script</span>
                     <CopyButton text={story.greenScreenScript} label="script" />
                   </div>
-                  <p className="text-sm text-gray-200 leading-relaxed">{story.greenScreenScript}</p>
+                  <p className="text-sm text-gray-800 leading-relaxed">{story.greenScreenScript}</p>
                 </div>
 
                 {/* Instagram Hook */}
@@ -301,7 +301,7 @@ export default function ContentBriefingPage() {
                     <span className="text-xs font-semibold text-[#666]">📱 Instagram Hook</span>
                     <CopyButton text={story.instagramHook} label="hook" />
                   </div>
-                  <p className="text-sm text-gray-200 italic">{story.instagramHook}</p>
+                  <p className="text-sm text-gray-800 italic">{story.instagramHook}</p>
                 </div>
 
                 {/* Hashtags */}

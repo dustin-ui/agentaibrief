@@ -288,11 +288,11 @@ export default function ListingGeneratorPage() {
                       <CopyButton text={content} />
                     </div>
                     {isCode ? (
-                      <pre className="bg-[#f0ece4]/50 rounded-lg p-4 text-sm text-gray-200 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
+                      <pre className="bg-[#f0ece4]/50 rounded-lg p-4 text-sm text-gray-800 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
                         {content}
                       </pre>
                     ) : (
-                      <div className="bg-[#f0ece4]/50 rounded-lg p-4 text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">
+                      <div className="bg-[#f0ece4]/50 rounded-lg p-4 text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
                         {content}
                       </div>
                     )}

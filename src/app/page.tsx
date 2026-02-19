@@ -39,6 +39,13 @@ const tools = [
     badge: 'IC',
   },
   {
+    name: 'Listing Attraction',
+    href: '/listing-description',
+    description: 'Listing descriptions so good, the neighbors will call you',
+    icon: '🏡',
+    badge: 'PRO',
+  },
+  {
     name: 'Contract Analyzer',
     href: '/contract-analyzer',
     description: 'Upload a contract, get instant clause-by-clause analysis',
@@ -120,9 +127,9 @@ export default function Home() {
             {isLoggedIn ? (
               <>
                 <span className="text-sm hidden sm:inline" style={{ color: '#888' }}>{user?.email}</span>
-                <span className="text-xs px-2 py-1 rounded-full font-semibold uppercase" style={{ background: 'rgba(232,93,38,0.15)', color: '#e85d26' }}>
+                <a href="/manage-subscription" className="text-xs px-2 py-1 rounded-full font-semibold uppercase transition-opacity hover:opacity-70" style={{ background: 'rgba(232,93,38,0.15)', color: '#e85d26' }} title="Manage subscription">
                   {profile?.subscription_tier === 'inner_circle' ? 'Inner Circle' : profile?.subscription_tier === 'pro' ? 'Pro' : 'Free'}
-                </span>
+                </a>
                 <button onClick={signOut} className="text-sm transition-colors text-[#888] hover:text-[#e85d26]">Log out</button>
               </>
             ) : (

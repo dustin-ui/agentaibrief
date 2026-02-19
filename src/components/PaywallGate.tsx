@@ -56,11 +56,14 @@ export function PaywallGate({ requiredTier, children, featureName, allowFreeTria
     return (
       <>
         {showTrialBanner && (
-          <div className="max-w-4xl mx-auto mb-4 p-4 rounded-xl bg-gradient-to-r from-[#e85d26]/10 to-[#e85d26]/5 border border-[#e85d26]/30 text-center">
+          <div className="max-w-4xl mx-auto mb-4 p-4 rounded-xl bg-gradient-to-r from-[#e85d26]/15 to-[#e85d26]/5 border border-[#e85d26]/40 flex items-center justify-between gap-4 flex-wrap">
             <p className="text-sm text-[#2a2a2a]">
-              🎁 <strong>Free Trial!</strong> You&apos;re trying {featureName || 'this feature'} for free.{' '}
-              <Link href="/pricing" className="text-[#e85d26] underline hover:no-underline">Upgrade to Pro</Link> for unlimited access.
+              🎁 <strong>Free trial — 1 use.</strong> Like what you see?{' '}
+              <Link href="/pricing" className="text-[#e85d26] font-semibold underline hover:no-underline">Upgrade to Pro ($19/mo)</Link> for unlimited descriptions.
             </p>
+            <Link href="/pricing" className="shrink-0 px-4 py-1.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
+              Upgrade Now →
+            </Link>
           </div>
         )}
         <div onClick={() => { setShowTrialBanner(true); markTrialUsed(); }}>
