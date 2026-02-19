@@ -212,7 +212,7 @@ export default function SEOCommandPage() {
                     <div className="grid grid-cols-7 gap-1.5 max-w-md mx-auto">
                       {gridData.map((point, i) => (
                         <button key={i} onClick={() => setSelectedGrid(point)}
-                          className={`w-full aspect-square rounded-lg ${gridColor(point.ranking)} ${selectedGrid === point ? 'ring-2 ring-white' : ''} hover:ring-2 hover:ring-white/50 transition-all flex items-center justify-center text-xs font-bold ${point.ranking && point.ranking <= 3 ? 'text-[#2a2a2a]' : 'text-[#2a2a2a]/90'}`}>
+                          className={`w-full aspect-square rounded-lg ${gridColor(point.ranking)} ${selectedGrid === point ? 'ring-2 ring-white' : ''} hover:ring-2 hover:ring-white/50 transition-all flex items-center justify-center text-xs font-bold ${point.ranking === null ? 'text-white' : point.ranking <= 3 ? 'text-[#2a2a2a]' : 'text-[#2a2a2a]/90'}`}>
                           {point.ranking ?? '—'}
                         </button>
                       ))}

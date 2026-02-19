@@ -268,15 +268,15 @@ export default function PromptLibrary() {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 bg-gradient-to-br from-[#e85d26]/20 to-gray-900 border border-[#e85d26]/30 rounded-2xl p-8 md:p-12 text-center">
+        <div className="mt-16 bg-gradient-to-br from-[#e85d26]/20 to-gray-900 border border-[#e85d26]/30 rounded-2xl p-8 md:p-12 text-center text-white">
           <h3 className="text-3xl font-bold mb-3">Unlock Every Prompt</h3>
-          <p className="text-[#666] mb-6 max-w-xl mx-auto text-lg">
+          <p className="text-gray-300 mb-6 max-w-xl mx-auto text-lg">
             Inner Circle members get all {PROMPTS.length}+ prompts, daily AI briefings, tool reviews, and implementation guides.
           </p>
           <Link href="/subscribe" className="inline-flex px-8 py-3.5 bg-[#e85d26] text-white font-semibold rounded-xl hover:bg-[#2d9db5] transition-colors text-lg">
             Join the Inner Circle →
           </Link>
-          <p className="text-sm text-[#888] mt-3">Cancel anytime · New prompts added weekly</p>
+          <p className="text-sm text-gray-400 mt-3">Cancel anytime · New prompts added weekly</p>
         </div>
       </main>
 

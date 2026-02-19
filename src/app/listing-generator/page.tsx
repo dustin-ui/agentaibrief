@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PaywallGate } from '@/components/PaywallGate';
 
+// Fair Housing compliant — no protected class targeting; describes lifestyle preferences, not demographics
 const TARGET_BUYERS = [
   'General / All Buyers',
   'First-Time Home Buyers',

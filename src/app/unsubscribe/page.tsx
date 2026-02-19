@@ -74,7 +74,7 @@ function UnsubscribeForm() {
 
           <div className="mt-6 pt-6 border-t border-gray-200 text-center">
             <p className="text-sm text-[#888] mb-3">Or adjust your preferences instead:</p>
-            <a href="/preferences" className="text-sm text-[#e85d26] hover:underline">
+            <a href="/manage-subscription" className="text-sm text-[#e85d26] hover:underline">
               Manage Email Preferences →
             </a>
           </div>

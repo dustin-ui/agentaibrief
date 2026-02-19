@@ -351,12 +351,12 @@ export default function SubscribePage() {
           
           {/* Dustin's Story Card */}
           <div className="bg-[#e8e6e1] rounded-2xl border border-[#e0dcd4] shadow-sm overflow-hidden mb-8">
-            <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-[#2a2a2a] p-8">
+            <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-8">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                 <img src="/dustin-fox.jpg" alt="Dustin Fox" className="w-20 h-20 rounded-full object-cover shrink-0" />
                 <div className="text-center md:text-left">
                   <h4 className="text-xl font-bold mb-1">Dustin Fox</h4>
-                  <p className="text-[#555] text-sm mb-4">Team Lead, Fox Homes • DC Metro Market</p>
+                  <p className="text-gray-300 text-sm mb-4">Team Lead, Fox Homes • DC Metro Market</p>
                   <p className="text-gray-200 text-sm leading-relaxed max-w-xl">
                     &ldquo;I went from solo agent to leading the Fox Homes Team doing $277 million in volume. AI didn&apos;t just help — it was the multiplier. This brief is everything I wish I had when I started adopting AI in my business.&rdquo;
                   </p>

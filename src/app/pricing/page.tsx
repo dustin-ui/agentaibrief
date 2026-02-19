@@ -97,14 +97,20 @@ export default function PricingPage() {
     const priceId = PRICE_IDS[envKey];
     setLoadingTier(tierInfo.tier);
 
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId, userId: user?.id, referral: typeof window !== 'undefined' && (window as any).Rewardful?.referral || undefined }),
-    });
-    const data = await res.json();
-    setLoadingTier(null);
-    if (data.url) router.push(data.url);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId, userId: user?.id, referral: typeof window !== 'undefined' && (window as any).Rewardful?.referral || undefined }),
+      });
+      const data = await res.json();
+      if (data.url) router.push(data.url);
+      else console.error('Checkout error:', data);
+    } catch (err) {
+      console.error('Checkout failed:', err);
+    } finally {
+      setLoadingTier(null);
+    }
   };
 
   return (

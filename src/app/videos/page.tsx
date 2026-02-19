@@ -24,7 +24,7 @@ export default function VideoLibraryPage() {
       ? videos
       : videos.filter((v) => v.tags.includes(filter));
 
-  const hasAccess = isInnerCircle;
+  const hasAccess = isInnerCircle || profile?.tier === 'team';
 
   async function handleVerifyAccess(e: React.FormEvent) {
     e.preventDefault();
@@ -208,10 +208,10 @@ export default function VideoLibraryPage() {
       {!hasAccess && (
         <section className="border-t border-[#e0dcd4] bg-gradient-to-b from-gray-900 to-gray-950">
           <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-            <h3 className="text-3xl font-bold text-[#2a2a2a] mb-4">
+            <h3 className="text-3xl font-bold text-white mb-4">
               Unlock the Full Video Library
             </h3>
-            <p className="text-[#666] text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
               Get access to all livestream replays, workshops, and exclusive
               content with an Inner Circle membership. Plus direct access to
               Dustin Fox for coaching & strategy.
@@ -225,7 +225,7 @@ export default function VideoLibraryPage() {
               </a>
               <button
                 onClick={() => setShowAccessModal(true)}
-                className="inline-flex items-center justify-center px-8 py-3 border border-gray-600 text-[#555] font-medium rounded-lg hover:bg-[#f0ece4] transition-colors"
+                className="inline-flex items-center justify-center px-8 py-3 border border-gray-600 text-gray-300 font-medium rounded-lg hover:bg-white/10 transition-colors"
               >
                 Already a member? Sign in
               </button>
@@ -416,7 +416,7 @@ function CardContent({
         )}
 
         {/* Duration badge */}
-        <div className="absolute bottom-2 right-2 bg-black/80 text-[#2a2a2a] text-xs font-medium px-2 py-1 rounded">
+        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-medium px-2 py-1 rounded">
           {formatDuration(video.duration)}
         </div>
 

@@ -185,7 +185,7 @@ function SuccessContent() {
               href="/pricing"
               className="inline-block bg-[#e85d26] text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-[#c44a1a] transition-colors"
             >
-              Upgrade to Pro — $9.99/mo
+              Upgrade to Pro — $19/mo
             </Link>
           </div>
         )}

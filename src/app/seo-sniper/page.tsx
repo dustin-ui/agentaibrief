@@ -261,13 +261,13 @@ export default function SEOSniperPage() {
                 <span className="text-sm text-[#666]">{wordCount.toLocaleString()} words • Target: {articleKeyword}</span>
                 <button
                   onClick={copyArticle}
-                  className="px-4 py-2 rounded-lg bg-[#f0ece4] hover:bg-[#d8d4cc] text-white text-sm font-medium transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-lg bg-[#f0ece4] hover:bg-[#d8d4cc] text-[#2a2a2a] text-sm font-medium transition-colors flex items-center gap-2"
                 >
                   {copied ? '✅ Copied!' : '📋 Copy to Clipboard'}
                 </button>
               </div>
             </div>
-            <div className="p-8 rounded-lg bg-[#f0ece4] border border-[#e0dcd4] prose prose-invert prose-orange max-w-none">
+            <div className="p-8 rounded-lg bg-[#f0ece4] border border-[#e0dcd4] prose prose-gray max-w-none text-[#2a2a2a]">
               <div dangerouslySetInnerHTML={{ __html: articleToHtml(article) }} />
             </div>
           </div>
@@ -297,7 +297,7 @@ export default function SEOSniperPage() {
                 <li className="flex items-center gap-2">❌ No article generation</li>
                 <li className="flex items-center gap-2">✅ Competition analysis</li>
               </ul>
-              <button className="w-full py-2 rounded-lg border border-[#d8d4cc] text-[#555] hover:bg-[#f0ece4] transition-colors text-sm font-medium">Get Started</button>
+              <a href="/signup" className="w-full py-2 rounded-lg border border-[#d8d4cc] text-[#555] hover:bg-[#f0ece4] transition-colors text-sm font-medium text-center block">Get Started</a>
             </div>
             {/* Pro */}
             <div className="rounded-xl border-2 border-[#e85d26] bg-[#f0ece4]/50 p-6 relative">
@@ -310,7 +310,7 @@ export default function SEOSniperPage() {
                 <li className="flex items-center gap-2">✅ Competition analysis</li>
                 <li className="flex items-center gap-2">✅ Question keywords</li>
               </ul>
-              <button className="w-full py-2 rounded-lg bg-[#e85d26] hover:bg-[#d05020] text-white text-sm font-medium transition-colors">Subscribe</button>
+              <a href="/subscribe" className="w-full py-2 rounded-lg bg-[#e85d26] hover:bg-[#d05020] text-white text-sm font-medium transition-colors text-center block">Subscribe</a>
             </div>
             {/* Inner Circle */}
             <div className="rounded-xl border border-[#e0dcd4] bg-[#f0ece4]/50 p-6">
@@ -322,7 +322,7 @@ export default function SEOSniperPage() {
                 <li className="flex items-center gap-2">✅ All AI tools access</li>
                 <li className="flex items-center gap-2">✅ Priority generation</li>
               </ul>
-              <button className="w-full py-2 rounded-lg border border-[#d8d4cc] text-[#555] hover:bg-[#f0ece4] transition-colors text-sm font-medium">Subscribe</button>
+              <a href="/subscribe" className="w-full py-2 rounded-lg border border-[#d8d4cc] text-[#555] hover:bg-[#f0ece4] transition-colors text-sm font-medium text-center block">Subscribe</a>
             </div>
           </div>
         </div>
