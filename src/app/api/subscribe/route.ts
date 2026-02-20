@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     if (!email || !email.includes('@')) {
       const isFormSubmit = !(request.headers.get('content-type') || '').includes('application/json');
       if (isFormSubmit) {
-        return NextResponse.redirect(new URL('/?subscribe=error', request.url));
+        return NextResponse.redirect(new URL('/?subscribe=error', request.url), { status: 303 });
       }
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
     }
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       console.log(`[subscribe] Saved to Supabase (CC not configured): ${email} (${tier || 'free'})`);
       const isFormSubmit = !(request.headers.get('content-type') || '').includes('application/json');
       if (isFormSubmit) {
-        return NextResponse.redirect(new URL('/?subscribe=success', request.url));
+        return NextResponse.redirect(new URL('/?subscribe=success', request.url), { status: 303 });
       }
       return NextResponse.json({
         success: true,
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       console.log(`[subscribe] CC_LIST_ID not set. Email saved to Supabase: ${email}`);
       const isFormSubmit = !(request.headers.get('content-type') || '').includes('application/json');
       if (isFormSubmit) {
-        return NextResponse.redirect(new URL('/?subscribe=success', request.url));
+        return NextResponse.redirect(new URL('/?subscribe=success', request.url), { status: 303 });
       }
       return NextResponse.json({
         success: true,
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     const isFormSubmit = !(request.headers.get('content-type') || '').includes('application/json');
     if (isFormSubmit) {
-      return NextResponse.redirect(new URL('/?subscribe=success', request.url));
+      return NextResponse.redirect(new URL('/?subscribe=success', request.url), { status: 303 });
     }
 
     return NextResponse.json({
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     console.error('Subscribe error:', error);
     const isFormSubmit = !(request.headers.get('content-type') || '').includes('application/json');
     if (isFormSubmit) {
-      return NextResponse.redirect(new URL('/?subscribe=error', request.url));
+      return NextResponse.redirect(new URL('/?subscribe=error', request.url), { status: 303 });
     }
     return NextResponse.json(
       { error: 'Failed to subscribe. Please try again.' },
