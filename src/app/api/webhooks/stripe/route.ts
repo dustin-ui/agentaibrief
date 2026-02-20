@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
 
         if (tier) {
           if (userId) {
-            // Existing user — update their profile
+            // Existing user — update their profile (critical path, must complete before returning 200)
             await updateProfile(userId, tier, stripeCustomerId, session.subscription as string);
           } else if (email) {
             // No account exists — auto-register them as a paid user
@@ -203,21 +203,20 @@ export async function POST(request: NextRequest) {
             );
           }
 
-          // Add to CC lists
+          // Fire-and-forget CC + Telegram — don't let slow 3rd-party calls block the 200 response
           if (email) {
             const lists = [CC_LISTS.free, CC_LISTS[tier]];
-            await addToCC(email, lists, firstName);
-          }
+            addToCC(email, lists, firstName).catch(err =>
+              console.error('[webhook] CC add failed (async):', err)
+            );
 
-          // Notify Dustin
-          if (email) {
             const tierLabel = tier === 'inner_circle' ? 'Inner Circle ($99/mo)' : 'Pro ($19/mo)';
             const isNew = !session.client_reference_id;
-            await notifyDustin(
+            notifyDustin(
               `🎉 <b>New Paid Subscriber!</b>\n\n` +
               `${firstName || 'Someone'} (${email}) just subscribed to <b>${tierLabel}</b> on AgentAIBrief!` +
               (isNew ? '\n\n<i>Auto-registered (paid without existing account) — magic link sent.</i>' : '')
-            );
+            ).catch(err => console.error('[webhook] Telegram notify failed (async):', err));
           }
         }
       }
