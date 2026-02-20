@@ -3,11 +3,18 @@
     {
       "path": "/api/newsletter/weekly-cron",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/admin/sync-subscriptions",
+      "schedule": "0 */2 * * *"
     }
   ],
   "functions": {
     "src/app/api/webhooks/stripe/route.ts": {
       "maxDuration": 30
+    },
+    "src/app/api/admin/sync-subscriptions/route.ts": {
+      "maxDuration": 120
     },
     "src/app/api/contract-analyze/route.ts": {
       "maxDuration": 120
