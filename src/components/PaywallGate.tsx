@@ -95,6 +95,9 @@ export function PaywallGate({ requiredTier, children, featureName, allowFreeTria
   }
 
   // Logged in but tier too low
+  const upgradeHref = requiredTier === 'inner_circle' ? '/subscribe' : '/pricing';
+  const upgradeCta = requiredTier === 'inner_circle' ? 'Join Inner Circle' : 'View Pricing';
+
   return (
     <div className="max-w-lg mx-auto my-12 p-8 rounded-2xl bg-[#f0ece4]/80 border border-[#d8d4cc] text-center">
       <div className="text-4xl mb-4">⬆️</div>
@@ -102,8 +105,8 @@ export function PaywallGate({ requiredTier, children, featureName, allowFreeTria
       <p className="text-[#666] mb-6">
         {featureName || 'This feature'} requires a {TIER_LABELS[requiredTier]} subscription. You&apos;re currently on the <span className="text-[#2a2a2a] font-medium capitalize">{tier.replace('_', ' ')}</span> plan.
       </p>
-      <Link href="/pricing" className="inline-block px-6 py-2.5 bg-[#e85d26] text-white rounded-lg hover:bg-[#c44a1a] transition-colors font-medium">
-        View Pricing
+      <Link href={upgradeHref} className="inline-block px-6 py-2.5 bg-[#e85d26] text-white rounded-lg hover:bg-[#c44a1a] transition-colors font-medium">
+        {upgradeCta}
       </Link>
     </div>
   );

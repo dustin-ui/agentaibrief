@@ -65,25 +65,83 @@ function Confetti() {
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const planParam = searchParams.get('plan') || 'free';
-  const { profile } = useAuth();
-  
-  // Determine actual tier: check profile from Supabase first, fall back to URL param
-  const actualTier = profile?.subscription_tier || planParam;
+  const sessionId = searchParams.get('session_id');
+  const isTrial = searchParams.get('trial') === 'true';
+  const { profile, user, refreshProfile } = useAuth();
+
+  const [sessionTier, setSessionTier] = useState<string | null>(null);
+  const [loadingSession, setLoadingSession] = useState(!!sessionId);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState('');
+
+  // Fetch tier from Stripe session
+  useEffect(() => {
+    if (!sessionId) return;
+    setLoadingSession(true);
+    fetch(`/api/session-info?session_id=${sessionId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setSessionTier(data.tier || null);
+      })
+      .catch(() => setSessionTier(null))
+      .finally(() => setLoadingSession(false));
+  }, [sessionId]);
+
+  // Determine actual tier: Stripe session > Supabase profile > fallback 'free'
+  const actualTier = sessionTier || profile?.subscription_tier || 'free';
   const isInnerCircle = actualTier === 'inner_circle';
   const isPro = actualTier === 'pro' || isInnerCircle;
-  
+
   const planLabel = isInnerCircle ? 'Inner Circle' : isPro ? 'Pro' : 'Free';
-  const planDesc = isInnerCircle 
+  const planDesc = isInnerCircle
     ? 'Full suite + priority features + direct team access'
-    : isPro 
-    ? 'Full access including Agent Angles on every story' 
+    : isPro
+    ? 'Full access including Agent Angles on every story'
     : 'Daily AI headlines + 1 featured story';
 
+  // Trial date: 7 days from now
+  const trialEndDate = new Date();
+  trialEndDate.setDate(trialEndDate.getDate() + 7);
+  const trialEndFormatted = trialEndDate.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
+  const handleRefreshAccess = async () => {
+    if (!user?.id) return;
+    setSyncing(true);
+    setSyncMsg('');
+    try {
+      await fetch('/api/sync-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      await refreshProfile();
+      setSyncMsg('Access updated!');
+    } catch {
+      setSyncMsg('Something went wrong. Please try again.');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const shareText = encodeURIComponent(
-    "Just signed up for AgentAIBrief — daily AI news designed for real estate agents. Check it out!"
+    'Just signed up for AgentAIBrief — daily AI news designed for real estate agents. Check it out!'
   );
   const shareUrl = encodeURIComponent('https://agentaibrief.com');
+
+  if (loadingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#e8e6e1]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#e85d26] mx-auto mb-4"></div>
+          <p className="text-[#666]">Loading your subscription details…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#e8e6e1]">
@@ -108,10 +166,22 @@ function SuccessContent() {
           <h2 className="text-4xl font-bold text-[#2a2a2a] mb-3">
             You&apos;re in!
           </h2>
-          <p className="text-xl text-[#666]">
-            Your first briefing arrives{' '}
-            <span className="font-semibold text-[#2a2a2a]">tomorrow at 10:15 AM EST</span>
-          </p>
+          {isTrial ? (
+            <div className="space-y-1">
+              <p className="text-xl text-[#e85d26] font-semibold">
+                Your 7-day free trial has started!
+              </p>
+              <p className="text-[#666]">
+                You won&apos;t be charged until{' '}
+                <span className="font-semibold text-[#2a2a2a]">{trialEndFormatted}</span>
+              </p>
+            </div>
+          ) : (
+            <p className="text-xl text-[#666]">
+              Your first briefing arrives{' '}
+              <span className="font-semibold text-[#2a2a2a]">tomorrow at 10:15 AM EST</span>
+            </p>
+          )}
         </div>
 
         {/* Plan Confirmation */}
@@ -122,10 +192,29 @@ function SuccessContent() {
             </div>
             <div>
               <p className="font-semibold text-[#2a2a2a]">
-                {planLabel} Plan {isPro ? 'Confirmed' : 'Activated'}
+                {planLabel} Plan {isTrial ? 'Trial Started' : isPro ? 'Confirmed' : 'Activated'}
               </p>
               <p className="text-sm text-[#888]">{planDesc}</p>
             </div>
+          </div>
+
+          {/* Refresh Access button */}
+          <div className="border-t border-[#e0dcd4] pt-4 mt-2">
+            <p className="text-sm text-[#888] mb-2">
+              Having trouble seeing your access?
+            </p>
+            <button
+              onClick={handleRefreshAccess}
+              disabled={syncing || !user?.id}
+              className="text-sm px-4 py-2 bg-[#2a2a2a] text-white rounded-lg hover:bg-[#444] transition-colors disabled:opacity-50"
+            >
+              {syncing ? 'Refreshing…' : 'Click to refresh access'}
+            </button>
+            {syncMsg && (
+              <p className={`text-sm mt-2 ${syncMsg === 'Access updated!' ? 'text-green-700' : 'text-red-500'}`}>
+                {syncMsg}
+              </p>
+            )}
           </div>
         </div>
 
@@ -178,7 +267,7 @@ function SuccessContent() {
           <div className="bg-[#2a2a2a] rounded-2xl p-6 mb-8">
             <h3 className="text-lg font-bold text-white mb-2">⚡ Want the full edge?</h3>
             <p className="text-[#999] mb-4">
-              Upgrade to Pro for <span className="font-semibold text-white">Agent Angles on every story</span> — 
+              Upgrade to Pro for <span className="font-semibold text-white">Agent Angles on every story</span> —
               specific scripts, strategies, and action items you can use today.
             </p>
             <Link
@@ -249,7 +338,7 @@ export default function SuccessPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[#e8e6e1]">
-        <div className="text-2xl text-[#666]">Loading...</div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#e85d26]"></div>
       </div>
     }>
       <SuccessContent />

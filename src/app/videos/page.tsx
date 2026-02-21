@@ -12,9 +12,6 @@ export default function VideoLibraryPage() {
   const [videos] = useState<Video[]>(getAllVideos());
   const [filter, setFilter] = useState<string>('all');
   const [showAccessModal, setShowAccessModal] = useState(false);
-  const [accessEmail, setAccessEmail] = useState('');
-  const [verifying, setVerifying] = useState(false);
-  const [accessError, setAccessError] = useState('');
 
   // Get unique tags
   const allTags = Array.from(new Set(videos.flatMap((v) => v.tags)));
@@ -24,45 +21,7 @@ export default function VideoLibraryPage() {
       ? videos
       : videos.filter((v) => v.tags.includes(filter));
 
-  const hasAccess = isInnerCircle || profile?.tier === 'team';
-
-  async function handleVerifyAccess(e: React.FormEvent) {
-    e.preventDefault();
-    setVerifying(true);
-    setAccessError('');
-
-    try {
-      const res = await fetch('/api/verify-access', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: accessEmail }),
-      });
-      const data = await res.json();
-
-      if (data.tier === 'inner-circle') {
-        // Update auth context
-        const stored = {
-          email: accessEmail,
-          tier: 'inner-circle' as const,
-          name: accessEmail.split('@')[0],
-        };
-        localStorage.setItem('aab_user', JSON.stringify(stored));
-        window.location.reload();
-      } else if (data.tier === 'pro') {
-        setAccessError(
-          'Your Pro subscription does not include video access. Upgrade to Inner Circle to unlock the full library.'
-        );
-      } else {
-        setAccessError(
-          'No active subscription found for this email. Subscribe to Inner Circle to access exclusive video content.'
-        );
-      }
-    } catch {
-      setAccessError('Something went wrong. Please try again.');
-    } finally {
-      setVerifying(false);
-    }
-  }
+  const hasAccess = isInnerCircle || profile?.subscription_tier === 'team';
 
   return (
     <div className="min-h-screen bg-[#e8e6e1]">
@@ -181,7 +140,7 @@ export default function VideoLibraryPage() {
       </div>
 
       {/* Video Grid */}
-      <PaywallGate requiredTier="pro" featureName="Video Library">
+      <PaywallGate requiredTier="inner_circle" featureName="Video Library">
       <main className="max-w-7xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredVideos.map((video) => (
@@ -248,10 +207,7 @@ export default function VideoLibraryPage() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-[#f0ece4] border border-[#d8d4cc] rounded-2xl max-w-md w-full p-8 relative">
             <button
-              onClick={() => {
-                setShowAccessModal(false);
-                setAccessError('');
-              }}
+              onClick={() => setShowAccessModal(false)}
               className="absolute top-4 right-4 text-[#888] hover:text-[#555] text-lg"
             >
               ✕
@@ -274,37 +230,25 @@ export default function VideoLibraryPage() {
                 </svg>
               </div>
               <h2 className="text-xl font-bold text-[#2a2a2a] mb-2">
-                Access Video Library
+                Sign In to Access
               </h2>
               <p className="text-sm text-[#666]">
-                Enter your subscription email to verify your Inner Circle
-                membership.
+                Log in with your Inner Circle account to unlock the full video library.
               </p>
             </div>
 
-            <form onSubmit={handleVerifyAccess}>
-              <input
-                type="email"
-                value={accessEmail}
-                onChange={(e) => setAccessEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                className="w-full px-4 py-3 bg-[#f0ece4] border border-gray-600 rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-[#e85d26] focus:border-[#e85d26] outline-none text-sm"
-              />
-              <button
-                type="submit"
-                disabled={verifying}
-                className="w-full mt-4 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors disabled:opacity-50"
-              >
-                {verifying ? 'Verifying...' : 'Verify Access'}
-              </button>
-            </form>
-
-            {accessError && (
-              <div className="mt-4 p-3 bg-red-50 border border-red-300 rounded-lg text-sm text-red-800">
-                {accessError}
-              </div>
-            )}
+            <Link
+              href="/login?redirect=/videos"
+              className="block w-full mt-2 py-3 bg-[#e85d26] text-white font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors text-center"
+            >
+              Log In
+            </Link>
+            <Link
+              href="/signup"
+              className="block w-full mt-3 py-3 border border-[#d8d4cc] text-[#2a2a2a] font-medium rounded-lg hover:bg-[#e0dcd4] transition-colors text-center"
+            >
+              Create Account
+            </Link>
 
             <div className="mt-6 pt-4 border-t border-[#d8d4cc] text-center">
               <p className="text-sm text-[#888]">
