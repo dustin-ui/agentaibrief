@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 
+export const maxDuration = 300;
+
 const COMPARISON_PROMPT = `You are a real estate contract comparison expert. Analyze this contract and extract the following fields into a JSON object.
+
+CRITICAL RULES:
+- "purchasePrice" must be the actual agreed-upon sales price written in the purchase contract itself.
+- Do NOT use the amount from any pre-approval letter, mortgage commitment letter, or lender letter — those show the buyer's maximum borrowing capacity, NOT the offer price.
+- If multiple documents are included (e.g. a contract + a pre-approval letter), extract the purchase price ONLY from the contract document.
 
 Return ONLY valid JSON with these exact fields (use null for anything not found):
 
@@ -53,8 +60,8 @@ Return ONLY valid JSON, no markdown fences.`;
 
 const SUMMARY_PROMPT = `You are a real estate expert helping a listing agent compare multiple offers. Given the structured comparison data below, provide:
 
-1. "summary": An array of 3-5 bullet points comparing the offers in plain language. Be specific with numbers. Example: "Offer A is $15,000 higher but has a home sale contingency that adds risk."
-2. "bestOffer": Which offer label (e.g. "Offer A") is strongest for the SELLER and why (2-3 sentences)
+1. "summary": An array of 3-5 bullet points comparing the offers in plain language. Be specific with numbers. Example: "Offer 1 is $15,000 higher but has a home sale contingency that adds risk."
+2. "bestOffer": Which offer label (e.g. "Offer 1") is strongest for the SELLER and why (2-3 sentences)
 3. "riskAnalysis": Array of objects with "offer" (label) and "risks" (array of specific risk descriptions)
 
 Consider: price, contingencies, financing strength, closing timeline, concessions, and overall deal certainty.

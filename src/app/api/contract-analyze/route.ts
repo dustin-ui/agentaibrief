@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 
+export const maxDuration = 300;
+
 const EXTRACTION_PROMPT = `You are a real estate contract analyzer. Extract ALL terms and contingencies from this contract into a structured JSON format.
+
+CRITICAL RULES:
+- The "purchasePrice" must be the actual agreed-upon sales price written in the purchase contract itself (e.g. the amount on the main contract line "Purchase Price: $____").
+- Do NOT use the amount from any pre-approval letter, mortgage commitment letter, or lender letter — those show the buyer's maximum borrowing capacity, NOT the offer price.
+- If multiple documents are included (e.g. a contract + a pre-approval letter), extract the purchase price ONLY from the contract document.
 
 Return a JSON object with these fields (use null for anything not found):
 
