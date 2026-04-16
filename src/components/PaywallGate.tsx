@@ -2,78 +2,66 @@
 
 import { useAuth, SubscriptionTier } from '@/lib/auth-context';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface PaywallGateProps {
   requiredTier: 'pro' | 'inner_circle';
   children: React.ReactNode;
   featureName?: string;
-  allowFreeTrial?: boolean; // Allow 1 free use for guests
-  trialKey?: string; // localStorage key for tracking free trial
+  allowFreeTrial?: boolean;
+  trialKey?: string;
 }
+
+type TrialGateContextValue = {
+  consumeTrial: () => void;
+  trialAvailable: boolean;
+};
+
+const TrialGateContext = createContext<TrialGateContextValue>({
+  consumeTrial: () => {},
+  trialAvailable: false,
+});
 
 const TIER_RANK: Record<SubscriptionTier, number> = { free: 0, pro: 1, inner_circle: 2, team: 3 };
 const TIER_LABELS: Record<string, string> = { pro: 'Pro', inner_circle: 'Inner Circle' };
 
 export function PaywallGate({ requiredTier, children, featureName, allowFreeTrial = false, trialKey }: PaywallGateProps) {
-  const { isLoggedIn, tier, loading } = useAuth();
-  const [trialUsed, setTrialUsed] = useState<boolean | null>(null);
-  const [showTrialBanner, setShowTrialBanner] = useState(false);
+  // ACCESS OPEN — login/pricing requirements temporarily disabled
+  // To re-enable: restore the original PaywallGate logic
+  const consumeTrial = () => {};
 
-  // Check if free trial has been used
-  useEffect(() => {
-    if (allowFreeTrial && trialKey) {
-      const used = localStorage.getItem(`trial_${trialKey}`) === 'used';
-      setTrialUsed(used);
-    } else {
-      setTrialUsed(false);
-    }
-  }, [allowFreeTrial, trialKey]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  void requiredTier; void featureName; void allowFreeTrial; void trialKey;
 
-  // Mark trial as used
-  const markTrialUsed = () => {
-    if (trialKey) {
-      localStorage.setItem(`trial_${trialKey}`, 'used');
-      setTrialUsed(true);
-    }
-  };
-
-  if (loading || trialUsed === null) {
+  if (true) { // ACCESS OPEN
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e85d26]"></div>
-      </div>
+      <TrialGateContext.Provider value={{ consumeTrial, trialAvailable: false }}>
+        {children}
+      </TrialGateContext.Provider>
     );
   }
 
-  // If user has sufficient tier, allow access
-  if (isLoggedIn && TIER_RANK[tier] >= TIER_RANK[requiredTier]) {
-    return <>{children}</>;
-  }
-
-  // If free trial is allowed and not used, show content with trial banner
-  if (allowFreeTrial && !trialUsed) {
+  if (allowFreeTrial && trialSessionUnlocked) {
     return (
-      <>
-        {showTrialBanner && (
-          <div className="max-w-4xl mx-auto mb-4 p-4 rounded-xl bg-gradient-to-r from-[#e85d26]/15 to-[#e85d26]/5 border border-[#e85d26]/40 flex items-center justify-between gap-4 flex-wrap">
-            <p className="text-sm text-[#2a2a2a]">
-              🎁 <strong>Free trial — 1 use.</strong> Like what you see?{' '}
-              <Link href="/pricing" className="text-[#e85d26] font-semibold underline hover:no-underline">Upgrade to Pro ($19/mo)</Link> for unlimited descriptions.
-            </p>
-            <Link href="/pricing" className="shrink-0 px-4 py-1.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
-              Upgrade Now →
-            </Link>
-          </div>
-        )}
-        <div onClick={() => { setShowTrialBanner(true); markTrialUsed(); }}>
+      <TrialGateContext.Provider value={{ consumeTrial, trialAvailable: !isLoggedIn }}>
+        <>
+          {!isLoggedIn && (
+            <div className="max-w-4xl mx-auto mb-4 p-4 rounded-xl bg-gradient-to-r from-[#e85d26]/15 to-[#e85d26]/5 border border-[#e85d26]/40 flex items-center justify-between gap-4 flex-wrap">
+              <p className="text-sm text-[#2a2a2a]">
+                🎁 <strong>Free trial - 1 use.</strong> This page stays unlocked for this visit.{' '}
+                <Link href="/pricing" className="text-[#e85d26] font-semibold underline hover:no-underline">Upgrade to Pro ($19/mo)</Link> for unlimited use.
+              </p>
+              <Link href="/pricing" className="shrink-0 px-4 py-1.5 bg-[#e85d26] text-white text-sm font-semibold rounded-lg hover:bg-[#c44a1a] transition-colors">
+                Upgrade Now →
+              </Link>
+            </div>
+          )}
           {children}
-        </div>
-      </>
+        </>
+      </TrialGateContext.Provider>
     );
   }
 
-  // Not logged in
   if (!isLoggedIn) {
     return (
       <div className="max-w-lg mx-auto my-12 p-8 rounded-2xl bg-[#f0ece4]/80 border border-[#d8d4cc] text-center">
@@ -94,7 +82,6 @@ export function PaywallGate({ requiredTier, children, featureName, allowFreeTria
     );
   }
 
-  // Logged in but tier too low
   const upgradeHref = requiredTier === 'inner_circle' ? '/subscribe' : '/pricing';
   const upgradeCta = requiredTier === 'inner_circle' ? 'Join Inner Circle' : 'View Pricing';
 
@@ -110,4 +97,8 @@ export function PaywallGate({ requiredTier, children, featureName, allowFreeTria
       </Link>
     </div>
   );
+}
+
+export function useTrialGate() {
+  return useContext(TrialGateContext);
 }

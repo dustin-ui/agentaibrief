@@ -131,9 +131,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile,
       loading,
       tier,
-      isLoggedIn: !!user,
-      isPro: tier === 'pro' || tier === 'inner_circle',
-      isInnerCircle: tier === 'inner_circle',
+      isLoggedIn: true, // ACCESS OPEN — treat all visitors as logged in
+      isPro: true,       // ACCESS OPEN — treat all visitors as pro
+      isInnerCircle: true, // ACCESS OPEN — treat all visitors as inner circle
       signIn,
       signUp,
       signOut,
