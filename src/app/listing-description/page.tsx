@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { PaywallGate } from '@/components/PaywallGate';
+import { PaywallGate, useTrialGate } from '@/components/PaywallGate';
 
 function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -24,6 +24,7 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
 }
 
 export default function ListingDescriptionPage() {
+  const { consumeTrial } = useTrialGate();
   const [address, setAddress] = useState('');
   const [sqft, setSqft] = useState('');
   const [capitalImprovements, setCapitalImprovements] = useState('');
@@ -42,6 +43,7 @@ export default function ListingDescriptionPage() {
 
   const generate = async () => {
     if (!canSubmit) return;
+    consumeTrial();
     setLoading(true);
     setError('');
     setDescription('');

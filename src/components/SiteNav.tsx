@@ -18,8 +18,8 @@ const NAV_ITEMS = [
   { href: '/market-update', label: 'Market Update' },
   { href: '/newsletter-builder', label: 'Newsletter' },
   { href: '/videos', label: 'Video Library' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/affiliate', label: 'Affiliate' },
+  // { href: '/pricing', label: 'Pricing' },   // hidden — open access mode
+  // { href: '/affiliate', label: 'Affiliate' }, // hidden — open access mode
 ];
 
 const TIER_BADGE: Record<string, { label: string; color: string }> = {

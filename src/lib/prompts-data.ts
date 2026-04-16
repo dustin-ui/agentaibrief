@@ -763,7 +763,41 @@ Requirements:
 - Tone: "let me save you from bad advice"`,
   },
 
-  // ============ MARKET ANALYSIS (5 prompts, 1 free) ============
+  // ============ MARKET ANALYSIS (7 prompts, 3 free) ============
+  {
+    id: 'market-featured-1',
+    title: 'CMA Narrator: 3-Sentence Seller Summary',
+    category: 'Market Analysis',
+    preview: 'Paste your comps and get a clear, conversational market summary your seller will actually understand.',
+    aiTools: ['ChatGPT', 'Claude'],
+    isFree: true,
+    variables: [
+      { key: 'CITY', label: 'City/Area', placeholder: 'Fairfax, VA' },
+      { key: 'COMPS', label: 'Your 5 Comparable Sales (paste them)', placeholder: '123 Oak St - $649K - Sold 12 days\n456 Elm Ave - $655K - Sold 8 days\n...' },
+      { key: 'LIST_PRICE', label: 'Recommended List Price', placeholder: '$655,000' },
+    ],
+    fullPrompt: `I'm a real estate agent preparing a CMA for a seller in [CITY]. Here are my 5 comparable sales:
+
+[COMPS]
+
+Write a 3-sentence summary explaining what the market is doing and why I'm recommending a list price of $[LIST_PRICE]. Make it conversational — like I'm explaining it to a homeowner, not an appraiser.`,
+  },
+  {
+    id: 'market-featured-2',
+    title: 'Price Reduction Call Script',
+    category: 'Market Analysis',
+    preview: 'Generate a calm, empathetic 5-sentence phone script for the toughest conversation in real estate.',
+    aiTools: ['ChatGPT', 'Claude'],
+    isFree: true,
+    variables: [
+      { key: 'CITY', label: 'City/Area', placeholder: 'Vienna, VA' },
+      { key: 'DAYS', label: 'Days on Market', placeholder: '32' },
+      { key: 'PRICE', label: 'Current List Price', placeholder: '$875,000' },
+      { key: 'SHOWINGS', label: 'Number of Showings', placeholder: '7' },
+      { key: 'OFFERS', label: 'Number of Offers Received', placeholder: '0' },
+    ],
+    fullPrompt: `I'm a real estate agent. My listing in [CITY] has been on the market for [DAYS] days at $[PRICE] with [SHOWINGS] showings and [OFFERS] offers. I need to recommend a price reduction to my seller. Write me a 5-sentence script for a phone call that's empathetic but direct. Don't sugarcoat it, but don't panic them either.`,
+  },
   {
     id: 'market-1',
     title: 'CMA Narrative Summary',

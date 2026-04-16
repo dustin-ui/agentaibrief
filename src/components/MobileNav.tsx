@@ -41,8 +41,7 @@ export function MobileNav() {
             <a href="/gpt-templates" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🤖 GPT Templates</a>
             <a href="/blog" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📝 Blog</a>
             <a href="/videos" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🎬 Video Library</a>
-            <a href="/pricing" className="text-sm text-[#e85d26] hover:text-[#c44a1a] font-semibold transition-colors" onClick={() => setOpen(false)}>💎 Pricing</a>
-            <a href="/affiliate" className="text-sm text-[#e85d26] hover:text-[#c44a1a] font-semibold transition-colors" onClick={() => setOpen(false)}>💰 Affiliate Program</a>
+            {/* Pricing + Affiliate hidden — open access mode */}
             <a href="mailto:dustin@foxhomesteam.com?subject=AgentAIBrief Support" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📧 Support</a>
             <a href="/manage-subscription" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>⚙️ Manage Subscription</a>
             <a href="/unsubscribe" className="text-sm text-[#888] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🚫 Unsubscribe</a>

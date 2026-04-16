@@ -117,8 +117,7 @@ export default function Home() {
               <a href="/prompts" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Prompts</a>
               <a href="/blog" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Blog</a>
               <a href="/videos" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Videos</a>
-              <a href="/pricing" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Pricing</a>
-              <a href="/affiliate" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Affiliate</a>
+              {/* Pricing and Affiliate links hidden — open access mode */}
               <a href="mailto:dustin@foxhomesteam.com?subject=AgentAIBrief Support" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Support</a>
             </nav>
           </div>
@@ -134,8 +133,7 @@ export default function Home() {
               </>
             ) : (
               <>
-                <button onClick={() => setShowLogin(true)} className="btn-outline-dark text-sm">Log In</button>
-                <button onClick={() => { window.location.href = '/subscribe'; }} className="text-sm px-4 py-2 bg-[#2a2a2a] text-white rounded-lg hover:bg-[#e85d26] transition-colors font-semibold">Get Started</button>
+                {/* Log In / Get Started hidden — open access mode */}
               </>
             )}
           </div>
@@ -157,7 +155,7 @@ export default function Home() {
                 Daily briefings, market snapshots, listing descriptions, and drip campaigns — all powered by AI, built for agents who move fast.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 items-start mb-10">
-                <a href="/subscribe" className="btn-primary px-8 py-4 text-[1rem]">
+                <a href="/trial" className="btn-primary px-8 py-4 text-[1rem]">
                   Start Free Trial
                 </a>
                 <button onClick={() => setShowDemo(true)} className="btn-outline-dark px-8 py-4 text-[1rem] cursor-pointer">
@@ -373,14 +371,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Affiliate Banner */}
-      <section className="py-14 text-center" style={{ background: '#e8e6e1' }}>
-        <h2 className="text-[1.6rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a' }}>Earn 30% Recurring Commission</h2>
-        <p className="mb-5 text-[0.95rem]" style={{ color: '#888' }}>Refer agents to AgentAIBrief and earn 30% of every payment, forever.</p>
-        <a href="/affiliate" className="btn-primary inline-block px-8 py-3 text-[0.95rem]">
-          Join the Affiliate Program →
-        </a>
-      </section>
+      {/* Affiliate Banner hidden — open access mode */}
 
       {/* Stats */}
       <section className="py-14 px-4" style={{ background: '#e8e6e1' }}>
