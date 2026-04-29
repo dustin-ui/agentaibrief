@@ -90,6 +90,8 @@ const tiers = [
 ];
 
 const _testimonials: { name: string; role: string; text: string }[] = []; // Real testimonials coming soon
+// TEMP: Free access mode — re-enable when ready to monetize
+const FREE_ACCESS_MODE = true;
 
 export default function SubscribePage() {
   const [isAnnual, setIsAnnual] = useState(true);
@@ -117,6 +119,64 @@ export default function SubscribePage() {
     } finally {
       setLoading(null);
     }
+  }
+
+  // TEMP: Free access mode — re-enable when ready to monetize
+  if (FREE_ACCESS_MODE) {
+    return (
+      <div className="min-h-screen bg-[#e8e6e1]">
+        <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]">
+          <div className="max-w-6xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <Link href="/">
+                <h1 className="text-2xl font-bold text-[#2a2a2a]">
+                  Agent<span className="text-[#e85d26]">AI</span>Brief
+                </h1>
+              </Link>
+              <Link href="/" className="text-sm text-[#888] hover:text-[#555] transition-colors">
+                &larr; Back to News
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        <section className="py-16">
+          <div className="max-w-2xl mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-[#2a2a2a] mb-4 tracking-tight">
+              All features are currently free!
+            </h2>
+            <p className="text-lg text-[#666] mb-8">
+              Enter your email to stay updated and get the daily briefings.
+            </p>
+
+            <form action="/api/subscribe" method="POST" className="flex flex-col sm:flex-row gap-3 justify-center">
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#e85d26] text-[#2a2a2a]"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-[#e85d26] text-white font-semibold text-sm rounded-lg hover:bg-[#c44a1a] transition-colors"
+              >
+                Subscribe to Newsletter
+              </button>
+            </form>
+            <p className="text-xs mt-3 text-[#888]">No spam. Unsubscribe anytime.</p>
+          </div>
+        </section>
+
+        <footer className="border-t border-[#e0dcd4] bg-[#f0ece4]">
+          <div className="max-w-6xl mx-auto px-4 py-6">
+            <p className="text-sm text-[#888] text-center">
+              &copy; 2026 AgentAIBrief.com &bull; Built for real estate professionals
+            </p>
+          </div>
+        </footer>
+      </div>
+    );
   }
 
   return (

@@ -36,6 +36,8 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// TEMP: Free access mode — re-enable when ready to monetize
+const FREE_ACCESS_MODE = true;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -122,7 +124,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null);
   };
 
-  const tier: SubscriptionTier = profile?.subscription_tier ?? 'free';
+  // TEMP: Free access mode — re-enable when ready to monetize
+  const tier: SubscriptionTier = FREE_ACCESS_MODE ? 'inner_circle' : (profile?.subscription_tier ?? 'free');
+  const isLoggedIn = FREE_ACCESS_MODE ? true : !!user;
+  const isPro = FREE_ACCESS_MODE ? true : (tier === 'pro' || tier === 'inner_circle' || tier === 'team');
+  const isInnerCircle = FREE_ACCESS_MODE ? true : (tier === 'inner_circle' || tier === 'team');
 
   return (
     <AuthContext.Provider value={{
@@ -131,9 +137,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile,
       loading,
       tier,
-      isLoggedIn: true, // ACCESS OPEN — treat all visitors as logged in
-      isPro: true,       // ACCESS OPEN — treat all visitors as pro
-      isInnerCircle: true, // ACCESS OPEN — treat all visitors as inner circle
+      isLoggedIn,
+      isPro,
+      isInnerCircle,
       signIn,
       signUp,
       signOut,

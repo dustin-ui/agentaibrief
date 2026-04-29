@@ -26,6 +26,8 @@ const TIER_BADGE: Record<string, { label: string; color: string }> = {
   pro: { label: 'PRO', color: 'bg-[#e85d26]' },
   inner_circle: { label: 'IC', color: 'bg-[#2a2a2a]' },
 };
+// TEMP: Free access mode — re-enable when ready to monetize
+const FREE_ACCESS_MODE = true;
 
 export function SiteNav({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
   const pathname = usePathname();
@@ -47,7 +49,12 @@ export function SiteNav({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
         </Link>
       ))}
       <div className="ml-2 flex items-center gap-2">
-        {isLoggedIn ? (
+        {FREE_ACCESS_MODE ? (
+          <Link href="/subscribe"
+            className="text-sm px-4 py-2 bg-[#2a2a2a] text-white rounded-lg hover:bg-[#e85d26] transition-colors font-medium">
+            Subscribe to Newsletter
+          </Link>
+        ) : isLoggedIn ? (
           <>
             {badge && (
               <span className={`${badge.color} text-white text-[10px] font-bold px-1.5 py-0.5 rounded`}>{badge.label}</span>

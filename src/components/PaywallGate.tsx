@@ -24,18 +24,32 @@ const TrialGateContext = createContext<TrialGateContextValue>({
 
 const TIER_RANK: Record<SubscriptionTier, number> = { free: 0, pro: 1, inner_circle: 2, team: 3 };
 const TIER_LABELS: Record<string, string> = { pro: 'Pro', inner_circle: 'Inner Circle' };
+// TEMP: Free access mode — re-enable when ready to monetize
+const FREE_ACCESS_MODE = true;
 
 export function PaywallGate({ requiredTier, children, featureName, allowFreeTrial = false, trialKey }: PaywallGateProps) {
-  // ACCESS OPEN — login/pricing requirements temporarily disabled
-  // To re-enable: restore the original PaywallGate logic
-  const consumeTrial = () => {};
+  const { isLoggedIn, tier } = useAuth();
+  const [trialSessionUnlocked, setTrialSessionUnlocked] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  void requiredTier; void featureName; void allowFreeTrial; void trialKey;
+  useEffect(() => {
+    if (!allowFreeTrial || !trialKey) return;
+    if (typeof window === 'undefined') return;
+    const key = `trial:${trialKey}`;
+    setTrialSessionUnlocked(sessionStorage.getItem(key) === 'used');
+  }, [allowFreeTrial, trialKey]);
 
-  if (true) { // ACCESS OPEN
+  const consumeTrial = () => {
+    if (!allowFreeTrial || !trialKey) return;
+    if (typeof window === 'undefined') return;
+    const key = `trial:${trialKey}`;
+    sessionStorage.setItem(key, 'used');
+    setTrialSessionUnlocked(true);
+  };
+
+  // TEMP: Free access mode — re-enable when ready to monetize
+  if (FREE_ACCESS_MODE) {
     return (
-      <TrialGateContext.Provider value={{ consumeTrial, trialAvailable: false }}>
+      <TrialGateContext.Provider value={{ consumeTrial: () => {}, trialAvailable: false }}>
         {children}
       </TrialGateContext.Provider>
     );

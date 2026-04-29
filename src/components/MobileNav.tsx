@@ -8,6 +8,8 @@ const TIER_BADGE: Record<string, { label: string; color: string }> = {
   pro: { label: 'PRO', color: 'bg-[#e85d26]' },
   inner_circle: { label: 'INNER CIRCLE', color: 'bg-[#2a2a2a]' },
 };
+// TEMP: Free access mode — re-enable when ready to monetize
+const FREE_ACCESS_MODE = true;
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -47,7 +49,11 @@ export function MobileNav() {
             <a href="/unsubscribe" className="text-sm text-[#888] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🚫 Unsubscribe</a>
 
             <div className="border-t pt-3 mt-2" style={{ borderColor: '#d8d4cc' }}>
-              {isLoggedIn ? (
+              {FREE_ACCESS_MODE ? (
+                <Link href="/subscribe" onClick={() => setOpen(false)} className="btn-primary block text-center py-2 rounded-lg text-sm font-medium">
+                  Subscribe to Newsletter
+                </Link>
+              ) : isLoggedIn ? (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {badge && <span className={`${badge.color} text-white text-[10px] font-bold px-1.5 py-0.5 rounded`}>{badge.label}</span>}
