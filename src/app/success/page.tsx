@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { FREE_ACCESS_MODE } from '@/lib/site-mode';
 
 interface ConfettiPieceData {
   id: number;
@@ -39,7 +40,10 @@ function Confetti() {
   const [pieces, setPieces] = useState<ConfettiPieceData[]>([]);
 
   useEffect(() => {
+    // Confetti uses Math.random(), so it must be generated on the client only
+    // (never during SSR) to avoid hydration mismatch. This is a one-time mount effect.
     const colors = ['#e85d26', '#2a2a2a', '#d4d0c8', '#f0ece4', '#c44a1a', '#555'];
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPieces(
       Array.from({ length: 50 }, (_, i) => ({
         id: i,
@@ -67,12 +71,13 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const isTrial = searchParams.get('trial') === 'true';
-  const { profile, user, refreshProfile } = useAuth();
+  const { profile, user, session, refreshProfile } = useAuth();
 
   const [sessionTier, setSessionTier] = useState<string | null>(null);
   const [loadingSession, setLoadingSession] = useState(!!sessionId);
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState('');
+  const [copied, setCopied] = useState(false);
 
   // Fetch tier from Stripe session
   useEffect(() => {
@@ -109,14 +114,16 @@ function SuccessContent() {
   });
 
   const handleRefreshAccess = async () => {
-    if (!user?.id) return;
+    if (!user?.id || !session) return;
     setSyncing(true);
     setSyncMsg('');
     try {
       await fetch('/api/sync-subscription', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
       await refreshProfile();
       setSyncMsg('Access updated!');
@@ -262,19 +269,19 @@ function SuccessContent() {
           </div>
         </div>
 
-        {/* Upsell for free users only */}
-        {!isPro && (
+        {/* Upsell for free users only — hidden in free-access mode (no live paid path) */}
+        {!isPro && !FREE_ACCESS_MODE && (
           <div className="bg-[#2a2a2a] rounded-2xl p-6 mb-8">
             <h3 className="text-lg font-bold text-white mb-2">⚡ Want the full edge?</h3>
             <p className="text-[#999] mb-4">
-              Upgrade to Pro for <span className="font-semibold text-white">Agent Angles on every story</span> —
+              Upgrade for <span className="font-semibold text-white">Agent Angles on every story</span> —
               specific scripts, strategies, and action items you can use today.
             </p>
             <Link
-              href="/pricing"
+              href="/trial"
               className="inline-block bg-[#e85d26] text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-[#c44a1a] transition-colors"
             >
-              Upgrade to Pro — $19/mo
+              Start your free trial →
             </Link>
           </div>
         )}
@@ -309,13 +316,18 @@ function SuccessContent() {
               LinkedIn
             </a>
             <button
-              onClick={() => {
-                navigator.clipboard.writeText('https://agentaibrief.com');
-                alert('Link copied!');
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText('https://agentaibrief.com');
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                } catch {
+                  setCopied(false);
+                }
               }}
               className="inline-flex items-center gap-2 bg-[#f0ece4] text-[#555] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#d8d4cc] transition-colors"
             >
-              📋 Copy Link
+              {copied ? '✅ Copied!' : '📋 Copy Link'}
             </button>
           </div>
         </div>

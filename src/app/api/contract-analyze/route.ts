@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { guardRoute } from '@/lib/route-guard';
+import { AI_MODELS } from '@/lib/config';
 
+// CRITICAL (per Dustin): contract analysis must have a FULL 5-minute budget for
+// multi-file Claude vision processing. Keep this at 300 and keep vercel.json in
+// sync at 300 — do NOT lower to 120.
 export const maxDuration = 300;
+
+// Cost / abuse caps before the per-file Claude vision loop.
+const MAX_FILES = 5;
+const MAX_TOTAL_BYTES = 25 * 1024 * 1024; // 25 MB across all uploaded files
 
 const EXTRACTION_PROMPT = `You are a real estate contract analyzer. Extract ALL terms and contingencies from this contract into a structured JSON format.
 
@@ -64,6 +73,14 @@ Return a JSON object with these fields (use null for anything not found):
 Return ONLY valid JSON, no markdown fences.`;
 
 export async function POST(req: NextRequest) {
+  const guard = await guardRoute(req, {
+    name: 'contract-analyze',
+    ipCapacity: 5,
+    ipPerMinute: 5,
+    userCapacity: 10,
+    userPerMinute: 10,
+  });
+  if (!guard.ok) return guard.response;
   try {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
@@ -78,7 +95,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No files uploaded' }, { status: 400 });
     }
 
-    const client = new Anthropic({ apiKey });
+    if (files.length > MAX_FILES) {
+      return NextResponse.json(
+        { error: `Too many files. Maximum ${MAX_FILES} files per request.` },
+        { status: 400 }
+      );
+    }
+
+    const totalBytes = files.reduce((sum, f) => sum + (f.size || 0), 0);
+    if (totalBytes > MAX_TOTAL_BYTES) {
+      return NextResponse.json(
+        {
+          error: `Uploads too large. Total must be under ${Math.floor(
+            MAX_TOTAL_BYTES / (1024 * 1024)
+          )} MB.`,
+        },
+        { status: 400 }
+      );
+    }
+
+    const client = new Anthropic({ apiKey, timeout: 60_000, maxRetries: 2 });
     const results = [];
 
     for (const file of files) {
@@ -139,7 +175,7 @@ export async function POST(req: NextRequest) {
       });
 
       const response = await client.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: AI_MODELS.anthropic,
         max_tokens: 4096,
         messages: [{ role: 'user', content: contentBlocks }],
       });

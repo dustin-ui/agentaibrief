@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin as getSupabaseAdmin } from '@/lib/supabase';
+import { requireAuth } from '@/lib/api-auth';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseAdmin = getSupabaseAdmin();
 
 const PRICE_TO_TIER: Record<string, 'pro' | 'inner_circle'> = {
   [process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'UNSET']: 'pro',
@@ -21,8 +19,10 @@ const PRICE_TO_TIER: Record<string, 'pro' | 'inner_circle'> = {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await request.json();
-    if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 });
+    const auth = await requireAuth(request);
+    if (auth.response) return auth.response;
+    // Always operate on the authenticated user's own id. Ignore any body userId.
+    const userId = auth.user.id;
 
     const stripe = getStripe();
     if (!stripe) return NextResponse.json({ synced: false, reason: 'stripe_not_configured' });
@@ -142,6 +142,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ synced: false, tier: profile.subscription_tier, reason: 'already_correct' });
   } catch (err) {
     console.error('[sync-subscription] Error:', err);
-    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

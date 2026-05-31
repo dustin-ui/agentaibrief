@@ -3,33 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-
-const NAV_ITEMS = [
-  { href: '/', label: 'News' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/tools', label: 'AI Tools' },
-  { href: '/prompts', label: 'Prompts' },
-  { href: '/neighborhood-brief', label: 'Market Brief' },
-  { href: '/seo-sniper', label: 'SEO Sniper' },
-  { href: '/seo-command', label: 'SEO Command' },
-  { href: '/listing-generator', label: 'Listing Generator' },
-  { href: '/listing-description', label: 'Listing Description' },
-  { href: '/listing-radar', label: 'Listing Radar' },
-  { href: '/market-update', label: 'Market Update' },
-  { href: '/newsletter-builder', label: 'Newsletter' },
-  { href: '/videos', label: 'Video Library' },
-  // { href: '/pricing', label: 'Pricing' },   // hidden — open access mode
-  // { href: '/affiliate', label: 'Affiliate' }, // hidden — open access mode
-];
+import { NAV_ITEMS } from '@/lib/nav-items';
+import { FREE_ACCESS_MODE } from '@/lib/site-mode';
 
 const TIER_BADGE: Record<string, { label: string; color: string }> = {
   pro: { label: 'PRO', color: 'bg-[#e85d26]' },
   inner_circle: { label: 'IC', color: 'bg-[#2a2a2a]' },
 };
-// TEMP: Free access mode — re-enable when ready to monetize
-const FREE_ACCESS_MODE = true;
 
-export function SiteNav({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
+export function SiteNav({ variant: _variant = 'light' }: { variant?: 'light' | 'dark' }) {
   const pathname = usePathname();
   const { isLoggedIn, profile, signOut, tier } = useAuth();
   const isActive = (href: string) => pathname === href;

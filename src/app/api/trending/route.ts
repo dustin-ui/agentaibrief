@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { fetchTrendingTopics, type TrendingData } from '@/lib/grok';
+import { guardRoute } from '@/lib/route-guard';
 
 // In-memory cache
 let cache: { data: TrendingData; updatedAt: string } | null = null;
@@ -11,7 +12,9 @@ function isCacheValid(): boolean {
   return age < CACHE_TTL_MS;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const guard = await guardRoute(request, { name: 'trending' });
+  if (!guard.ok) return guard.response;
   try {
     if (isCacheValid() && cache) {
       return NextResponse.json({
@@ -40,7 +43,7 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: 'Unable to load trending topics right now',
       },
       { status: 500 }
     );

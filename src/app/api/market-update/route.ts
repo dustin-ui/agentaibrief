@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { AI_MODELS } from '@/lib/config';
 
 export const maxDuration = 120;
 
@@ -38,7 +39,7 @@ Then provide:
 Format the response in clean markdown with clear headers and bold metric labels. Use actual numbers from current sources. If exact data isn't available for a metric, provide the best available estimate and note the source timeframe.`;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODELS.gemini}:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -4,6 +4,8 @@ export interface PromptVariable {
   placeholder: string;
 }
 
+export type AiTool = 'ChatGPT' | 'Claude' | 'Gemini' | 'Perplexity';
+
 export interface Prompt {
   id: string;
   title: string;
@@ -11,7 +13,7 @@ export interface Prompt {
   preview: string;
   fullPrompt: string;
   isFree: boolean;
-  aiTools: ('ChatGPT' | 'Claude' | 'Gemini' | 'Perplexity')[];
+  aiTools: AiTool[];
   variables: PromptVariable[];
 }
 

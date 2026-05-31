@@ -14,11 +14,14 @@ export default function AdminPage() {
 
   const isAdmin = profile?.email && ADMIN_EMAILS.includes(profile.email);
 
+  const accessToken = session?.access_token;
+
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!isAdmin || !accessToken) return;
+    const authHeaders = { Authorization: `Bearer ${accessToken}` };
 
     // Check CC token status
-    fetch('/api/admin/cc-status')
+    fetch('/api/admin/cc-status', { headers: authHeaders })
       .then(r => r.json())
       .then(d => {
         setCcStatus(d.status || 'unknown');
@@ -27,11 +30,28 @@ export default function AdminPage() {
       .catch(() => setCcStatus('error'));
 
     // Get stats
-    fetch('/api/admin/stats')
+    fetch('/api/admin/stats', { headers: authHeaders })
       .then(r => r.json())
       .then(d => setStats(d))
       .catch(() => {});
-  }, [isAdmin]);
+  }, [isAdmin, accessToken]);
+
+  const handleReauthorize = async () => {
+    if (!accessToken) return;
+    try {
+      const res = await fetch('/api/auth/cc-connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ mode: 'admin_reauth' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      /* ignore */
+    }
+  };
 
   if (!session) {
     return (
@@ -54,8 +74,6 @@ export default function AdminPage() {
       </div>
     );
   }
-
-  const ccAuthUrl = `https://authz.constantcontact.com/oauth2/default/v1/authorize?client_id=4012da91-493c-4f46-9093-b01eff0b8f53&redirect_uri=https://agentaibrief.com/api/auth/callback/constantcontact&response_type=code&scope=contact_data+campaign_data+offline_access&state=admin_reauth&prompt=consent`;
 
   return (
     <div className="min-h-screen bg-[#e8e6e1]">
@@ -112,12 +130,12 @@ export default function AdminPage() {
                 Re-authorize the Fox Homes CC account to restore admin email capabilities.
                 Make sure you&apos;re logged into Constant Contact as <strong>dustin@foxhomesteam.com</strong> before clicking.
               </p>
-              <a
-                href={ccAuthUrl}
+              <button
+                onClick={handleReauthorize}
                 className="inline-block px-6 py-3 bg-[#e85d26] text-white rounded-lg font-semibold hover:bg-[#c44a1a] transition-colors"
               >
                 Re-authorize Fox Homes CC Account →
-              </a>
+              </button>
             </div>
           </div>
         </div>

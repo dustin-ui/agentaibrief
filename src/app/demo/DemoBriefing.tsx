@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 const BRIEFING_DATE = 'Monday, February 9, 2026';
 
@@ -81,9 +83,9 @@ export function DemoBriefing() {
       {/* Top bar */}
       <div className="bg-[#e8e6e1] border-b border-[#e0dcd4] sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="/" className="text-lg font-bold text-[#2a2a2a]">
+          <Link href="/" className="text-lg font-bold text-[#2a2a2a]">
             Agent<span className="text-[#e85d26]">AI</span>Brief
-          </a>
+          </Link>
           <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-white text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
             Subscribe →
           </a>
@@ -239,7 +241,7 @@ export function DemoBriefing() {
 
               {/* Dustin footer */}
               <div className="mt-6 flex items-center gap-3 justify-center">
-                <img src="/dustin-fox.jpg" alt="Dustin Fox" className="w-10 h-10 rounded-full object-cover" />
+                <Image src="/dustin-fox.jpg" alt="Dustin Fox" width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
                 <div className="text-left">
                   <p className="text-sm font-semibold text-[#2a2a2a]">Dustin Fox</p>
                   <p className="text-xs text-[#888]">Fox Homes Team • $277M Volume • 2,102 ⭐ Reviews</p>

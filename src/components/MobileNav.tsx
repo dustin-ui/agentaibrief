@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
+import { NAV_ITEMS, SUPPORT_MAILTO } from '@/lib/nav-items';
+import { FREE_ACCESS_MODE } from '@/lib/site-mode';
 
 const TIER_BADGE: Record<string, { label: string; color: string }> = {
   pro: { label: 'PRO', color: 'bg-[#e85d26]' },
   inner_circle: { label: 'INNER CIRCLE', color: 'bg-[#2a2a2a]' },
 };
-// TEMP: Free access mode — re-enable when ready to monetize
-const FREE_ACCESS_MODE = true;
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -32,21 +32,15 @@ export function MobileNav() {
       {open && (
         <div className="absolute top-full left-0 right-0 border-b-2 shadow-lg z-50" style={{ background: '#f0ece4', borderColor: '#d8d4cc' }}>
           <nav className="flex flex-col px-4 py-3 space-y-3">
-            <a href="/tools" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🛠️ All AI Tools</a>
-            <a href="/listing-generator" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🏠 Listing Generator</a>
-            <a href="/listing-description" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>✍️ Listing Description</a>
-            <a href="/content-briefing" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📋 Content Briefing</a>
-            <a href="/contract-analyzer" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📄 Contract Analyzer</a>
-            <a href="/seo-sniper" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🎯 SEO Sniper</a>
-            <a href="/seo-command" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📡 SEO Command</a>
-            <a href="/prompts" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>💬 Prompts</a>
-            <a href="/gpt-templates" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🤖 GPT Templates</a>
-            <a href="/blog" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📝 Blog</a>
-            <a href="/videos" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🎬 Video Library</a>
+            {NAV_ITEMS.map((item) => (
+              <Link key={item.href} href={item.href} className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>
+                {item.icon ? `${item.icon} ` : ''}{item.label}
+              </Link>
+            ))}
             {/* Pricing + Affiliate hidden — open access mode */}
-            <a href="mailto:dustin@foxhomesteam.com?subject=AgentAIBrief Support" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📧 Support</a>
-            <a href="/manage-subscription" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>⚙️ Manage Subscription</a>
-            <a href="/unsubscribe" className="text-sm text-[#888] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🚫 Unsubscribe</a>
+            <a href={SUPPORT_MAILTO} className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>📧 Support</a>
+            <Link href="/manage-subscription" className="text-sm text-[#555] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>⚙️ Manage Subscription</Link>
+            <Link href="/unsubscribe" className="text-sm text-[#888] hover:text-[#e85d26] font-medium flex items-center gap-2 transition-colors" onClick={() => setOpen(false)}>🚫 Unsubscribe</Link>
 
             <div className="border-t pt-3 mt-2" style={{ borderColor: '#d8d4cc' }}>
               {FREE_ACCESS_MODE ? (

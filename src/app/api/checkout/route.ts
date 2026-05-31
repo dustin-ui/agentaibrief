@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
+import { getSiteUrl } from '@/lib/api-auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +15,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ url: '/success?demo=true' });
     }
 
-    const origin = request.headers.get('origin') || 'https://agentaibrief.com';
+    // Never trust the Origin header for redirect URLs (phishing/open-redirect).
+    const origin = getSiteUrl();
 
     const sessionParams: Record<string, unknown> = {
       mode: 'subscription',
@@ -39,7 +41,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (error: unknown) {
     console.error('Checkout error:', error);
-    const message = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

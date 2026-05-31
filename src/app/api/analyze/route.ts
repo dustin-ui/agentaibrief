@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { analyzeNewsForAgents, AnalysisInput } from '@/lib/analyze';
+import { guardRoute } from '@/lib/route-guard';
 
 export async function POST(request: NextRequest) {
+  const guard = await guardRoute(request, { name: 'analyze' });
+  if (!guard.ok) return guard.response;
   try {
     const body = (await request.json()) as AnalysisInput;
 
@@ -24,9 +27,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Analysis error:', error);
-    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: message },
+      { error: 'Unable to analyze this story right now' },
       { status: 500 }
     );
   }

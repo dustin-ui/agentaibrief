@@ -21,6 +21,10 @@ interface SEOReport {
   topKeywords: { keyword: string; position: number; traffic: number; volume: number; change: number }[];
   trafficChannels: { direct: number; ai: number; organic: number; referral: number };
   weeklyHistory: { week: string; authorityScore: number; organicTraffic: number; organicKeywords: number }[];
+  semrushRank?: number;
+  trafficCost?: number;
+  referringDomains?: number;
+  priorities?: { icon: string; title: string; impact: 'high' | 'medium' | 'low'; description: string }[];
 }
 
 function ChangeIndicator({ value, suffix = '' }: { value: number; suffix?: string }) {
@@ -192,15 +196,15 @@ export default function ProDashboard() {
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-[#555]">SemRush Rank</span>
-                      <span className="text-[#2a2a2a] font-medium">#{(report as any).semrushRank?.toLocaleString() || 'N/A'}</span>
+                      <span className="text-[#2a2a2a] font-medium">#{report.semrushRank?.toLocaleString() || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[#555]">Traffic Value</span>
-                      <span className="text-[#2a2a2a] font-medium">${(report as any).trafficCost?.toLocaleString() || '0'}/mo</span>
+                      <span className="text-[#2a2a2a] font-medium">${report.trafficCost?.toLocaleString() || '0'}/mo</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[#555]">Referring Domains</span>
-                      <span className="text-[#2a2a2a] font-medium">{(report as any).referringDomains?.toLocaleString() || 'N/A'}</span>
+                      <span className="text-[#2a2a2a] font-medium">{report.referringDomains?.toLocaleString() || 'N/A'}</span>
                     </div>
                   </div>
                 )}
@@ -282,11 +286,11 @@ export default function ProDashboard() {
             </div>
 
             {/* Actionable Priorities */}
-            {(report as any).priorities && (report as any).priorities.length > 0 && (
+            {report.priorities && report.priorities.length > 0 && (
               <div className="bg-[#f0ece4]/50 border border-[#d8d4cc] rounded-xl p-6 mb-8">
                 <h3 className="text-lg font-semibold text-[#2a2a2a] mb-4">🎯 Your Top 3 Priorities This Week</h3>
                 <div className="space-y-4">
-                  {(report as any).priorities.map((p: any, i: number) => (
+                  {report.priorities.map((p, i) => (
                     <div key={i} className="flex gap-4 p-4 bg-[#f0ece4]/50 border border-[#d8d4cc]/50 rounded-lg">
                       <div className="text-2xl flex-shrink-0 mt-0.5">{p.icon}</div>
                       <div className="flex-1">

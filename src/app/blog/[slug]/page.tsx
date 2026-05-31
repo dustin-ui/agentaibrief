@@ -78,12 +78,39 @@ export default async function BlogPostPage({ params }: Props) {
 
   const allPosts = getAllBlogPosts().filter((p) => p.slug !== slug).slice(0, 2);
 
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: { '@type': 'Person', name: post.author },
+    publisher: {
+      '@type': 'Organization',
+      name: 'AgentAIBrief',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://agentaibrief.com/logo.jpg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://agentaibrief.com/blog/${post.slug}`,
+    },
+    keywords: post.tags.join(', '),
+  };
+
   return (
     <div className="min-h-screen bg-[#e8e6e1]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <header className="border-b border-[#e0dcd4] bg-[#e8e6e1] sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/">
-            <h1 className="text-2xl font-bold text-[#2a2a2a]">Agent<span className="text-[#e85d26]">AI</span>Brief</h1>
+            <span className="text-2xl font-bold text-[#2a2a2a]">Agent<span className="text-[#e85d26]">AI</span>Brief</span>
           </Link>
           <nav className="hidden md:flex items-center gap-4">
             <Link href="/" className="text-sm text-[#666] hover:text-[#2a2a2a]">News</Link>

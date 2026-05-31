@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { guardRoute } from '@/lib/route-guard';
 
-const SEMRUSH_KEY = 'a3fc492f4f3f6d6066f46f457f2bf02b';
+const SEMRUSH_KEY = process.env.SEMRUSH_API_KEY || '';
 
 function parseSemrushCSV(csv: string): Record<string, string>[] {
   const lines = csv.trim().split('\n');
@@ -15,10 +16,19 @@ function parseSemrushCSV(csv: string): Record<string, string>[] {
 }
 
 export async function POST(req: NextRequest) {
+  const guard = await guardRoute(req, { name: 'seo-sniper' });
+  if (!guard.ok) return guard.response;
   try {
     const { marketArea } = await req.json();
     if (!marketArea || typeof marketArea !== 'string') {
       return NextResponse.json({ error: 'Market area is required' }, { status: 400 });
+    }
+
+    if (!SEMRUSH_KEY) {
+      return NextResponse.json(
+        { error: 'SEMRUSH_API_KEY is not configured. Set it in the environment.' },
+        { status: 503 }
+      );
     }
 
     const area = marketArea.trim();
@@ -26,8 +36,8 @@ export async function POST(req: NextRequest) {
     const phraseQuestions = encodeURIComponent(`${area} homes`);
 
     const [relatedRes, questionsRes] = await Promise.all([
-      fetch(`https://api.semrush.com/?type=phrase_related&key=${SEMRUSH_KEY}&export_columns=Ph,Nq,Cp,Co,Nr&phrase=${phraseRelated}&database=us&display_limit=20`),
-      fetch(`https://api.semrush.com/?type=phrase_questions&key=${SEMRUSH_KEY}&export_columns=Ph,Nq,Cp,Co&phrase=${phraseQuestions}&database=us&display_limit=20`),
+      fetch(`https://api.semrush.com/?type=phrase_related&key=${SEMRUSH_KEY}&export_columns=Ph,Nq,Cp,Co,Nr&phrase=${phraseRelated}&database=us&display_limit=20`, { signal: AbortSignal.timeout(60_000) }),
+      fetch(`https://api.semrush.com/?type=phrase_questions&key=${SEMRUSH_KEY}&export_columns=Ph,Nq,Cp,Co&phrase=${phraseQuestions}&database=us&display_limit=20`, { signal: AbortSignal.timeout(60_000) }),
     ]);
 
     const relatedText = await relatedRes.text();

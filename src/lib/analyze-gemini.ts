@@ -1,4 +1,5 @@
 // Gemini-based Agent Angle analyzer (uses available API key)
+import { AI_MODELS } from './config';
 
 export interface AnalysisResult {
   agentAngle: string;
@@ -31,7 +32,7 @@ Respond in this exact JSON format (no markdown, no code fences, just raw JSON):
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODELS.gemini}:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -44,10 +45,16 @@ Respond in this exact JSON format (no markdown, no code fences, just raw JSON):
             responseMimeType: 'application/json',
           },
         }),
+        signal: AbortSignal.timeout(60_000),
       },
     );
 
     if (!res.ok) {
+      if (res.status === 429) {
+        const retryAfter = res.headers.get('retry-after');
+        console.error('Gemini API rate limited (429)', retryAfter ? `retry after ${retryAfter}s` : '');
+        return null;
+      }
       console.error('Gemini API error:', res.status, await res.text());
       return null;
     }

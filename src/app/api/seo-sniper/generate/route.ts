@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { guardRoute } from '@/lib/route-guard';
+import { AI_MODELS } from '@/lib/config';
 
-const anthropic = new Anthropic();
+const anthropic = new Anthropic({ timeout: 60_000, maxRetries: 2 });
 
 export async function POST(req: NextRequest) {
+  const guard = await guardRoute(req, { name: 'seo-sniper-generate' });
+  if (!guard.ok) return guard.response;
   try {
     const { keyword, marketArea } = await req.json();
     if (!keyword || !marketArea) {
@@ -11,7 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: AI_MODELS.anthropic,
       max_tokens: 4096,
       messages: [
         {

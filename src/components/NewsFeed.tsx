@@ -40,7 +40,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
         } else {
           setError('Failed to load news');
         }
-      } catch (err) {
+      } catch {
         setError('Failed to connect to server');
       } finally {
         setLoading(false);

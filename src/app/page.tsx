@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { NewsFeed } from '@/components/NewsFeed';
 import { TrendingBar } from '@/components/TrendingBar';
-import { LoginModal } from '@/components/LoginModal';
 import { MobileNav } from '@/components/MobileNav';
 import { StickySubscribeBar } from '@/components/StickySubscribeBar';
 import { useAuth } from '@/lib/auth-context';
+import { HOME_NAV_ITEMS, SUPPORT_MAILTO } from '@/lib/nav-items';
+import { FREE_ACCESS_MODE, PAID_MODE, CONTACT_SALES_HREF } from '@/lib/site-mode';
 import Link from 'next/link';
 
 const tools = [
@@ -70,7 +71,6 @@ const tools = [
 
 export default function Home() {
   const { user, isLoggedIn, isPro, signOut, profile } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
   const [subEmail, setSubEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -113,12 +113,11 @@ export default function Home() {
               Agent<span style={{ color: '#e85d26' }}>AI</span>Brief
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-              <a href="/tools" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">AI Tools</a>
-              <a href="/prompts" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Prompts</a>
-              <a href="/blog" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Blog</a>
-              <a href="/videos" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Videos</a>
+              {HOME_NAV_ITEMS.map((item) => (
+                <Link key={item.href} href={item.href} className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">{item.label}</Link>
+              ))}
               {/* Pricing and Affiliate links hidden — open access mode */}
-              <a href="mailto:dustin@foxhomesteam.com?subject=AgentAIBrief Support" className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Support</a>
+              <a href={SUPPORT_MAILTO} className="text-sm font-medium transition-colors text-[#555] hover:text-[#e85d26]">Support</a>
             </nav>
           </div>
           <div className="flex items-center gap-3">
@@ -173,8 +172,11 @@ export default function Home() {
                 </div>
               ) : (
                 <form onSubmit={handleEmailSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-[480px]">
+                  <label htmlFor="hero-email" className="sr-only">Email address</label>
                   <input
+                    id="hero-email"
                     type="email"
+                    aria-label="Email address"
                     placeholder="Enter your email for the free daily brief"
                     value={subEmail}
                     onChange={e => setSubEmail(e.target.value)}
@@ -195,7 +197,7 @@ export default function Home() {
               {subStatus === 'error' && (
                 <p className="text-red-800 text-sm mt-2">Something went wrong. Try again.</p>
               )}
-              <p className="text-xs mt-3" style={{ color: '#888' }}>No spam. Unsubscribe anytime. Join 2,400+ agents.</p>
+              <p className="text-xs mt-3" style={{ color: '#5a5a5a' }}>No spam. Unsubscribe anytime. Join 2,400+ agents.</p>
             </div>
 
             {/* Hero Visual — Keyboard-inspired device */}
@@ -301,36 +303,49 @@ export default function Home() {
       <section className="py-20 px-4" style={{ background: '#d4d0c8' }}>
         <div className="max-w-[1100px] mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-[2.5rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a', letterSpacing: '-1px' }}>Simple, Clear Pricing</h2>
-            <p style={{ color: '#666' }}>Start free, upgrade when you&apos;re ready.</p>
+            {FREE_ACCESS_MODE ? (
+              <>
+                <h2 className="text-[2.5rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a', letterSpacing: '-1px' }}>Everything&apos;s Free Right Now</h2>
+                <p style={{ color: '#5a5a5a' }}>Every tool and the full daily brief — no card, no catch. Just grab your free access.</p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-[2.5rem] font-extrabold tracking-tight mb-2" style={{ color: '#2a2a2a', letterSpacing: '-1px' }}>Simple, Clear Pricing</h2>
+                <p style={{ color: '#5a5a5a' }}>Start free, upgrade when you&apos;re ready.</p>
+              </>
+            )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {/* Free */}
             <div className="rounded-2xl p-8 text-center" style={{ background: '#f0ece4', border: '2px solid #d8d4cc' }}>
               <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>Free</div>
-              <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$0<span className="text-[0.9rem] font-medium" style={{ color: '#888' }}>/mo</span></div>
-              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#666' }}>
+              <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$0<span className="text-[0.9rem] font-medium" style={{ color: '#5a5a5a' }}>/mo</span></div>
+              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#5a5a5a' }}>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Daily AI Brief</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Prompt Library</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>AI News Feed</li>
               </ul>
               <a href="/subscribe" className="btn-outline-dark block w-full py-3 text-center text-sm">
-                Get Started
+                {FREE_ACCESS_MODE ? 'Get Free Access' : 'Get Started'}
               </a>
             </div>
 
             {/* Pro */}
             <div className="rounded-2xl p-8 text-center" style={{ background: '#f0ece4', border: '2px solid #d8d4cc' }}>
               <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>Pro</div>
-              <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$19<span className="text-[0.9rem] font-medium" style={{ color: '#888' }}>/mo</span></div>
-              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#666' }}>
+              {PAID_MODE ? (
+                <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$19<span className="text-[0.9rem] font-medium" style={{ color: '#5a5a5a' }}>/mo</span></div>
+              ) : (
+                <div className="text-[1.6rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>Free for now</div>
+              )}
+              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#5a5a5a' }}>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Everything in Free</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Listing Content Factory</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Contract Analyzer</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Content Briefing</li>
               </ul>
               <a href="/subscribe" className="block w-full py-3 text-white font-semibold rounded-lg text-sm transition-all" style={{ background: '#e85d26', boxShadow: '0 3px 0 #c44a1a' }}>
-                Start Pro →
+                {FREE_ACCESS_MODE ? 'Get Free Access' : 'Start Pro →'}
               </a>
             </div>
 
@@ -338,7 +353,11 @@ export default function Home() {
             <div className="rounded-2xl p-8 text-center relative" style={{ background: '#2a2a2a', border: '2px solid #e85d26', boxShadow: '0 3px 0 #e85d26' }}>
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[0.7rem] font-bold px-3 py-1 rounded-full uppercase" style={{ background: '#e85d26', color: '#fff' }}>Most Popular</span>
               <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>Inner Circle</div>
-              <div className="text-[2.5rem] font-extrabold text-white leading-none mb-1">$99<span className="text-[0.9rem] font-medium" style={{ color: '#aaa' }}>/mo</span></div>
+              {PAID_MODE ? (
+                <div className="text-[2.5rem] font-extrabold text-white leading-none mb-1">$99<span className="text-[0.9rem] font-medium" style={{ color: '#aaa' }}>/mo</span></div>
+              ) : (
+                <div className="text-[1.6rem] font-extrabold text-white leading-none mb-1">Free for now</div>
+              )}
               <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#ccc' }}>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Everything in Pro</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Content Briefing</li>
@@ -348,22 +367,26 @@ export default function Home() {
                 <li><span style={{ color: '#e85d26' }}>→ </span>Direct access to Dustin Fox</li>
               </ul>
               <a href="/subscribe" className="block w-full py-3 text-white font-semibold rounded-lg text-sm transition-all" style={{ background: '#e85d26', boxShadow: '0 3px 0 #c44a1a' }}>
-                Join Inner Circle →
+                {FREE_ACCESS_MODE ? 'Get Free Access' : 'Join Inner Circle →'}
               </a>
             </div>
 
             {/* Team */}
             <div className="rounded-2xl p-8 text-center" style={{ background: '#f0ece4', border: '2px solid #d8d4cc' }}>
               <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#e85d26' }}>Team</div>
-              <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$299<span className="text-[0.9rem] font-medium" style={{ color: '#888' }}>/mo</span></div>
-              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#666' }}>
+              {PAID_MODE ? (
+                <div className="text-[2.5rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>$299<span className="text-[0.9rem] font-medium" style={{ color: '#5a5a5a' }}>/mo</span></div>
+              ) : (
+                <div className="text-[1.6rem] font-extrabold leading-none mb-1" style={{ color: '#2a2a2a' }}>Let&apos;s talk</div>
+              )}
+              <ul className="text-left text-[0.85rem] leading-[2.2] my-5" style={{ color: '#5a5a5a' }}>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Everything in Inner Circle</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Up to 10 agent seats</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Team analytics</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Custom onboarding</li>
                 <li><span style={{ color: '#e85d26' }}>→ </span>Priority support</li>
               </ul>
-              <a href="/subscribe" className="btn-outline-dark block w-full py-3 text-center text-sm">
+              <a href={CONTACT_SALES_HREF} className="btn-outline-dark block w-full py-3 text-center text-sm">
                 Contact Sales →
               </a>
             </div>
@@ -403,26 +426,35 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-10 text-center text-xs border-t-2" style={{ color: '#888', borderColor: '#d4d0c8' }}>
+      <footer className="py-10 text-center text-xs border-t-2" style={{ color: '#5a5a5a', borderColor: '#d4d0c8' }}>
         <div>© 2026 AgentAIBrief.com</div>
         <div className="mt-2 flex justify-center flex-wrap gap-4 sm:gap-6">
-          <a href="mailto:dustin@foxhomesteam.com?subject=AgentAIBrief Support" className="transition-colors text-[#888] hover:text-[#e85d26]">Support</a>
-          <a href="/privacy" className="transition-colors text-[#888] hover:text-[#e85d26]">Privacy Policy</a>
-          <a href="/terms" className="transition-colors text-[#888] hover:text-[#e85d26]">Terms of Service</a>
-          <a href="/preferences" className="transition-colors text-[#888] hover:text-[#e85d26]">Manage Preferences</a>
-          <a href="/unsubscribe" className="transition-colors text-[#888] hover:text-[#e85d26]">Unsubscribe</a>
+          <a href={SUPPORT_MAILTO} className="transition-colors text-[#5a5a5a] hover:text-[#e85d26]">Support</a>
+          <a href="/privacy" className="transition-colors text-[#5a5a5a] hover:text-[#e85d26]">Privacy Policy</a>
+          <a href="/terms" className="transition-colors text-[#5a5a5a] hover:text-[#e85d26]">Terms of Service</a>
+          <a href="/preferences" className="transition-colors text-[#5a5a5a] hover:text-[#e85d26]">Manage Preferences</a>
+          <a href="/unsubscribe" className="transition-colors text-[#5a5a5a] hover:text-[#e85d26]">Unsubscribe</a>
         </div>
       </footer>
 
-      <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
       <StickySubscribeBar />
 
       {/* Demo Video Modal */}
       {showDemo && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowDemo(false)}>
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          onClick={() => setShowDemo(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="demo-modal-title"
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowDemo(false); }}
+        >
+          <h2 id="demo-modal-title" className="sr-only">AgentAIBrief product demo video</h2>
           <div className="relative w-full max-w-4xl mx-4" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setShowDemo(false)}
+              aria-label="Close demo video"
+              autoFocus
               className="absolute -top-10 right-0 text-white text-3xl font-light hover:text-[#e85d26] transition-colors cursor-pointer"
             >
               ✕

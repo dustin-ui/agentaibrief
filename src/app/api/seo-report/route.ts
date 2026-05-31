@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const SEMRUSH_API_KEY = process.env.SEMRUSH_API_KEY || 'a3fc492f4f3f6d6066f46f457f2bf02b';
+// SECURITY: do NOT hardcode the SemRush key. Fail closed if it's missing.
+// The previously-committed literal key MUST be rotated (it was exposed in source).
+const SEMRUSH_API_KEY = process.env.SEMRUSH_API_KEY || '';
 const SEMRUSH_BASE = 'https://api.semrush.com/';
 const SEMRUSH_BACKLINKS = 'https://api.semrush.com/analytics/v1/';
 
@@ -135,6 +137,13 @@ function generatePriorities(data: PriorityInput): { icon: string; title: string;
 
 export async function GET(request: NextRequest) {
   const domain = request.nextUrl.searchParams.get('domain') || 'foxessellfaster.com';
+
+  if (!SEMRUSH_API_KEY) {
+    return NextResponse.json(
+      { error: 'SEMRUSH_API_KEY is not configured. Set it in the environment.' },
+      { status: 500 }
+    );
+  }
 
   try {
     // Parallel API calls

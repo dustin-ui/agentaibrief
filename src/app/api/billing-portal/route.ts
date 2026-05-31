@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin as getSupabaseAdmin } from '@/lib/supabase';
+import { getSiteUrl } from '@/lib/api-auth';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseAdmin = getSupabaseAdmin();
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,7 +42,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const origin = request.headers.get('origin') || 'https://agentaibrief.com';
+    // Never trust the Origin header for return URLs.
+    const origin = getSiteUrl();
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,

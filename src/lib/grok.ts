@@ -1,5 +1,6 @@
 // Grok/xAI trending topics client
 // Uses grok-3-mini-fast via the xAI chat completions API
+import { AI_MODELS } from './config';
 
 export interface TrendingTopic {
   label: string;
@@ -12,7 +13,8 @@ export interface TrendingData {
 }
 
 const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
-const MODEL = 'grok-3-mini';
+const MODEL = AI_MODELS.grok;
+const FETCH_TIMEOUT_MS = 60_000;
 
 const SYSTEM_PROMPT = `You are a trend analyst. Return ONLY valid JSON, no markdown fences, no commentary.`;
 
@@ -42,9 +44,16 @@ export async function fetchTrendingTopics(): Promise<TrendingData> {
       ],
       temperature: 0.7,
     }),
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
 
   if (!response.ok) {
+    if (response.status === 429) {
+      const retryAfter = response.headers.get('retry-after');
+      throw new Error(
+        `xAI API rate limited (429)${retryAfter ? `; retry after ${retryAfter}s` : ''}`
+      );
+    }
     const errorText = await response.text();
     throw new Error(`xAI API error (${response.status}): ${errorText}`);
   }

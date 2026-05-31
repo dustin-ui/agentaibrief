@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function PreferencesPage() {
   const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
@@ -49,7 +50,7 @@ export default function PreferencesPage() {
           <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
             <p className="text-green-800 font-semibold text-lg">✅ Preferences saved!</p>
             <p className="text-green-600 text-sm mt-2">Your email preferences have been updated.</p>
-            <a href="/" className="inline-block mt-4 text-sm text-[#e85d26] hover:underline">← Back to AgentAIBrief</a>
+            <Link href="/" className="inline-block mt-4 text-sm text-[#e85d26] hover:underline">← Back to AgentAIBrief</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -128,7 +129,7 @@ export default function PreferencesPage() {
         )}
 
         <div className="mt-12 pt-6 border-t border-[#e0dcd4] text-center">
-          <a href="/" className="text-sm text-[#e85d26] hover:underline">← Back to AgentAIBrief</a>
+          <Link href="/" className="text-sm text-[#e85d26] hover:underline">← Back to AgentAIBrief</Link>
         </div>
       </div>
     </div>

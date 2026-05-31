@@ -1,8 +1,9 @@
 'use client';
 
-import { useAuth, SubscriptionTier } from '@/lib/auth-context';
+import { useAuth } from '@/lib/auth-context';
+import { FREE_ACCESS_MODE } from '@/lib/site-mode';
 import Link from 'next/link';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 interface PaywallGateProps {
   requiredTier: 'pro' | 'inner_circle';
@@ -22,21 +23,14 @@ const TrialGateContext = createContext<TrialGateContextValue>({
   trialAvailable: false,
 });
 
-const TIER_RANK: Record<SubscriptionTier, number> = { free: 0, pro: 1, inner_circle: 2, team: 3 };
 const TIER_LABELS: Record<string, string> = { pro: 'Pro', inner_circle: 'Inner Circle' };
-// TEMP: Free access mode — re-enable when ready to monetize
-const FREE_ACCESS_MODE = true;
 
 export function PaywallGate({ requiredTier, children, featureName, allowFreeTrial = false, trialKey }: PaywallGateProps) {
   const { isLoggedIn, tier } = useAuth();
-  const [trialSessionUnlocked, setTrialSessionUnlocked] = useState(false);
-
-  useEffect(() => {
-    if (!allowFreeTrial || !trialKey) return;
-    if (typeof window === 'undefined') return;
-    const key = `trial:${trialKey}`;
-    setTrialSessionUnlocked(sessionStorage.getItem(key) === 'used');
-  }, [allowFreeTrial, trialKey]);
+  const [trialSessionUnlocked, setTrialSessionUnlocked] = useState(() => {
+    if (typeof window === 'undefined' || !allowFreeTrial || !trialKey) return false;
+    return sessionStorage.getItem(`trial:${trialKey}`) === 'used';
+  });
 
   const consumeTrial = () => {
     if (!allowFreeTrial || !trialKey) return;

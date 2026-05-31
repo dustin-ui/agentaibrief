@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin as getSupabaseAdmin } from '@/lib/supabase';
+import { CC_OAUTH_COOKIE, verifyState } from '@/lib/cc-oauth';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = getSupabaseAdmin();
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const state = searchParams.get('state'); // user_id passed as state
+  const state = searchParams.get('state');
   const error = searchParams.get('error');
 
   if (error) {
@@ -18,6 +16,16 @@ export async function GET(request: NextRequest) {
 
   if (!code) {
     return NextResponse.redirect(new URL('/?cc_error=no_code', request.url));
+  }
+
+  // Validate the signed state against the one-time HttpOnly nonce cookie.
+  // This binds the callback to the session that initiated the flow and
+  // prevents CSRF / token-injection via an attacker-supplied state.
+  const cookieNonce = request.cookies.get(CC_OAUTH_COOKIE)?.value ?? null;
+  const payload = verifyState(state, cookieNonce);
+
+  if (!payload) {
+    return NextResponse.redirect(new URL('/?cc_error=invalid_state', request.url));
   }
 
   const clientId = process.env.CC_CLIENT_ID;
@@ -69,8 +77,9 @@ export async function GET(request: NextRequest) {
       tokenData = await retryResponse.json();
     }
 
-    // Save tokens to the user's newsletter profile if we have a state (user_id)
-    if (state && state !== 'admin_reauth') {
+    // Map the connection to the SESSION user (from the verified state), not to
+    // an attacker-supplied value.
+    if (payload.m === 'connect' && payload.u) {
       await supabase
         .from('newsletter_profiles')
         .update({
@@ -79,11 +88,12 @@ export async function GET(request: NextRequest) {
           cc_refresh_token: tokenData.refresh_token,
           updated_at: new Date().toISOString(),
         })
-        .eq('user_id', state);
+        .eq('user_id', payload.u);
     }
 
-    // Only update the main cc_tokens table for admin reauth (not subscriber connections)
-    if (state === 'admin_reauth') {
+    // admin_reauth updates the shared admin cc_tokens row. The signed state for
+    // admin_reauth is only ever issued to an authenticated admin.
+    if (payload.m === 'admin_reauth') {
       const { error: updateError } = await supabase
         .from('cc_tokens')
         .update({
@@ -113,9 +123,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Redirect back with success
-    const redirectPath = '/?cc_success=true';
-    return NextResponse.redirect(new URL(redirectPath, request.url));
+    // Redirect back with success and clear the one-time nonce cookie.
+    const res = NextResponse.redirect(new URL('/?cc_success=true', request.url));
+    res.cookies.set(CC_OAUTH_COOKIE, '', { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 });
+    return res;
 
   } catch (err) {
     console.error('OAuth callback error:', err);

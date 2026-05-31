@@ -12,7 +12,7 @@ const supabase = createClient(
 );
 
 export default function TrialPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, session, loading: authLoading } = useAuth();
 
   // Form fields
   const [fullName, setFullName] = useState('');
@@ -24,11 +24,14 @@ export default function TrialPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const grantTrial = async (userId: string, userEmail?: string, userName?: string) => {
+  // The server derives the user from the bearer token and ignores any body.
+  const grantTrial = async (accessToken: string) => {
     const res = await fetch('/api/grant-trial', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, email: userEmail, fullName: userName }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
     const data = await res.json();
     if (!res.ok || data.error) {
@@ -38,11 +41,11 @@ export default function TrialPage() {
 
   // Already-logged-in flow: just activate the trial
   const handleActivateTrial = async () => {
-    if (!user) return;
+    if (!user || !session) return;
     setLoading(true);
     setError('');
     try {
-      await grantTrial(user.id, user.email ?? undefined, undefined);
+      await grantTrial(session.access_token);
       setSuccess(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
@@ -73,13 +76,13 @@ export default function TrialPage() {
         return;
       }
 
-      const userId = data.user?.id;
-      if (!userId) {
-        setError('Signup succeeded but no user ID returned. Please try logging in.');
+      const accessToken = data.session?.access_token;
+      if (!accessToken) {
+        setError('Signup succeeded. Please log in to activate your trial.');
         return;
       }
 
-      await grantTrial(userId, email, fullName);
+      await grantTrial(accessToken);
       setSuccess(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

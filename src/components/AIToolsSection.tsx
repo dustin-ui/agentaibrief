@@ -95,7 +95,7 @@ interface AIToolsSectionProps {
   isPremium?: boolean;
 }
 
-export function AIToolsSection({ isPremium = false }: AIToolsSectionProps) {
+export function AIToolsSection({ isPremium: _isPremium = false }: AIToolsSectionProps) {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [showAll, setShowAll] = useState(false);
 

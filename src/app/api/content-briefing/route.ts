@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { guardRoute } from '@/lib/route-guard';
+import { AI_MODELS } from '@/lib/config';
 
 export const maxDuration = 300;
 
@@ -59,6 +61,15 @@ function repairJSON(text: string): unknown {
 }
 
 export async function POST(req: NextRequest) {
+  const guard = await guardRoute(req, {
+    name: 'content-briefing',
+    ipCapacity: 4,
+    ipPerMinute: 4,
+    userCapacity: 8,
+    userPerMinute: 8,
+  });
+  if (!guard.ok) return guard.response;
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: 'Anthropic API key not configured' }, { status: 500 });
@@ -103,7 +114,7 @@ export async function POST(req: NextRequest) {
         const newsContext = uniqueArticles.slice(0, 40).join('\n\n---\n\n');
         send('progress', { step: 'select', pct: 30, msg: `Found ${uniqueArticles.length} articles. Selecting top stories...` });
 
-        const client = new Anthropic({ apiKey });
+        const client = new Anthropic({ apiKey, timeout: 60_000, maxRetries: 2 });
 
         // PHASE 1: Quick selection — pick 15 stories, minimal output
         const selectPrompt = `Select the 15 best local news stories from ${area} for a real estate agent's social media content. Return ONLY a JSON array.
@@ -121,7 +132,7 @@ ARTICLES:
 ${newsContext}`;
 
         const selectRes = await client.messages.create({
-          model: 'claude-sonnet-4-20250514',
+          model: AI_MODELS.anthropic,
           max_tokens: 4000,
           messages: [{ role: 'user', content: selectPrompt }],
         });
@@ -150,7 +161,7 @@ ${JSON.stringify(batch)}`;
         async function runScriptBatch(batch: unknown[], batchNum: number, pctBase: number): Promise<unknown[]> {
           let text = '';
           const s = await client.messages.stream({
-            model: 'claude-sonnet-4-20250514',
+            model: AI_MODELS.anthropic,
             max_tokens: 6000,
             messages: [{ role: 'user', content: scriptPromptBase(batch) }],
           });

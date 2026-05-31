@@ -3,6 +3,7 @@
 import { formatDistanceToNow } from 'date-fns';
 import { TrendingBadge } from './TrendingBadge';
 import { ShareButtons } from './ShareButtons';
+import { FREE_ACCESS_MODE } from '@/lib/site-mode';
 
 interface NewsCardProps {
   id: string;
@@ -92,13 +93,20 @@ export function NewsCard({
             <ShareButtons title={title} url={link} />
           </div>
 
-          {/* Locked Content Placeholder */}
+          {/* Locked Content Placeholder — in free mode there is no paywall, so
+              show a friendly newsletter nudge instead of a misleading lock. */}
           {!agentAngle && !isPremium && (
             <div className="mt-3 p-3 bg-[#f5f0ea] rounded-lg border border-dashed border-gray-300">
-              <p className="text-sm text-[#888] text-center">
-                🔒 <span className="font-medium">Agent Angle & Implementation Tips</span> — 
-                <a href="/subscribe" className="text-[#e85d26] hover:underline ml-1">Subscribe to unlock</a>
-              </p>
+              {FREE_ACCESS_MODE ? (
+                <p className="text-sm text-[#5a5a5a] text-center">
+                  <a href="/subscribe" className="text-[#e85d26] hover:underline">More agent insights in the daily brief →</a>
+                </p>
+              ) : (
+                <p className="text-sm text-[#5a5a5a] text-center">
+                  🔒 <span className="font-medium">Agent Angle &amp; Implementation Tips</span> —
+                  <a href="/subscribe" className="text-[#e85d26] hover:underline ml-1">Subscribe to unlock</a>
+                </p>
+              )}
             </div>
           )}
         </div>

@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { guardRoute } from '@/lib/route-guard';
+import { AI_MODELS } from '@/lib/config';
 
+// Keep at 300 and in sync with vercel.json (multi-file Claude vision).
 export const maxDuration = 300;
+
+const MAX_OFFERS = 5;
+const MAX_TOTAL_BYTES = 25 * 1024 * 1024;
 
 const COMPARISON_PROMPT = `You are a real estate contract comparison expert. Analyze this contract and extract the following fields into a JSON object.
 
@@ -123,7 +129,7 @@ async function extractContentFromBuffer(
 
 // Fetch file from URL and return buffer + mime type
 async function fetchFileFromUrl(url: string): Promise<{ buffer: Buffer; mimeType: string; fileName: string }> {
-  const response = await fetch(url);
+  const response = await fetch(url, { signal: AbortSignal.timeout(60_000) });
   if (!response.ok) {
     throw new Error(`Failed to fetch file: ${response.status}`);
   }
@@ -160,6 +166,14 @@ async function extractContentFromFile(file: File): Promise<{ contentBlocks: Anth
 }
 
 export async function POST(req: NextRequest) {
+  const guard = await guardRoute(req, {
+    name: 'contract-compare',
+    ipCapacity: 5,
+    ipPerMinute: 5,
+    userCapacity: 10,
+    userPerMinute: 10,
+  });
+  if (!guard.ok) return guard.response;
   try {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
@@ -167,7 +181,7 @@ export async function POST(req: NextRequest) {
     }
 
     const contentType = req.headers.get('content-type') || '';
-    const client = new Anthropic({ apiKey });
+    const client = new Anthropic({ apiKey, timeout: 60_000, maxRetries: 2 });
 
     console.log('Contract compare request - Content-Type:', contentType);
 
@@ -184,7 +198,7 @@ export async function POST(req: NextRequest) {
         }));
 
         const summaryResponse = await client.messages.create({
-          model: 'claude-sonnet-4-20250514',
+          model: AI_MODELS.anthropic,
           max_tokens: 2048,
           messages: [
             {
@@ -214,6 +228,13 @@ export async function POST(req: NextRequest) {
 
       if (!offerInputs || offerInputs.length === 0) {
         return NextResponse.json({ error: 'No offers provided' }, { status: 400 });
+      }
+
+      if (offerInputs.length > MAX_OFFERS) {
+        return NextResponse.json(
+          { error: `Too many offers. Maximum ${MAX_OFFERS}.` },
+          { status: 400 }
+        );
       }
 
       const offers: Array<{ label: string; fileName: string; data: Record<string, unknown> | null; error?: string }> = [];
@@ -280,7 +301,7 @@ export async function POST(req: NextRequest) {
           console.log(`Sending ${allContentBlocks.length} content blocks to Claude for ${label}`);
 
           const response = await client.messages.create({
-            model: 'claude-sonnet-4-20250514',
+            model: AI_MODELS.anthropic,
             max_tokens: 4096,
             messages: [{ role: 'user', content: allContentBlocks }],
           });
@@ -307,7 +328,7 @@ export async function POST(req: NextRequest) {
           }
         } catch (err) {
           console.error('Offer processing error:', err);
-          offers.push({ label, fileName: '', data: null, error: String(err) });
+          offers.push({ label, fileName: '', data: null, error: 'Failed to analyze this offer' });
         }
       }
 
@@ -323,7 +344,7 @@ export async function POST(req: NextRequest) {
           }));
 
           const summaryResponse = await client.messages.create({
-            model: 'claude-sonnet-4-20250514',
+            model: AI_MODELS.anthropic,
             max_tokens: 2048,
             messages: [
               {
@@ -365,8 +386,15 @@ export async function POST(req: NextRequest) {
     if (files.length < 2) {
       return NextResponse.json({ error: 'Need at least 2 contracts to compare' }, { status: 400 });
     }
-    if (files.length > 5) {
-      return NextResponse.json({ error: 'Maximum 5 contracts allowed' }, { status: 400 });
+    if (files.length > MAX_OFFERS) {
+      return NextResponse.json({ error: `Maximum ${MAX_OFFERS} contracts allowed` }, { status: 400 });
+    }
+    const totalBytes = files.reduce((sum, f) => sum + (f.size || 0), 0);
+    if (totalBytes > MAX_TOTAL_BYTES) {
+      return NextResponse.json(
+        { error: `Uploads too large. Total must be under ${Math.floor(MAX_TOTAL_BYTES / (1024 * 1024))} MB.` },
+        { status: 400 }
+      );
     }
 
     const offers: Array<{ label: string; fileName: string; data: Record<string, unknown> | null; error?: string }> = [];
@@ -384,7 +412,7 @@ export async function POST(req: NextRequest) {
         });
 
         const response = await client.messages.create({
-          model: 'claude-sonnet-4-20250514',
+          model: AI_MODELS.anthropic,
           max_tokens: 4096,
           messages: [{ role: 'user', content: contentBlocks }],
         });
@@ -400,7 +428,8 @@ export async function POST(req: NextRequest) {
           offers.push({ label, fileName: file.name, data: null, error: 'Failed to parse AI response' });
         }
       } catch (err) {
-        offers.push({ label, fileName: file.name, data: null, error: String(err) });
+        console.error('Offer processing error:', err);
+        offers.push({ label, fileName: file.name, data: null, error: 'Failed to analyze this offer' });
       }
     }
 
@@ -415,7 +444,7 @@ export async function POST(req: NextRequest) {
         }));
 
         const summaryResponse = await client.messages.create({
-          model: 'claude-sonnet-4-20250514',
+          model: AI_MODELS.anthropic,
           max_tokens: 2048,
           messages: [
             {
@@ -439,7 +468,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ address, offers, comparison });
   } catch (error) {
     console.error('Contract comparison error:', error);
-    const errMsg = error instanceof Error ? error.message : String(error);
-    return NextResponse.json({ error: `Comparison failed: ${errMsg}` }, { status: 500 });
+    return NextResponse.json({ error: 'Comparison failed' }, { status: 500 });
   }
 }

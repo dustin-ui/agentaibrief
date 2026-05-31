@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { guardRoute } from '@/lib/route-guard';
+import { AI_MODELS } from '@/lib/config';
 
 export const maxDuration = 120;
 
 export async function POST(req: NextRequest) {
+  const guard = await guardRoute(req, { name: 'market-script' });
+  if (!guard.ok) return guard.response;
   try {
     const { city, state, duration, agent_name, team_name, marketData } = await req.json();
 
@@ -39,10 +43,10 @@ Close with: "{agent_name}, {team_or_brokerage}, selling {city} one home at a tim
       .replace(/\{agent_name\}/g, agent_name)
       .replace(/\{team_or_brokerage\}/g, team_name);
 
-    const openai = new OpenAI({ apiKey });
+    const openai = new OpenAI({ apiKey, timeout: 60_000, maxRetries: 2 });
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: AI_MODELS.openai,
       messages: [
         { role: 'system', content: systemPrompt },
         {
