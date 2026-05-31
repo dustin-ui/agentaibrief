@@ -78,7 +78,9 @@ type CompareResult = {
   address: string;
   offers: CompareOffer[];
   comparison: {
-    summary: string;
+    summary: string[];
+    bestOffer?: { label: string; reasoning: string };
+    riskAnalysis?: { offer: string; risks: string[] }[];
   } | null;
 };
 

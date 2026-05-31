@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { guardRoute } from '@/lib/route-guard';
+import { AI_MODELS } from '@/lib/config';
 
 export const maxDuration = 120;
 
@@ -73,6 +75,9 @@ Keep all copy Fair Housing compliant. No references to protected classes, famili
 Format with clear FRONT SIDE and BACK SIDE headers.`;
 
 export async function POST(req: NextRequest) {
+  const guard = await guardRoute(req, { name: 'listing-description' });
+  if (!guard.ok) return guard.response;
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: 'OpenAI API key not configured' }, { status: 500 });
@@ -86,10 +91,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Listing description required for postcard generation' }, { status: 400 });
     }
 
-    const client = new OpenAI({ apiKey });
+    const client = new OpenAI({ apiKey, timeout: 60_000, maxRetries: 2 });
     try {
       const res = await client.chat.completions.create({
-        model: 'gpt-4o',
+        model: AI_MODELS.openai,
         messages: [
           { role: 'system', content: POSTCARD_SYSTEM_PROMPT },
           { role: 'user', content: `Generate postcard copy based on this listing description:\n\n${previousDescription}` },
@@ -121,10 +126,10 @@ ${photoUrls ? `**Photo URLs for reference:** ${photoUrls}` : ''}
 
 Remember: 3,800-4,000 characters, start with a headline, Fair Housing compliant, do NOT include the street address.`;
 
-  const client = new OpenAI({ apiKey });
+  const client = new OpenAI({ apiKey, timeout: 60_000, maxRetries: 2 });
   try {
     const res = await client.chat.completions.create({
-      model: 'gpt-4o',
+      model: AI_MODELS.openai,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: userPrompt },

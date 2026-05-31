@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { discoverBreakingAINews } from '@/lib/perplexity';
+import { guardRoute } from '@/lib/route-guard';
 
 export async function GET(request: NextRequest) {
+  const guard = await guardRoute(request, { name: 'discover' });
+  if (!guard.ok) return guard.response;
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') || undefined;
@@ -14,15 +17,16 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Discovery error:', error);
-    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: message },
+      { error: 'Unable to discover news right now' },
       { status: 500 }
     );
   }
 }
 
 export async function POST(request: NextRequest) {
+  const guard = await guardRoute(request, { name: 'discover' });
+  if (!guard.ok) return guard.response;
   try {
     const body = await request.json();
     const query = body.query as string | undefined;
@@ -35,9 +39,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Discovery error:', error);
-    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: message },
+      { error: 'Unable to discover news right now' },
       { status: 500 }
     );
   }

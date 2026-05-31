@@ -16,12 +16,15 @@ function ManageSubscriptionContent() {
   const searchParams = useSearchParams();
   const returned = searchParams.get('returned') === 'true';
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(profile?.email ?? '');
   const [portalStatus, setPortalStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    if (profile?.email) setEmail(profile.email);
+    // Profile loads asynchronously from auth context; seed the editable email
+    // field once it arrives, without clobbering anything the user has typed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (profile?.email) setEmail((prev) => (prev ? prev : profile.email));
   }, [profile]);
 
   async function openBillingPortal(lookupEmail?: string) {
@@ -177,7 +180,7 @@ function ManageSubscriptionContent() {
         {/* Bottom links */}
         <div className="flex justify-center gap-6 mt-6 text-sm text-[#888]">
           <a href="/unsubscribe" className="hover:text-[#e85d26] transition-colors">Unsubscribe from emails</a>
-          <a href="/" className="hover:text-[#e85d26] transition-colors">← Back to home</a>
+          <Link href="/" className="hover:text-[#e85d26] transition-colors">← Back to home</Link>
         </div>
       </div>
     </div>

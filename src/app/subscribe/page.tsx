@@ -1,7 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
+import { FREE_ACCESS_MODE } from '@/lib/site-mode';
+
+declare global {
+  interface Window {
+    Rewardful?: { referral?: string };
+  }
+}
 
 const PRICE_MAP = {
   pro: {
@@ -90,12 +98,11 @@ const tiers = [
 ];
 
 const _testimonials: { name: string; role: string; text: string }[] = []; // Real testimonials coming soon
-// TEMP: Free access mode — re-enable when ready to monetize
-const FREE_ACCESS_MODE = true;
 
 export default function SubscribePage() {
   const [isAnnual, setIsAnnual] = useState(true);
   const [loading, setLoading] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState('');
 
   async function handleCheckout(tierKey: 'free' | 'pro' | 'inner-circle') {
     if (tierKey === 'free') {
@@ -104,18 +111,22 @@ export default function SubscribePage() {
     }
     const priceId = PRICE_MAP[tierKey][isAnnual ? 'annual' : 'monthly'];
     setLoading(tierKey);
+    setCheckoutError('');
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId, referral: typeof window !== 'undefined' && (window as any).Rewardful?.referral || undefined }),
+        body: JSON.stringify({ priceId, referral: (typeof window !== 'undefined' && window.Rewardful?.referral) || undefined }),
       });
-      const data = await res.json();
-      if (data.url) {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.url) {
         window.location.href = data.url;
+        return;
       }
+      setCheckoutError("Couldn't start checkout. Please try again, or email support@agentaibrief.com.");
     } catch (err) {
       console.error('Checkout error:', err);
+      setCheckoutError("Couldn't start checkout. Please try again, or email support@agentaibrief.com.");
     } finally {
       setLoading(null);
     }
@@ -170,7 +181,7 @@ export default function SubscribePage() {
 
         <footer className="border-t border-[#e0dcd4] bg-[#f0ece4]">
           <div className="max-w-6xl mx-auto px-4 py-6">
-            <p className="text-sm text-[#888] text-center">
+            <p className="text-sm text-[#5a5a5a] text-center">
               &copy; 2026 AgentAIBrief.com &bull; Built for real estate professionals
             </p>
           </div>
@@ -369,6 +380,10 @@ export default function SubscribePage() {
             ))}
           </div>
 
+          {checkoutError && (
+            <p role="alert" className="text-center text-sm text-red-800 mt-6">{checkoutError}</p>
+          )}
+
           {/* Money-Back Guarantee Badge */}
           <div className="flex justify-center mt-10">
             <div className="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-full px-6 py-3">
@@ -413,7 +428,7 @@ export default function SubscribePage() {
           <div className="bg-[#e8e6e1] rounded-2xl border border-[#e0dcd4] shadow-sm overflow-hidden mb-8">
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-8">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                <img src="/dustin-fox.jpg" alt="Dustin Fox" className="w-20 h-20 rounded-full object-cover shrink-0" />
+                <Image src="/dustin-fox.jpg" alt="Dustin Fox" width={80} height={80} className="w-20 h-20 rounded-full object-cover shrink-0" />
                 <div className="text-center md:text-left">
                   <h4 className="text-xl font-bold mb-1">Dustin Fox</h4>
                   <p className="text-gray-300 text-sm mb-4">Team Lead, Fox Homes • DC Metro Market</p>
@@ -537,7 +552,7 @@ export default function SubscribePage() {
       {/* Footer */}
       <footer className="border-t border-[#e0dcd4] bg-[#f0ece4]">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <p className="text-sm text-[#888] text-center">
+          <p className="text-sm text-[#5a5a5a] text-center">
             © 2026 AgentAIBrief.com • Built for real estate professionals
           </p>
         </div>

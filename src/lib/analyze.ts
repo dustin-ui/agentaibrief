@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { AI_MODELS } from './config';
 
 export interface AnalysisInput {
   headline: string;
@@ -30,7 +31,7 @@ export async function analyzeNewsForAgents(input: AnalysisInput): Promise<Analys
     throw new Error('ANTHROPIC_API_KEY environment variable is not set');
   }
 
-  const client = new Anthropic({ apiKey });
+  const client = new Anthropic({ apiKey, timeout: 60_000, maxRetries: 2 });
 
   const userPrompt = `Analyze this AI news story for real estate agents:
 
@@ -45,13 +46,16 @@ Respond in this exact JSON format (no markdown, no code fences, just raw JSON):
 }`;
 
   const message = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: AI_MODELS.anthropic,
     max_tokens: 512,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userPrompt }],
   });
 
-  const text = message.content[0].type === 'text' ? message.content[0].text : '';
+  const text = message.content
+    .filter((b): b is Anthropic.Messages.TextBlock => b.type === 'text')
+    .map(b => b.text)
+    .join('');
 
   try {
     const parsed = JSON.parse(text) as AnalysisResult;

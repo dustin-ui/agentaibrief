@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin as getSupabaseAdmin } from '@/lib/supabase';
+import { requireCronSecret, getAuthedUser, isAdminEmail } from '@/lib/api-auth';
 import Stripe from 'stripe';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseAdmin = getSupabaseAdmin();
 
 // Map Stripe price IDs to tiers (same as webhook)
 const PRICE_TO_TIER: Record<string, 'pro' | 'inner_circle'> = {
@@ -16,11 +14,15 @@ const PRICE_TO_TIER: Record<string, 'pro' | 'inner_circle'> = {
   [process.env.STRIPE_IC_ANNUAL_PRICE_ID || '']: 'inner_circle',
 };
 
-const CC_LISTS = {
-  free: '6ed164ce-017a-11f1-a92b-0242340da00b',
-  pro: '8807bcb0-053d-11f1-ac8d-0242d66c4631',
-  inner_circle: 'ddceae1c-054a-11f1-bdec-02425936aa0c',
-};
+// CC List IDs centralized in @/lib/config (CC_LISTS).
+
+// Bounded window for the downgrade reconciliation pass. Rather than calling
+// stripe.subscriptions.retrieve() once per paid profile (O(N) Stripe round
+// trips), we rely on customer.subscription.deleted/updated webhooks for the
+// authoritative downgrade, and here only reconcile profiles whose Stripe sub
+// is NOT present in the active set we just paged through. We additionally cap
+// the per-run reconcile to recently-updated profiles to bound work.
+const DOWNGRADE_WINDOW_DAYS = 35;
 
 async function notifyDustin(message: string) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -38,17 +40,16 @@ async function notifyDustin(message: string) {
 }
 
 export async function POST(request: NextRequest) {
-  // Secure with a shared secret — can be called by Vercel cron (no auth header)
-  // or externally with the CRON_SECRET header
-  const authHeader = request.headers.get('authorization');
-  const cronSecret = process.env.CRON_SECRET || 'sync-secret';
-
-  // Allow Vercel cron calls (no auth) OR authenticated external calls
-  const isVercelCron = request.headers.get('x-vercel-cron') === '1';
-  const isAuthed = authHeader === `Bearer ${cronSecret}`;
-
-  if (!isVercelCron && !isAuthed) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  // Require either a valid CRON_SECRET bearer (constant-time compare; fails
+  // closed if CRON_SECRET is unset) OR an authenticated admin user.
+  // The spoofable x-vercel-cron header is NOT treated as an auth bypass —
+  // Vercel cron can send the Authorization: Bearer <CRON_SECRET> header.
+  const cronError = requireCronSecret(request);
+  if (cronError) {
+    const user = await getAuthedUser(request);
+    if (!user || !isAdminEmail(user.email)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
   }
 
   const stripe = getStripe();
@@ -61,13 +62,27 @@ export async function POST(request: NextRequest) {
   let checked = 0;
 
   try {
-    // Page through all active subscriptions in Stripe
+    // ------------------------------------------------------------------
+    // 1) Page through all active Stripe subscriptions and collect them in
+    //    memory (bounded by Stripe's active-sub count). Track the set of
+    //    active subscription IDs + customer IDs for the downgrade pass.
+    // ------------------------------------------------------------------
+    type ActiveSub = {
+      tier: 'pro' | 'inner_circle';
+      email: string;
+      stripeCustomerId: string;
+      subscriptionId: string;
+    };
+    const activeSubs: ActiveSub[] = [];
+    const activeSubIds = new Set<string>();
+
     for await (const subscription of stripe.subscriptions.list({
       status: 'active',
       limit: 100,
       expand: ['data.customer'],
     }) as AsyncIterable<Stripe.Subscription>) {
       checked++;
+      activeSubIds.add(subscription.id);
 
       const priceId = subscription.items.data[0]?.price.id;
       const correctTier = priceId ? PRICE_TO_TIER[priceId] : null;
@@ -76,96 +91,111 @@ export async function POST(request: NextRequest) {
       const customer = subscription.customer as Stripe.Customer;
       const email = customer.email;
       const stripeCustomerId = customer.id;
-
       if (!email) continue;
 
-      // Find the profile by stripe_customer_id first, then by email
-      let profile: { id: string; subscription_tier: string; email: string } | null = null;
+      activeSubs.push({ tier: correctTier, email, stripeCustomerId, subscriptionId: subscription.id });
+    }
 
-      const { data: byCustomer } = await supabaseAdmin
+    // ------------------------------------------------------------------
+    // 2) Batch-load the matching profiles in two queries (by customer id and
+    //    by email) instead of 1-2 queries PER subscription. Build lookup maps.
+    // ------------------------------------------------------------------
+    const customerIds = [...new Set(activeSubs.map(s => s.stripeCustomerId))];
+    const emails = [...new Set(activeSubs.map(s => s.email))];
+
+    type ProfileRow = { id: string; subscription_tier: string; email: string; stripe_customer_id: string | null };
+    const byCustomerId = new Map<string, ProfileRow>();
+    const byEmail = new Map<string, ProfileRow>();
+
+    if (customerIds.length > 0) {
+      const { data } = await supabaseAdmin
         .from('profiles')
-        .select('id, subscription_tier, email')
-        .eq('stripe_customer_id', stripeCustomerId)
-        .maybeSingle();
-
-      if (byCustomer) {
-        profile = byCustomer;
-      } else {
-        const { data: byEmail } = await supabaseAdmin
-          .from('profiles')
-          .select('id, subscription_tier, email')
-          .eq('email', email)
-          .maybeSingle();
-        profile = byEmail;
+        .select('id, subscription_tier, email, stripe_customer_id')
+        .in('stripe_customer_id', customerIds);
+      for (const p of (data as ProfileRow[] | null) || []) {
+        if (p.stripe_customer_id) byCustomerId.set(p.stripe_customer_id, p);
       }
-
-      if (!profile) {
-        // No profile at all — user paid but never created an account
-        // (edge case: they checked out without signing up and auto-register failed)
-        errors.push(`No profile for ${email} (${stripeCustomerId}) — manual fix needed`);
-        continue;
-      }
-
-      // Check if tier is wrong
-      if (profile.subscription_tier !== correctTier) {
-        const { error } = await supabaseAdmin
-          .from('profiles')
-          .update({
-            subscription_tier: correctTier,
-            subscription_status: 'active',
-            stripe_customer_id: stripeCustomerId,
-            stripe_subscription_id: subscription.id,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', profile.id);
-
-        if (error) {
-          errors.push(`Failed to fix ${email}: ${error.message}`);
-        } else {
-          const msg = `Fixed ${email}: ${profile.subscription_tier} → ${correctTier}`;
-          console.log('[sync]', msg);
-          fixed.push(msg);
-        }
-      } else {
-        // Tier is correct but stripe_customer_id might be missing — patch it
-        if (!byCustomer) {
-          await supabaseAdmin
-            .from('profiles')
-            .update({
-              stripe_customer_id: stripeCustomerId,
-              stripe_subscription_id: subscription.id,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', profile.id);
-        }
+    }
+    if (emails.length > 0) {
+      const { data } = await supabaseAdmin
+        .from('profiles')
+        .select('id, subscription_tier, email, stripe_customer_id')
+        .in('email', emails);
+      for (const p of (data as ProfileRow[] | null) || []) {
+        if (p.email) byEmail.set(p.email, p);
       }
     }
 
-    // Also check for cancelled subs — downgrade anyone whose Stripe sub is gone
+    // ------------------------------------------------------------------
+    // 3) Reconcile in memory; issue only the writes that are actually needed.
+    // ------------------------------------------------------------------
+    for (const s of activeSubs) {
+      const matchedByCustomer = byCustomerId.get(s.stripeCustomerId);
+      const profile = matchedByCustomer || byEmail.get(s.email) || null;
+
+      if (!profile) {
+        errors.push(`No profile for ${s.email} (${s.stripeCustomerId}) — manual fix needed`);
+        continue;
+      }
+
+      if (profile.subscription_tier !== s.tier) {
+        const { error } = await supabaseAdmin
+          .from('profiles')
+          .update({
+            subscription_tier: s.tier,
+            subscription_status: 'active',
+            stripe_customer_id: s.stripeCustomerId,
+            stripe_subscription_id: s.subscriptionId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', profile.id);
+        if (error) {
+          errors.push(`Failed to fix ${s.email}: ${error.message}`);
+        } else {
+          const msg = `Fixed ${s.email}: ${profile.subscription_tier} → ${s.tier}`;
+          console.log('[sync]', msg);
+          fixed.push(msg);
+        }
+      } else if (!matchedByCustomer) {
+        // Tier correct but stripe_customer_id missing — patch it.
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            stripe_customer_id: s.stripeCustomerId,
+            stripe_subscription_id: s.subscriptionId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', profile.id);
+      }
+    }
+
+    // ------------------------------------------------------------------
+    // 4) Downgrade pass (bounded). Authoritative downgrades come from the
+    //    customer.subscription.deleted/updated and invoice.payment_failed
+    //    webhooks. Here we only reconcile paid profiles whose stored
+    //    stripe_subscription_id is NOT in the active set we just paged, and
+    //    only those updated within a recent window — no per-profile
+    //    stripe.subscriptions.retrieve() loop.
+    // ------------------------------------------------------------------
+    const windowStart = new Date(Date.now() - DOWNGRADE_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
     const { data: paidProfiles } = await supabaseAdmin
       .from('profiles')
-      .select('id, email, subscription_tier, stripe_subscription_id')
+      .select('id, email, subscription_tier, stripe_subscription_id, updated_at')
       .neq('subscription_tier', 'free')
-      .not('stripe_subscription_id', 'is', null);
+      .not('stripe_subscription_id', 'is', null)
+      .gte('updated_at', windowStart);
 
     if (paidProfiles) {
-      for (const profile of paidProfiles) {
-        try {
-          const sub = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
-          if (sub.status !== 'active' && sub.status !== 'trialing') {
-            await supabaseAdmin
-              .from('profiles')
-              .update({ subscription_tier: 'free', subscription_status: 'inactive', updated_at: new Date().toISOString() })
-              .eq('id', profile.id);
-            fixed.push(`Downgraded ${profile.email}: ${profile.subscription_tier} → free (sub status: ${sub.status})`);
-          }
-        } catch {
-          // Sub not found in Stripe — downgrade
-          await supabaseAdmin
-            .from('profiles')
-            .update({ subscription_tier: 'free', subscription_status: 'inactive', updated_at: new Date().toISOString() })
-            .eq('id', profile.id);
-          fixed.push(`Downgraded ${profile.email}: sub not found in Stripe`);
+      for (const profile of paidProfiles as { id: string; email: string; subscription_tier: string; stripe_subscription_id: string }[]) {
+        if (activeSubIds.has(profile.stripe_subscription_id)) continue; // still active
+        const { error } = await supabaseAdmin
+          .from('profiles')
+          .update({ subscription_tier: 'free', subscription_status: 'inactive', updated_at: new Date().toISOString() })
+          .eq('id', profile.id);
+        if (error) {
+          errors.push(`Failed to downgrade ${profile.email}: ${error.message}`);
+        } else {
+          fixed.push(`Downgraded ${profile.email}: ${profile.subscription_tier} → free (sub ${profile.stripe_subscription_id} not in active set)`);
         }
       }
     }
@@ -186,7 +216,7 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[sync] Fatal error:', msg);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 

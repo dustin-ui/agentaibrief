@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'About Dustin Fox',
@@ -11,9 +13,9 @@ export default function AboutPage() {
       {/* Header */}
       <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <a href="/" className="text-2xl font-bold text-[#2a2a2a]">
+          <Link href="/" className="text-2xl font-bold text-[#2a2a2a]">
             Agent<span className="text-[#e85d26]">AI</span>Brief
-          </a>
+          </Link>
           <a href="/subscribe" className="px-4 py-2 bg-[#e85d26] text-white text-sm font-medium rounded-lg hover:bg-[#c44a1a]">
             Subscribe
           </a>
@@ -24,9 +26,11 @@ export default function AboutPage() {
       <section className="bg-gradient-to-b from-gray-900 to-gray-800 text-white">
         <div className="max-w-4xl mx-auto px-4 py-16">
           <div className="flex flex-col md:flex-row items-center gap-8">
-            <img
+            <Image
               src="/dustin-fox.jpg"
               alt="Dustin Fox"
+              width={144}
+              height={144}
               className="w-36 h-36 rounded-full object-cover border-4 border-[#e85d26] shadow-xl shrink-0"
             />
             <div className="text-center md:text-left">
@@ -144,7 +148,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <p className="text-sm text-[#888] text-center">
             © 2026 AgentAIBrief.com • Built for real estate professionals •{' '}
-            <a href="/" className="text-[#e85d26] hover:underline">Home</a>
+            <Link href="/" className="text-[#e85d26] hover:underline">Home</Link>
           </p>
         </div>
       </footer>

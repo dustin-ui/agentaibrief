@@ -1,71 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getStripe } from '@/lib/stripe';
-import { PRICE_IDS } from '@/lib/stripe';
+import { getStripe, PRICE_IDS } from '@/lib/stripe';
+import { supabaseAdmin } from '@/lib/supabase';
+import { requireAuth } from '@/lib/api-auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
-
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Email is required', tier: 'guest' },
-        { status: 400 }
-      );
-    }
+    const auth = await requireAuth(request);
+    if (auth.response) return auth.response;
+    const user = auth.user;
 
     const stripe = getStripe();
 
-    // If Stripe is not configured, use demo mode
+    // Fail CLOSED: if Stripe is not configured we cannot verify entitlement.
+    // Never grant a paid tier as a fallback.
     if (!stripe) {
-      // Demo mode: allow any email that looks real
-      return NextResponse.json({
-        tier: 'inner-circle',
-        demo: true,
-        message: 'Demo mode — Stripe not configured',
-      });
+      return NextResponse.json(
+        { tier: 'guest', error: 'Access verification temporarily unavailable.' },
+        { status: 503 }
+      );
     }
 
-    // Look up customer by email in Stripe
-    const customers = await stripe.customers.list({
-      email: email.toLowerCase().trim(),
-      limit: 1,
-    });
+    // Derive entitlement from the authenticated user's profile / Stripe customer.
+    // Never trust an email from the request body.
+    const { data: profile } = await supabaseAdmin()
+      .from('profiles')
+      .select('email, stripe_customer_id')
+      .eq('id', user.id)
+      .maybeSingle();
 
-    if (customers.data.length === 0) {
-      return NextResponse.json({
-        tier: 'guest',
-        message: 'No subscription found for this email',
-      });
+    const lookupEmail = (profile?.email || user.email || '').toLowerCase().trim();
+    const stripeCustomerId = profile?.stripe_customer_id || null;
+
+    // Resolve the Stripe customer for THIS authenticated user only.
+    let customerId = stripeCustomerId;
+    if (!customerId && lookupEmail) {
+      const customers = await stripe.customers.list({ email: lookupEmail, limit: 1 });
+      customerId = customers.data[0]?.id ?? null;
     }
 
-    const customer = customers.data[0];
+    if (!customerId) {
+      return NextResponse.json({ tier: 'guest', message: 'No subscription found' });
+    }
 
-    // Get active subscriptions for this customer
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customer.id,
+    const activeSubs = await stripe.subscriptions.list({
+      customer: customerId,
       status: 'active',
       limit: 10,
     });
-
-    if (subscriptions.data.length === 0) {
-      // Also check trialing subscriptions
+    const subs = [...activeSubs.data];
+    if (subs.length === 0) {
       const trialSubs = await stripe.subscriptions.list({
-        customer: customer.id,
+        customer: customerId,
         status: 'trialing',
         limit: 10,
       });
-
-      if (trialSubs.data.length === 0) {
-        return NextResponse.json({
-          tier: 'guest',
-          message: 'No active subscription found',
-        });
-      }
-
-      subscriptions.data.push(...trialSubs.data);
+      subs.push(...trialSubs.data);
     }
 
-    // Determine highest tier from active subscriptions
+    if (subs.length === 0) {
+      return NextResponse.json({ tier: 'guest', message: 'No active subscription found' });
+    }
+
     const innerCirclePriceIds = [
       PRICE_IDS.INNER_CIRCLE_MONTHLY,
       PRICE_IDS.INNER_CIRCLE_ANNUAL,
@@ -73,8 +68,7 @@ export async function POST(request: NextRequest) {
     const proPriceIds = [PRICE_IDS.PRO_MONTHLY, PRICE_IDS.PRO_ANNUAL];
 
     let tier = 'guest' as string;
-
-    for (const sub of subscriptions.data) {
+    for (const sub of subs) {
       for (const item of sub.items.data) {
         const priceId = item.price.id;
         if (innerCirclePriceIds.includes(priceId)) {
@@ -97,10 +91,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: unknown) {
     console.error('Verify access error:', error);
-    const message =
-      error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: message, tier: 'guest' },
+      { error: 'Internal server error', tier: 'guest' },
       { status: 500 }
     );
   }

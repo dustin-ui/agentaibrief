@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { createClient, User, Session } from '@supabase/supabase-js';
+import { FREE_ACCESS_MODE } from '@/lib/site-mode';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -36,8 +37,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-// TEMP: Free access mode — re-enable when ready to monetize
-const FREE_ACCESS_MODE = true;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -56,10 +55,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // If tier looks wrong (free but has Stripe data), fire a background sync.
       // This self-heals any webhook-missed signups without manual intervention.
       if (data.subscription_tier === 'free' && (data.stripe_customer_id || data.stripe_subscription_id)) {
+        const { data: { session: s } } = await supabase.auth.getSession();
+        if (!s?.access_token) return;
         fetch('/api/sync-subscription', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${s.access_token}`,
+          },
         })
           .then(res => res.json())
           .then(result => {

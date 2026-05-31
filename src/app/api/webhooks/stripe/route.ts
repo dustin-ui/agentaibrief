@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
 import { addSubscriber } from '@/lib/constant-contact';
+import { ccListsForTier } from '@/lib/config';
 import Stripe from 'stripe';
 
 const supabaseAdmin = createClient(
@@ -17,12 +18,7 @@ const PRICE_TO_TIER: Record<string, 'pro' | 'inner_circle'> = {
   [process.env.STRIPE_IC_ANNUAL_PRICE_ID || '']: 'inner_circle',
 };
 
-// CC List IDs by tier
-const CC_LISTS = {
-  free: '6ed164ce-017a-11f1-a92b-0242340da00b',
-  pro: '8807bcb0-053d-11f1-ac8d-0242d66c4631',
-  'inner_circle': 'ddceae1c-054a-11f1-bdec-02425936aa0c',
-};
+// CC List IDs are centralized in @/lib/config (CC_LISTS).
 
 async function addToCC(email: string, listIds: string[], firstName?: string) {
   try {
@@ -48,23 +44,33 @@ async function notifyDustin(message: string) {
   }
 }
 
+/**
+ * Update a profile's subscription state. Returns true on success, false on
+ * failure so the webhook handler can decide whether to return a non-2xx and
+ * let Stripe retry (critical-path data integrity).
+ */
 async function updateProfile(
   userId: string,
   tier: 'pro' | 'inner_circle' | 'free',
+  status: 'active' | 'inactive' | 'past_due',
   stripeCustomerId?: string,
   stripeSubscriptionId?: string
-) {
+): Promise<boolean> {
   const update: Record<string, unknown> = {
     subscription_tier: tier,
-    subscription_status: tier === 'free' ? 'inactive' : 'active',
+    subscription_status: status,
     updated_at: new Date().toISOString(),
   };
   if (stripeCustomerId) update.stripe_customer_id = stripeCustomerId;
   if (stripeSubscriptionId) update.stripe_subscription_id = stripeSubscriptionId;
 
   const { error } = await supabaseAdmin.from('profiles').update(update).eq('id', userId);
-  if (error) console.error('[webhook] Profile update error:', error);
-  else console.log(`[webhook] Updated profile ${userId} to ${tier}`);
+  if (error) {
+    console.error('[webhook] Profile update error:', error);
+    return false;
+  }
+  console.log(`[webhook] Updated profile ${userId} to ${tier}/${status}`);
+  return true;
 }
 
 async function findUserByStripeCustomer(customerId: string): Promise<string | null> {
@@ -100,22 +106,48 @@ async function createPaidUser(
 
   const userId = authData.user.id;
 
-  // Create profile row
-  const { error: profileError } = await supabaseAdmin.from('profiles').insert({
-    id: userId,
-    email,
-    full_name: firstName || null,
-    subscription_tier: tier,
-    subscription_status: 'active',
-    stripe_customer_id: stripeCustomerId,
-    stripe_subscription_id: stripeSubscriptionId,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
+  // Create profile row. Use upsert so a partially-created profile (e.g. created
+  // by a Supabase auth trigger) does not cause a silent insert failure that
+  // leaves the paid user without their tier.
+  const { error: profileError } = await supabaseAdmin.from('profiles').upsert(
+    {
+      id: userId,
+      email,
+      full_name: firstName || null,
+      subscription_tier: tier,
+      subscription_status: 'active',
+      stripe_customer_id: stripeCustomerId,
+      stripe_subscription_id: stripeSubscriptionId,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'id' }
+  );
 
   if (profileError) {
-    console.error('[webhook] Failed to create profile:', profileError);
-    // Don't return null — auth user was created, profile may partially exist
+    // One retry as a plain update keyed by id, in case the row already exists
+    // and the upsert raced. Surface the failure to the caller if this also fails.
+    console.error('[webhook] Failed to upsert profile, retrying as update:', profileError);
+    const { error: retryError } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        email,
+        subscription_tier: tier,
+        subscription_status: 'active',
+        stripe_customer_id: stripeCustomerId,
+        stripe_subscription_id: stripeSubscriptionId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId);
+    if (retryError) {
+      console.error('[webhook] Profile create retry also failed:', retryError);
+      notifyDustin(
+        `\u26a0\ufe0f <b>Webhook profile create failed</b>\n\nPaid user ${email} (${tier}) could not be written to profiles. Manual fix needed.`
+      ).catch(() => {});
+      // Return null so the handler treats this as a critical-path failure and
+      // returns a non-2xx, letting Stripe retry the event.
+      return null;
+    }
   }
 
   // Send magic link so they can set a password and log in
@@ -150,11 +182,15 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET || '');
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Verification failed';
-    return NextResponse.json({ error: msg }, { status: 400 });
+    console.error('[webhook] Signature verification failed:', msg);
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
   // UUID v4 pattern — only valid Supabase user IDs should be used as client_reference_id
   const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  // If a critical-path profiles write fails, we return a non-2xx so Stripe retries.
+  let criticalFailure = false;
 
   switch (event.type) {
     case 'checkout.session.completed': {
@@ -190,7 +226,8 @@ export async function POST(request: NextRequest) {
         if (tier) {
           if (userId) {
             // Existing user — update their profile (critical path, must complete before returning 200)
-            await updateProfile(userId, tier, stripeCustomerId, session.subscription as string);
+            const ok = await updateProfile(userId, tier, 'active', stripeCustomerId, session.subscription as string);
+            if (!ok) criticalFailure = true;
           } else if (email) {
             // No account exists — auto-register them as a paid user
             console.log(`[webhook] No account found for ${email} — auto-registering as ${tier}`);
@@ -201,11 +238,13 @@ export async function POST(request: NextRequest) {
               stripeCustomerId,
               session.subscription as string
             );
+            // createPaidUser returns null when the profile write ultimately failed
+            if (!userId) criticalFailure = true;
           }
 
           // Fire-and-forget CC + Telegram — don't let slow 3rd-party calls block the 200 response
           if (email) {
-            const lists = [CC_LISTS.free, CC_LISTS[tier]];
+            const lists = ccListsForTier(tier);
             addToCC(email, lists, firstName).catch(err =>
               console.error('[webhook] CC add failed (async):', err)
             );
@@ -226,15 +265,47 @@ export async function POST(request: NextRequest) {
     case 'customer.subscription.updated': {
       const subscription = event.data.object as Stripe.Subscription;
       const priceId = subscription.items.data[0]?.price.id;
-      const tier = priceId ? PRICE_TO_TIER[priceId] : null;
+      const mappedTier = priceId ? PRICE_TO_TIER[priceId] : null;
       const customerId =
         typeof subscription.customer === 'string'
           ? subscription.customer
           : subscription.customer.toString();
       const userId = await findUserByStripeCustomer(customerId);
 
-      if (userId && tier) {
-        await updateProfile(userId, tier, undefined, subscription.id);
+      if (userId) {
+        // Do NOT blindly upgrade on price match. Only grant the paid tier when
+        // the subscription is actually active or trialing; otherwise downgrade
+        // to free/inactive so Supabase state mirrors Stripe (mirrors sync jobs).
+        const status = subscription.status;
+        if (mappedTier && (status === 'active' || status === 'trialing')) {
+          const ok = await updateProfile(userId, mappedTier, 'active', undefined, subscription.id);
+          if (!ok) criticalFailure = true;
+        } else if (status === 'past_due' || status === 'unpaid') {
+          // Keep tier visibility but mark past_due so access can be gated.
+          const ok = await updateProfile(userId, 'free', 'past_due', undefined, subscription.id);
+          if (!ok) criticalFailure = true;
+        } else {
+          // canceled, incomplete, incomplete_expired, paused, etc -> downgrade
+          const ok = await updateProfile(userId, 'free', 'inactive', undefined, subscription.id);
+          if (!ok) criticalFailure = true;
+        }
+      }
+      break;
+    }
+
+    case 'invoice.payment_failed': {
+      const invoice = event.data.object as Stripe.Invoice;
+      const customerId =
+        typeof invoice.customer === 'string'
+          ? invoice.customer
+          : invoice.customer?.toString();
+      if (customerId) {
+        const userId = await findUserByStripeCustomer(customerId);
+        if (userId) {
+          // Mark past_due so downstream access checks can gate paid features.
+          const ok = await updateProfile(userId, 'free', 'past_due', undefined);
+          if (!ok) criticalFailure = true;
+        }
       }
       break;
     }
@@ -248,13 +319,23 @@ export async function POST(request: NextRequest) {
       const userId = await findUserByStripeCustomer(customerId);
 
       if (userId) {
-        await updateProfile(userId, 'free');
+        const ok = await updateProfile(userId, 'free', 'inactive');
+        if (!ok) criticalFailure = true;
       }
       break;
     }
 
     default:
       console.log(`Unhandled event: ${event.type}`);
+  }
+
+  // Critical-path profiles write failed — return non-2xx so Stripe retries the
+  // event instead of silently dropping a paid user's tier.
+  if (criticalFailure) {
+    return NextResponse.json(
+      { error: 'Profile update failed; will retry' },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ received: true });

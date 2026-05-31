@@ -1,10 +1,6 @@
 {
   "crons": [
     {
-      "path": "/api/newsletter/weekly-cron",
-      "schedule": "0 9 * * *"
-    },
-    {
       "path": "/api/admin/sync-subscriptions",
       "schedule": "0 */2 * * *"
     }
@@ -17,27 +13,12 @@
       "maxDuration": 120
     },
     "src/app/api/contract-analyze/route.ts": {
-      "maxDuration": 120
+      "maxDuration": 300
     },
     "src/app/api/contract-compare/route.ts": {
-      "maxDuration": 120
+      "maxDuration": 300
     },
     "src/app/api/content-briefing/route.ts": {
-      "maxDuration": 300
-    },
-    "src/app/api/newsletter/generate-stories/route.ts": {
-      "maxDuration": 120
-    },
-    "src/app/api/newsletter/generate-edition/route.ts": {
-      "maxDuration": 180
-    },
-    "src/app/api/newsletter/weekly-cron/route.ts": {
-      "maxDuration": 300
-    },
-    "src/app/api/newsletter/generate-for-user/route.ts": {
-      "maxDuration": 180
-    },
-    "src/app/api/newsletter/generate-all/route.ts": {
       "maxDuration": 300
     }
   }

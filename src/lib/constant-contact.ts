@@ -2,6 +2,7 @@
 import { supabaseAdmin } from './supabase';
 
 const CC_API_BASE = 'https://api.cc.email/v3';
+const CC_FETCH_TIMEOUT_MS = 60_000;
 
 interface CCTokens {
   access_token: string;
@@ -61,6 +62,7 @@ async function refreshAccessToken(): Promise<string | null> {
         refresh_token: tokens.refresh_token,
         grant_type: 'refresh_token',
       }),
+      signal: AbortSignal.timeout(CC_FETCH_TIMEOUT_MS),
     });
 
     if (!res.ok) return null;
@@ -106,6 +108,7 @@ async function ccFetch(path: string, options: RequestInit = {}): Promise<Respons
       'Content-Type': 'application/json',
       ...options.headers,
     },
+    signal: options.signal ?? AbortSignal.timeout(CC_FETCH_TIMEOUT_MS),
   });
 
   // If 401, try refreshing token
@@ -120,6 +123,7 @@ async function ccFetch(path: string, options: RequestInit = {}): Promise<Respons
         'Content-Type': 'application/json',
         ...options.headers,
       },
+      signal: options.signal ?? AbortSignal.timeout(CC_FETCH_TIMEOUT_MS),
     });
   }
 

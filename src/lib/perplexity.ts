@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { AI_MODELS } from './config';
 
 export interface DiscoveredNewsItem {
   title: string;
@@ -70,7 +71,7 @@ export async function discoverBreakingAINews(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'sonar',
+      model: AI_MODELS.perplexity,
       messages: [
         { role: 'system', content: DISCOVERY_PROMPT },
         { role: 'user', content: query },
@@ -78,9 +79,16 @@ export async function discoverBreakingAINews(
       max_tokens: 2048,
       temperature: 0.3,
     }),
+    signal: AbortSignal.timeout(60_000),
   });
 
   if (!response.ok) {
+    if (response.status === 429) {
+      const retryAfter = response.headers.get('retry-after');
+      throw new Error(
+        `Perplexity API rate limited (429)${retryAfter ? `; retry after ${retryAfter}s` : ''}`
+      );
+    }
     const errorText = await response.text();
     throw new Error(`Perplexity API error (${response.status}): ${errorText}`);
   }

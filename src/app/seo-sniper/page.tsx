@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { MobileNav } from '@/components/MobileNav';
 import { SiteNav } from '@/components/SiteNav';
 import { PaywallGate } from '@/components/PaywallGate';
@@ -126,9 +127,9 @@ export default function SEOSniperPage() {
       {/* Header */}
       <header className="border-b border-[#e0dcd4] bg-[#e8e6e1]/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-bold bg-gradient-to-r from-[#e85d26] to-[#c44a1a] bg-clip-text text-transparent">AgentAI Brief</span>
-          </a>
+          </Link>
           <SiteNav variant="dark" />
           <MobileNav />
         </div>

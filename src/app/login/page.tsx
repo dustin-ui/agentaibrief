@@ -92,11 +92,20 @@ function LoginForm() {
         </div>
 
         {showForgot && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4" onClick={() => setShowForgot(false)}>
-            <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-2xl p-8 max-w-md w-full" onClick={e => e.stopPropagation()}>
-              <h2 className="text-lg font-semibold text-[#2a2a2a] mb-2">Reset Password</h2>
+          <div
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4"
+            onClick={() => setShowForgot(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="forgot-modal-title"
+            onKeyDown={(e) => { if (e.key === 'Escape') setShowForgot(false); }}
+          >
+            <div className="bg-[#f0ece4] border border-[#e0dcd4] rounded-2xl p-8 max-w-md w-full relative" onClick={e => e.stopPropagation()}>
+              <button type="button" onClick={() => setShowForgot(false)} aria-label="Close" className="absolute top-4 right-4 text-[#666] hover:text-[#e85d26]">✕</button>
+              <h2 id="forgot-modal-title" className="text-lg font-semibold text-[#2a2a2a] mb-2">Reset Password</h2>
               <p className="text-[#666] text-sm mb-4">Enter your email and we&apos;ll send a reset link.</p>
-              <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} placeholder="you@example.com"
+              <label htmlFor="reset-email" className="sr-only">Email address</label>
+              <input id="reset-email" type="email" aria-label="Email address" autoFocus value={resetEmail} onChange={e => setResetEmail(e.target.value)} placeholder="you@example.com"
                 className="w-full px-4 py-2.5 bg-[#f0ece4] border border-[#d8d4cc] rounded-lg text-[#2a2a2a] placeholder-gray-500 focus:ring-2 focus:ring-[#e85d26] outline-none mb-3" />
               {resetMsg && <p className={`text-sm mb-3 ${resetMsg.includes('Check') ? 'text-green-700' : 'text-red-400'}`}>{resetMsg}</p>}
               <button onClick={handleReset} disabled={resetLoading}

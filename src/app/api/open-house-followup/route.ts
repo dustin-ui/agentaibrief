@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { guardRoute } from '@/lib/route-guard';
+import { AI_MODELS } from '@/lib/config';
 
 export const maxDuration = 120;
 
 export async function POST(req: NextRequest) {
+  const guard = await guardRoute(req, { name: 'open-house-followup' });
+  if (!guard.ok) return guard.response;
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: 'Anthropic API key not configured' }, { status: 500 });
@@ -59,9 +64,9 @@ Return ONLY a JSON object:
 }`;
 
   try {
-    const client = new Anthropic({ apiKey });
+    const client = new Anthropic({ apiKey, timeout: 60_000, maxRetries: 2 });
     const res = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: AI_MODELS.anthropic,
       max_tokens: 3000,
       messages: [{ role: 'user', content: prompt }],
     });

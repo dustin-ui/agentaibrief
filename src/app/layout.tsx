@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
@@ -42,20 +42,11 @@ export const metadata: Metadata = {
     siteName: 'AgentAIBrief',
     title,
     description,
-    images: [
-      {
-        url: `${siteUrl}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: 'AgentAIBrief — AI News for Real Estate Pros',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title,
     description,
-    images: [`${siteUrl}/og-image.png`],
     creator: '@dustinmfox',
   },
   robots: {
@@ -74,6 +65,41 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: '#e85d26',
+  colorScheme: 'light',
+};
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'AgentAIBrief',
+  url: siteUrl,
+  logo: `${siteUrl}/logo.jpg`,
+  description,
+  founder: {
+    '@type': 'Person',
+    name: 'Dustin Fox',
+    url: 'https://www.foxessellfaster.com',
+  },
+  sameAs: ['https://instagram.com/dustinmfox'],
+};
+
+const webSiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'AgentAIBrief',
+  url: siteUrl,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${siteUrl}/blog?q={search_term_string}`,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -84,6 +110,14 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+        />
         <script defer data-domain="agentaibrief.com" src="https://plausible.io/js/script.js"></script>
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className}`}>
