@@ -11,6 +11,234 @@ export interface BlogPost {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'how-278m-team-finds-content-with-ai',
+    title: 'How a $278M Real Estate Team Finds Better Content with AI',
+    description: 'The three-part AI workflow Dustin Fox uses to find local real estate content ideas before they are obvious, score them, and turn them into share-worthy posts.',
+    date: '2026-06-15',
+    author: 'Dustin Fox',
+    readTime: '6 min read',
+    tags: ['AI Content', 'Manus', 'Real Estate Marketing'],
+    content: `Most real estate agents do not have a content problem.
+
+They have a boring-content problem.
+
+They post the same market stats, the same listing graphics, the same "rates changed again" updates, and then wonder why nobody shares it.
+
+The content that actually grows an audience usually comes from a different place. It comes from stories people already care about before they ever think of them as real estate content.
+
+That is how I use AI in our own real estate business.
+
+Not to replace agents. Not to replace local knowledge. Not to automate trust.
+
+I use it to find better raw material.
+
+Our team did roughly $278M in production, and over the past year I grew from about 1,500 followers to more than 30,000. A big reason was learning how to find local stories before they became obvious.
+
+Here is the system.
+
+## 1. I make AI search for local stories before everyone else sees them
+
+Most agents wait until a story is already everywhere.
+
+By then, the moment is usually gone.
+
+I use Manus to look for stories earlier in the cycle:
+
+- county votes
+- planning agendas
+- new restaurants
+- road projects
+- business openings
+- school board issues
+- development fights
+- closings
+- public meeting notes
+- economic development updates
+- local government pages
+
+Those are the places where better content starts.
+
+A national real estate headline might be interesting to agents, but local stories are what people in your market actually talk about.
+
+If a restaurant is opening, a road project is going to change traffic, a school board vote is getting attention, or a development fight is heating up, people care because it affects their daily life.
+
+That gives you a content angle that is bigger than real estate but still connected to your local expertise.
+
+## 2. I make it search places most agents skip
+
+Most agents look in the same obvious places:
+
+- Instagram
+- Google News
+- Facebook groups
+- other agents' posts
+
+Those can help, but they are usually late signals.
+
+The better signals are often buried in sources agents do not want to read:
+
+- county websites
+- planning commission packets
+- zoning agendas
+- economic development pages
+- meeting videos
+- school board documents
+- transportation updates
+- local news outlets
+- city newsletters
+- public hearing notices
+
+That is exactly the kind of work AI is good at.
+
+It can scan boring sources, summarize what matters, and surface stories that deserve a second look.
+
+The key is not asking AI, "What should I post today?"
+
+That gives you generic ideas.
+
+The better prompt is: "Search these local sources and find stories that people in my market would actually talk about. Then explain why each story matters."
+
+That turns AI into a local research assistant instead of a caption generator.
+
+## 3. I make it score the stories before I waste time on them
+
+Not every story deserves a video.
+
+Not every story deserves a newsletter.
+
+Not every story deserves your time.
+
+So I make AI score ideas before I create around them.
+
+The system is simple:
+
+- Red means high viral potential
+- Orange means strong local interest
+- Yellow means useful
+- Green means lower priority
+
+The score is based on practical questions:
+
+- Would a local person send this to someone else?
+- Is there a clear headline or hook?
+- Does this affect daily life?
+- Is there a visual angle?
+- Is there controversy, nostalgia, convenience, money, traffic, food, schools, or development involved?
+- Can I explain it quickly?
+- Is it tied to a place people recognize?
+
+That keeps me from spending hours on content nobody was ever going to care about.
+
+It also helps separate "useful" from "share-worthy."
+
+A useful post might build trust.
+
+A share-worthy post can grow your audience.
+
+You need both, but you should know which one you are making before you start.
+
+## The mistake most agents make with AI content
+
+Most agents use AI at the very end of the process.
+
+They already picked the topic, then they ask AI to write the caption.
+
+That is fine, but it is not where the leverage is.
+
+The real leverage is using AI at the beginning:
+
+1. Find better stories
+2. Pull from sources nobody else is checking
+3. Score the ideas before creating
+4. Turn the winners into scripts, newsletters, posts, and follow-up content
+
+If your topic is weak, even a great caption will not save it.
+
+If your topic is strong, the content gets easier.
+
+## A simple Manus prompt you can adapt
+
+Here is a simple version of the workflow:
+
+\`\`\`
+Search local sources for story ideas in [MARKET]. Focus on county websites, city pages, planning agendas, economic development updates, transportation news, school board sources, local news outlets, and public meeting notes.
+
+Find stories that could matter to homeowners, buyers, sellers, or local residents.
+
+For each story, return:
+- Headline
+- Source URL
+- Short summary
+- Why locals would care
+- Real estate angle, if any
+- Suggested content hook
+- Viral score: Red, Orange, Yellow, or Green
+- Reason for the score
+
+Do not give generic real estate tips. Find real local stories.
+\`\`\`
+
+You can run that weekly, daily, or before planning your next batch of videos.
+
+The output is not the finished content.
+
+It is the raw material.
+
+That is the point.
+
+## How to turn one story into multiple assets
+
+Once a story scores well, I can turn it into several pieces of content:
+
+- short-form video script
+- Instagram caption
+- newsletter blurb
+- blog outline
+- YouTube short description
+- talking points for a market update
+- follow-up post if the story develops
+
+That is how one good local story becomes a week of content.
+
+But again, the win starts with finding the right story.
+
+## AI did not replace the agent
+
+This matters.
+
+AI did not replace our agents.
+
+It gave us more leverage.
+
+The agent still needs judgment. The agent still needs local knowledge. The agent still needs taste.
+
+But AI can help with the work that slows most people down:
+
+- searching
+- scanning
+- summarizing
+- comparing
+- scoring
+- drafting
+- repurposing
+
+That gives you more time to do the part humans are better at: deciding what matters and explaining it in a way people trust.
+
+## The bottom line
+
+If you want better real estate content, do not start by asking AI for captions.
+
+Start by asking it to find better stories.
+
+The agents who win with AI will not be the ones posting the most generic AI-written content.
+
+They will be the ones using AI to see opportunities earlier, research faster, and create around topics people already care about.
+
+That is the difference.
+
+Want more real estate AI workflows like this? [Subscribe to AgentAIBrief](/subscribe) and I will send you practical AI systems built for agents, teams, and operators.`,
+  },
+  {
     slug: 'top-10-ai-tools-real-estate-agents-2026',
     title: 'Top 10 AI Tools Every Real Estate Agent Needs in 2026',
     description: 'Discover the must-have AI tools that top-producing real estate agents are using in 2026 to close more deals, save time, and dominate their market.',

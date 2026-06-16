@@ -16,6 +16,22 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## ManyChat Blog Unlocks
+
+Public blog posts live at `/blog/[slug]` and remain fully crawlable for Google.
+ManyChat and Instagram automations should link to `/unlock/[slug]` instead.
+The unlock page is `noindex`, captures the reader's email, stores a local
+subscriber record, syncs to Constant Contact when configured, records a
+`blog_unlock_events` row, sets a one-year unlock cookie, and redirects to the
+public article with Instagram/ManyChat UTM parameters.
+
+Example:
+
+```text
+Public SEO URL: https://agentaibrief.com/blog/top-10-ai-tools-real-estate-agents-2026
+ManyChat URL: https://agentaibrief.com/unlock/top-10-ai-tools-real-estate-agents-2026?source=instagram&campaign=top-10-ai-tools
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

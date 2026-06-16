@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addSubscriber, isConfigured } from '@/lib/constant-contact';
 import { getOrCreateReferral } from '@/lib/referral';
-import { supabaseAdmin } from '@/lib/supabase';
-
-async function saveSubscriber(email: string, tier: string, firstName?: string) {
-  const sb = supabaseAdmin();
-  await sb.from('subscribers').upsert(
-    { email, tier, first_name: firstName, subscribed_at: new Date().toISOString() },
-    { onConflict: 'email' }
-  );
-}
+import { saveSubscriber } from '@/lib/subscribers';
 
 async function parseBody(request: NextRequest): Promise<{ email: string; firstName?: string; tier?: string; ref?: string }> {
   const contentType = request.headers.get('content-type') || '';
