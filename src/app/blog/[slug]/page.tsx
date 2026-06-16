@@ -46,7 +46,11 @@ function renderMarkdown(content: string) {
       html.push(line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n');
       continue;
     }
-    if (line.startsWith('## ')) {
+    const youtubeMatch = line.match(/^\{\{youtube:([a-zA-Z0-9_-]{6,})\}\}$/);
+    if (youtubeMatch) {
+      const videoId = youtubeMatch[1];
+      html.push(`<div class="my-8 overflow-hidden rounded-2xl border border-[#e0dcd4] bg-black shadow-sm"><div class="relative w-full" style="padding-top:56.25%"><iframe class="absolute inset-0 h-full w-full" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div>`);
+    } else if (line.startsWith('## ')) {
       html.push(`<h2 class="text-2xl font-bold text-[#2a2a2a] mt-10 mb-4">${processInline(line.slice(3))}</h2>`);
     } else if (line.startsWith('### ')) {
       html.push(`<h3 class="text-xl font-semibold text-[#2a2a2a] mt-8 mb-3">${processInline(line.slice(4))}</h3>`);

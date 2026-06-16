@@ -36,6 +36,10 @@ Our team did roughly $278M in production, and over the past year I grew from abo
 
 Here is the system.
 
+## Watch the walkthrough
+
+{{youtube:uNjvm2Uuen0}}
+
 ## 1. I make AI search for local stories before everyone else sees them
 
 Most agents wait until a story is already everywhere.
