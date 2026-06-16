@@ -11,6 +11,646 @@ export interface BlogPost {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'local-aeo-best-real-estate-agent-chatgpt-manus',
+    title: 'When Someone Asks ChatGPT for the Best Real Estate Agent in Your City, Do You Show Up?',
+    description: 'A screenshot-driven local AEO audit showing how to test AI visibility across Google AI Overview, ChatGPT, Gemini, and Perplexity, plus the Manus workflow for local news research.',
+    date: '2026-06-16',
+    author: 'Dustin Fox',
+    readTime: '16 min read',
+    tags: ['AEO', 'Local SEO', 'Manus', 'Real Estate Marketing'],
+    content: `Most real estate agents are still thinking about SEO like it is 2016.
+
+They want to rank on Google. They want more clicks. They want their website to show up for searches like “best real estate agent in Fairfax VA.”
+
+That still matters.
+
+But buyers and sellers are starting to ask a different kind of question in a different kind of place:
+
+> Who is the best real estate agent in Fairfax VA?
+
+They are asking ChatGPT. They are asking Gemini. They are asking Perplexity. They are reading Google AI Overviews before they click a website.
+
+That is where Answer Engine Optimization, or AEO, comes in.
+
+AEO is not replacing SEO. It is the next layer on top of it.
+
+SEO asks:
+
+> Can people find you in search results?
+
+AEO asks:
+
+> When an AI tool summarizes the market and recommends a provider, are you included in the answer?
+
+For this walkthrough, I used a real example: Fox Homes Team and the query “best Fairfax VA real estate agent.”
+
+The goal was not to cherry-pick a perfect result. The goal was to show the actual audit process, then show how an AI research agent can turn that visibility work into a repeatable local content system.
+
+Because that is where the opportunity is.
+
+## The short version
+
+A local AEO audit answers five questions:
+
+- Does AI recommend your business?
+- Which competitors does it recommend instead?
+- Which sources does it cite?
+- What proof does the AI appear to trust?
+- What content, schema, reviews, citations, or third-party profiles need to be improved?
+
+For the Fox Homes example, the results were mixed in a useful way:
+
+- Google local results: Fox Homes appeared strongly.
+- ChatGPT: Fox Homes was recommended in this run.
+- Google AI Overview: competitors appeared first in the visible AI answer.
+- Gemini: competitors appeared first in the visible answer.
+- Perplexity: did not name a single winner in the visible answer and instead gave selection criteria.
+
+That is the entire point.
+
+Local SEO strength and AI-answer visibility are related, but they are not the same thing.
+
+## First, start with the money question
+
+Do not start with your website.
+
+Start with the question a real buyer or seller would ask.
+
+For this audit, the seed question was:
+
+> Who is the best real estate agent in Fairfax VA?
+
+That question matters because it has everything a local business wants:
+
+- Local intent
+- High commercial intent
+- Comparison intent
+- Trust intent
+- Recommendation intent
+
+This is not someone casually browsing. This is someone close to making a decision.
+
+{{image:/blog/aeo-local-business-playbook/01-google-search-top-local-services.png|Google already treats “best Fairfax VA real estate agent” as a high-intent local recommendation query.}}
+
+## Check Google first
+
+Google is still the easiest place to start because it shows several layers of visibility at once:
+
+- Sponsored results
+- Local Services Ads
+- AI Overview
+- Organic results
+- Review directories
+- Forums and discussions
+- Local pack and map results
+- People Also Ask
+
+In this example, Fox Homes Team appeared prominently in sponsored and local services placement.
+
+That is good visibility.
+
+But AEO is not only about appearing somewhere on the page.
+
+The more important question is:
+
+> Does the AI-generated answer recommend you?
+
+{{image:/blog/aeo-local-business-playbook/02-google-ai-overview-and-citations.png|Google AI Overview appears for the query and starts naming agents based on public sources.}}
+
+## Read the AI Overview like a scout report
+
+The Google AI Overview for this query named other agents in the visible answer, including Debbie Dogrul and Jake Barney.
+
+That is not a failure. It is intelligence.
+
+AEO is a diagnostic process. When the answer engine names someone else, you ask:
+
+- Who did it name?
+- Why did it name them?
+- What sources did it cite?
+- Are those sources directories, review sites, local news, brokerage pages, Reddit threads, or “best of” lists?
+- What proof does the AI seem to trust?
+
+In this run, visible sources included Zillow, U.S. News, FastExpert-style pages, and other list or directory sources.
+
+That tells you exactly where to focus.
+
+You are not guessing what the AI wants. The answer page is showing you.
+
+## Compare AI visibility against local pack visibility
+
+Fox Homes Team showed up strongly in the Google local pack with a 5.0 rating and roughly 2.2K reviews.
+
+That is a huge asset.
+
+But this is the important lesson:
+
+> A business can be strong in the local pack and still not be the first business recommended in the AI answer.
+
+Local SEO and AEO overlap, but they are not identical.
+
+Local SEO rewards proximity, reviews, categories, business profile strength, relevance, and local prominence.
+
+AEO rewards those things too, but it also leans heavily on answer-friendly sources:
+
+- List pages
+- Third-party rankings
+- Review aggregators
+- Local media mentions
+- Structured biographies
+- Clear service pages
+- Consistent entity information
+- FAQ content
+- Schema markup
+- Original data
+
+{{image:/blog/aeo-local-business-playbook/04-google-local-pack-fox-homes.png|Fox Homes Team appears strongly in the local pack, but local pack visibility and AI answer visibility are not the same thing.}}
+
+## Look for forums and discussion sources
+
+Google showed a “Discussions and forums” section with Reddit and DC Urban Moms style recommendation threads.
+
+This matters because AI engines often pull from places where people talk in natural language.
+
+For local businesses, forum-style content can reveal:
+
+- What people actually ask
+- What names get recommended organically
+- What objections come up
+- What proof people trust
+- What language buyers and sellers use
+
+You do not need to spam forums. That is a bad strategy.
+
+But you should study them.
+
+If every forum thread mentions responsiveness, neighborhood experience, reviews, pricing strategy, and negotiation, your content should answer those things directly.
+
+{{image:/blog/aeo-local-business-playbook/03-google-discussions-forums-opportunities.png|Google surfaces Reddit and forum-style discussion threads, which can reveal recommendation language and citation opportunities.}}
+
+## Turn SEO keywords into AI prompts
+
+The SEO keyword was:
+
+> best Fairfax VA real estate agent
+
+The AEO prompt became:
+
+> Who is the best real estate agent in Fairfax VA?
+
+That is the shift.
+
+SEO keywords are often short and choppy. AI prompts are conversational.
+
+For a full AEO audit, build prompts from real Google Search Console and SemRush queries.
+
+Example prompt set:
+
+- Who is the best real estate agent in Fairfax VA?
+- Who is the best listing agent in Fairfax VA?
+- Who should I hire to sell my house in Fairfax VA?
+- What is my Fairfax VA home worth?
+- Best real estate team in Fairfax County
+- Best Realtor near Old Town Fairfax
+- Top real estate agents in Northern Virginia
+- How do I choose a real estate agent in Fairfax VA?
+- What questions should I ask a Realtor before selling my house?
+- Which real estate team has the best reviews in Fairfax VA?
+
+The point is not to test one prompt and declare victory.
+
+The point is to create a repeatable visibility benchmark.
+
+## Test ChatGPT
+
+I ran the natural-language prompt in ChatGPT:
+
+> Who is the best real estate agent in Fairfax VA?
+
+ChatGPT did something important in this run.
+
+It did not just give a lazy list.
+
+It treated “best” as something that needs evidence, then looked at public signals like reviews, local presence, sales or team claims, and authority sources.
+
+That is the AEO game.
+
+AI wants confidence.
+
+Confidence comes from repeated, consistent, public signals.
+
+For a real estate team, those signals can include:
+
+- Google reviews
+- Zillow reviews
+- RealTrends rankings
+- Washingtonian or local magazine mentions
+- Local service pages
+- City pages
+- Market reports
+- Agent and team bio pages
+- YouTube authority
+- Consistent business profile data
+- Local backlinks and citations
+
+In this run, ChatGPT named Devon and Dustin Fox with Fox Homes Team as one of the strongest candidates for best real estate agent or team in Fairfax VA.
+
+That is the screenshot every local business owner wants.
+
+But do not stop there.
+
+One good answer is not the whole story.
+
+You need to track:
+
+- Which prompt produced the recommendation
+- Which platform produced it
+- Which sources were used
+- Which competitors were also mentioned
+- Whether the answer changes next month
+- Whether the business appears for adjacent prompts
+
+{{image:/blog/aeo-local-business-playbook/05-chatgpt-answer-fox-homes-recommended.png|ChatGPT named Devon and Dustin Fox with Fox Homes Team as one of the strongest Fairfax VA candidates in this run.}}
+
+## Test Gemini with the same prompt
+
+Next, I ran the same prompt in Gemini.
+
+This is where the audit becomes useful.
+
+Gemini did not show the same first-screen result as ChatGPT. In the visible answer, Gemini listed other contenders first.
+
+That is not bad news. It is a roadmap.
+
+If ChatGPT sees enough evidence to recommend Fox Homes Team, but Gemini does not surface Fox Homes Team first, the question becomes:
+
+> What sources or signals is Gemini rewarding that ChatGPT is not?
+
+That is why AEO reports should not say “we rank in AI” or “we do not rank in AI.”
+
+That is too simplistic.
+
+A proper report should say:
+
+- ChatGPT visibility: yes or no
+- Gemini visibility: yes or no
+- Google AI Overview visibility: yes or no
+- Perplexity visibility: yes or no
+- Citation sources by platform
+- Competitors by platform
+- Recommended fixes by platform
+
+{{image:/blog/aeo-local-business-playbook/06-gemini-answer-competitors-first.png|Gemini listed other contenders first in the visible answer, proving AEO visibility differs by platform.}}
+
+## Test Perplexity
+
+Perplexity is useful because it tends to behave like a citation-first answer engine.
+
+In this run, Perplexity avoided naming a single “best” agent in the visible answer. Instead, it gave criteria for choosing one.
+
+That is still useful.
+
+Those criteria become a content checklist.
+
+If Perplexity says users should compare:
+
+- Local market expertise
+- Track record
+- Reviews
+- Recent transactions
+- Neighborhood experience
+- Selling strategy
+
+Then your website should have content that clearly answers each of those items.
+
+A neutral answer can still tell you what to build.
+
+{{image:/blog/aeo-local-business-playbook/07-perplexity-answer-criteria-not-single-winner.png|Perplexity avoided naming a single best agent and gave evaluation criteria, which becomes a content checklist.}}
+
+## Mine Google Search Console for prompt ideas
+
+Do not invent prompts out of thin air.
+
+Start with real queries people already use.
+
+Google Search Console shows what people typed into Google before seeing or clicking your site.
+
+Those queries can be rewritten into AI prompts.
+
+Example:
+
+Search query:
+
+> fairfax va real estate market
+
+AI prompt:
+
+> What is happening in the Fairfax VA real estate market right now?
+
+Search query:
+
+> best realtor fairfax va
+
+AI prompt:
+
+> Who is the best Realtor in Fairfax VA for selling a home?
+
+Search query:
+
+> home value fairfax va
+
+AI prompt:
+
+> How can I find out what my Fairfax VA home is worth?
+
+{{image:/blog/aeo-local-business-playbook/08-gsc-performance-query-mining-source-public.png|Google Search Console gives you real queries people already use, which can be turned into AI prompts.}}
+
+## Build a clean tracking sheet
+
+One prompt is anecdotal.
+
+Fifty prompts become a benchmark.
+
+Your AEO tracker should include:
+
+- Prompt
+- Platform
+- Does the business appear?
+- Position or placement
+- Competitors mentioned
+- Sources cited
+- What the AI said
+- Content gap
+- Recommended action
+- Screenshot file
+
+For a local real estate team, you would track prompts across:
+
+- Best agent queries
+- Listing agent queries
+- Home valuation queries
+- City market queries
+- Neighborhood queries
+- “Who should I hire?” queries
+- Comparison queries
+- Review queries
+- Selling timeline queries
+- Commission and cost questions
+
+Here is what a sample tracking row looks like:
+
+| Prompt | Platform | Fox Homes visible? | Diagnosis | Action |
+|---|---|---:|---|---|
+| Who is the best real estate agent in Fairfax VA? | Google AI Overview | Not in visible first-screen answer | Google cited third-party list and review sources and competitors first | Improve or earn presence on cited sources and build a stronger answer-ready Fairfax guide |
+| Who is the best real estate agent in Fairfax VA? | Google Local Pack | Yes | Local visibility is strong | Use as proof, but do not confuse local pack visibility with AI-answer visibility |
+| Who is the best real estate agent in Fairfax VA? | ChatGPT | Yes | ChatGPT saw enough entity, review, and authority signals | Preserve citations and add more structured proof to owned pages |
+| Who is the best real estate agent in Fairfax VA? | Gemini | Not visible first-screen | Gemini surfaced other contenders first | Identify Gemini-weighted sources and improve citation footprint |
+| Who is the best real estate agent in Fairfax VA? | Perplexity | No single winner | Perplexity gave criteria instead | Create content that directly satisfies those criteria |
+
+Run the same prompts monthly.
+
+That is how you turn AEO from a buzzword into a reportable system.
+
+## Where Manus fits into the workflow
+
+AEO tells you what answer engines believe about your business today.
+
+But the next question is more practical:
+
+> What do we publish next so our brand becomes more visible, more cited, and more useful in those answer engines?
+
+That is where Manus comes in.
+
+Manus is an AI agent platform. Instead of only answering a question inside a chat window, it can research across the web, inspect sources, organize findings, create files, and run recurring tasks on a schedule.
+
+For local real estate marketing, that matters because the best content ideas are often not sitting in one clean Google result.
+
+They are scattered across:
+
+- county board agendas
+- planning commission packets
+- economic development pages
+- public notices
+- local restaurant and business news
+- transportation updates
+- school board materials
+- YouTube meeting uploads
+- local news sites
+- social signals
+
+A normal chatbot can brainstorm ideas. That is useful, but limited.
+
+A normal search engine can find pages. That is useful, but manual.
+
+Manus is better for this specific job because it can behave more like a research operator:
+
+- It can follow a detailed brief.
+- It can search multiple source types instead of one query at a time.
+- It can compare stories against a scoring framework.
+- It can produce a structured spreadsheet, not just a paragraph.
+- It can run the same research every day, week, or month.
+- It can package the findings for a content team instead of leaving them buried in chat history.
+
+That makes it especially strong for local news discovery.
+
+Most agents are late to local stories because they wait for stories to show up in their feed. Manus can be pointed at earlier signals, like agendas, approvals, openings, closings, debates, and public notices.
+
+That is the difference between “give me content ideas” and “find the 20 local stories most likely to matter this week.”
+
+## The actual Manus prompt
+
+Here is the sanitized version of the Tier 3 daily research prompt used for the local story workflow.
+
+The private email addresses were removed for the public article. Replace the bracketed fields with your market, categories, sources, recipients, and output format.
+
+\`\`\`text
+Conduct Tier 3 Deep Research for [MARKET] viral-potential stories for the current week. Find the top 20 [MARKET] stories with the highest viral potential for local social media, email, and real estate/community audience engagement.
+
+Prioritize [PRIMARY COUNTY/AREA 1], [PRIMARY COUNTY/AREA 2], and [PRIMARY COUNTY/AREA 3], followed by [SECONDARY AREAS].
+
+Required story mix:
+- 8 Government & Development stories
+- 10 Restaurant & Business stories
+- 2 School Board stories
+
+Time window: Prioritize stories published, posted, discussed, approved, opened, closed, announced, or debated within the last 7 to 14 days.
+
+Research official government pages, economic development pages, planning pages, meeting agendas, board packets, public notices, local outlets, YouTube uploads, and relevant social signals.
+
+Score each story as:
+- Red: highest viral potential
+- Orange: strong local interest
+- Yellow: moderate local interest
+- Green: lower priority
+
+Create a formatted Excel spreadsheet named “[MARKET] Viral Stories Research - Week of [CURRENT DATE].xlsx” with a dark blue header, frozen top row, category-colored rows, clickable URLs, and viral potential color badges.
+
+Email the spreadsheet to [PRIMARY RECIPIENT] and [SECONDARY RECIPIENT] with the subject “[MARKET] Viral Stories Research - Week of [CURRENT DATE]” and include a bulleted summary of all 20 stories in the email body with Category, County/Area, Headline, one-sentence viral hook, and Source name for each.
+\`\`\`
+
+That prompt is not magic because of the wording alone.
+
+It works because it is specific.
+
+It defines:
+
+- the market
+- the time window
+- the source types
+- the desired story mix
+- the scoring system
+- the output file
+- the formatting requirements
+- the delivery format
+
+That is what separates a useful AI research workflow from a vague content idea generator.
+
+## What Manus costs for this workflow
+
+As of the pricing page I checked in June 2026, Manus showed two relevant paid plans:
+
+- Customizable monthly usage: $100 per month, 20,000 credits per month, 300 refresh credits every day, 20 concurrent tasks, and 20 scheduled tasks.
+- Extended usage for productivity: $300 per month, 63,000 credits per month, 300 refresh credits every day, a free Cloud Computer, 20 concurrent tasks, and 20 scheduled tasks.
+
+For this exact Tier 3 local-news research workflow, I would think about the cost this way:
+
+- Daily research: use the Extended plan. Budget $300 per month. If it runs roughly 30 times per month, the subscription cost is about $10 per daily report before any extra credit purchases.
+- Weekly research: the Customizable plan may be enough if this is the main scheduled workflow and the research scope is controlled. Budget $100 per month, or about $25 per weekly report. Use Extended if the runs are very heavy or if you are running several scheduled workflows.
+- Monthly research: the Customizable plan should usually be the starting point. Budget $100 per month if you want the workflow available on demand, but the effective cost is high if you only run one report.
+
+The clean recommendation:
+
+- If you want a serious daily local-news research engine, get the Extended plan.
+- If you only want weekly or monthly research, start with Customizable and watch credit usage.
+- If you are managing this for multiple markets, multiple agents, or several recurring research jobs, move to Extended or a Team plan.
+
+One important note: Manus uses credits based on task complexity, so the exact credit burn can vary. A research job that scans many sources, opens files, creates a spreadsheet, and emails it will cost more than a simple chat answer. Check the dashboard after the first few runs, then adjust the schedule or plan.
+
+## Turn findings into action
+
+An AEO audit is not complete until it becomes a content and citation plan.
+
+For this example, the action plan would be:
+
+### Strengthen the “best Fairfax VA real estate agent” page
+
+Create or improve a page that directly answers the question, without making unsupported claims.
+
+The page should explain:
+
+- How to evaluate a Fairfax VA real estate agent
+- What metrics matter for sellers
+- Why reviews matter
+- What local experience looks like
+- What questions to ask before hiring an agent
+- Where Fox Homes Team fits into that evaluation
+
+### Add evidence blocks
+
+Answer engines need proof.
+
+Use sections like:
+
+- Review footprint
+- Years serving Northern Virginia
+- Cities served
+- Seller services
+- Recent market expertise
+- Media or ranking mentions
+- Client education resources
+
+### Build comparison-friendly content
+
+AI tools love clear comparisons.
+
+Create pages or sections like:
+
+- How to choose a listing agent in Fairfax VA
+- Questions to ask a Realtor before selling in Fairfax
+- Fairfax VA home seller checklist
+- Fairfax VA real estate market update
+- Fairfax VA home value guide
+
+### Add FAQ schema
+
+Every major answer-ready page should include FAQs.
+
+Example questions:
+
+- Who is the best real estate agent in Fairfax VA?
+- How do I choose a listing agent in Fairfax VA?
+- What should I ask a Realtor before selling my home?
+- How much is my Fairfax VA home worth?
+- How long does it take to sell a home in Fairfax VA?
+
+### Improve third-party citation footprint
+
+If AI tools cite Zillow, U.S. News, FastExpert, Redfin, Yelp, Realtor.com, local magazines, Reddit threads, and local news, those sources matter.
+
+You cannot control all of them.
+
+But you can improve your presence across the ones that allow profiles, reviews, bios, awards, and citations.
+
+### Track the same prompts every month
+
+The monthly report should show:
+
+- Visibility percentage
+- Number of prompts where the business appears
+- Number of prompts where competitors appear
+- Sources cited most often
+- New citation opportunities
+- Pages created or improved
+- Movement since last month
+
+## The local AEO checklist
+
+Use this checklist for any local business:
+
+- Pick one high-intent query.
+- Rewrite it as natural-language AI prompts.
+- Test Google AI Overview, ChatGPT, Gemini, and Perplexity.
+- Screenshot every result.
+- Record whether the business appears.
+- Record which competitors appear.
+- Record cited sources.
+- Identify missing proof.
+- Build or improve answer-ready content.
+- Add schema.
+- Improve third-party profiles and citations.
+- Use Manus or another research workflow to find better local stories every week.
+- Re-run the same prompts every month.
+
+## The big takeaway
+
+AEO is not magic.
+
+It is not tricking ChatGPT.
+
+It is making your business so clearly, consistently, and credibly associated with a local topic that AI tools feel safe recommending you.
+
+For local businesses, the question is simple:
+
+> When someone asks AI who to hire in your city, are you part of the answer?
+
+If not, that is the new SEO opportunity.
+
+Pick one money keyword this week.
+
+Turn it into AI prompts.
+
+Test Google, ChatGPT, Gemini, and Perplexity.
+
+Screenshot the answers.
+
+Write down who gets recommended and which sources get cited.
+
+Then use an AI research agent like Manus to find the local stories that help you publish better content before everyone else catches up.
+
+That is your AEO roadmap.
+`,
+  },
+  {
     slug: 'how-278m-team-finds-content-with-ai',
     title: 'How a $278M Real Estate Team Finds Better Content with AI',
     description: 'The three-part AI workflow Dustin Fox uses to find local real estate content ideas before they are obvious, score them, and turn them into share-worthy posts.',

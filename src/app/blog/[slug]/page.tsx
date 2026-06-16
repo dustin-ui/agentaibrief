@@ -31,13 +31,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function renderMarkdown(content: string) {
-  // Simple markdown-to-HTML: headers, bold, links, code blocks, paragraphs
+  // Simple markdown-to-HTML: headers, bold, links, tables, images, code blocks, paragraphs
   const lines = content.split('\n');
   const html: string[] = [];
   let inCodeBlock = false;
+  let inUl = false;
+  let inOl = false;
+  let inTable = false;
+
+  const closeLists = () => {
+    if (inUl) {
+      html.push('</ul>');
+      inUl = false;
+    }
+    if (inOl) {
+      html.push('</ol>');
+      inOl = false;
+    }
+  };
+
+  const closeTable = () => {
+    if (inTable) {
+      html.push('</tbody></table></div>');
+      inTable = false;
+    }
+  };
 
   for (const line of lines) {
     if (line.startsWith('```')) {
+      closeLists();
+      closeTable();
       inCodeBlock = !inCodeBlock;
       html.push(inCodeBlock ? '<pre class="bg-[#f5f0ea] rounded-lg p-4 overflow-x-auto text-sm my-4"><code>' : '</code></pre>');
       continue;
@@ -47,23 +70,67 @@ function renderMarkdown(content: string) {
       continue;
     }
     const youtubeMatch = line.match(/^\{\{youtube:([a-zA-Z0-9_-]{6,})\}\}$/);
+    const imageMatch = line.match(/^\{\{image:([^|}]+)\|(.+)\}\}$/);
     if (youtubeMatch) {
+      closeLists();
+      closeTable();
       const videoId = youtubeMatch[1];
       html.push(`<div class="my-8 overflow-hidden rounded-2xl border border-[#e0dcd4] bg-black shadow-sm"><div class="relative w-full" style="padding-top:56.25%"><iframe class="absolute inset-0 h-full w-full" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div>`);
+    } else if (imageMatch) {
+      closeLists();
+      closeTable();
+      const src = imageMatch[1];
+      const caption = processInline(imageMatch[2]);
+      html.push(`<figure class="my-8 overflow-hidden rounded-2xl border border-[#e0dcd4] bg-white shadow-sm"><img src="${src}" alt="${caption.replace(/<[^>]*>/g, '')}" class="w-full h-auto"/><figcaption class="border-t border-[#e0dcd4] bg-white px-4 py-3 text-sm leading-relaxed text-[#555]">${caption}</figcaption></figure>`);
     } else if (line.startsWith('## ')) {
+      closeLists();
+      closeTable();
       html.push(`<h2 class="text-2xl font-bold text-[#2a2a2a] mt-10 mb-4">${processInline(line.slice(3))}</h2>`);
     } else if (line.startsWith('### ')) {
+      closeLists();
+      closeTable();
       html.push(`<h3 class="text-xl font-semibold text-[#2a2a2a] mt-8 mb-3">${processInline(line.slice(4))}</h3>`);
+    } else if (line.startsWith('> ')) {
+      closeLists();
+      closeTable();
+      html.push(`<blockquote class="border-l-4 border-[#e85d26] bg-white rounded-r-lg px-5 py-4 my-6 text-[#2a2a2a] font-semibold leading-relaxed">${processInline(line.slice(2))}</blockquote>`);
+    } else if (line.trim().startsWith('|') && line.includes('|')) {
+      closeLists();
+      const cells = line.trim().slice(1, -1).split('|').map((c) => c.trim());
+      const isDivider = cells.every((c) => /^:?-{3,}:?$/.test(c));
+      if (isDivider) continue;
+      if (!inTable) {
+        html.push('<div class="my-6 overflow-x-auto rounded-xl border border-[#e0dcd4] bg-white"><table class="min-w-full text-left text-sm"><tbody>');
+        inTable = true;
+      }
+      html.push(`<tr>${cells.map((cell) => `<td class="border-b border-[#e0dcd4] px-3 py-3 align-top text-[#555]">${processInline(cell)}</td>`).join('')}</tr>`);
     } else if (line.startsWith('- ')) {
-      html.push(`<li class="ml-4 text-[#555] leading-relaxed">${processInline(line.slice(2))}</li>`);
+      closeTable();
+      if (!inUl) {
+        closeLists();
+        html.push('<ul class="list-disc pl-6 mb-6 space-y-2">');
+        inUl = true;
+      }
+      html.push(`<li class="text-[#555] leading-relaxed">${processInline(line.slice(2))}</li>`);
     } else if (/^\d+\.\s/.test(line)) {
-      html.push(`<li class="ml-4 text-[#555] leading-relaxed list-decimal">${processInline(line.replace(/^\d+\.\s/, ''))}</li>`);
+      closeTable();
+      if (!inOl) {
+        closeLists();
+        html.push('<ol class="list-decimal pl-6 mb-6 space-y-2">');
+        inOl = true;
+      }
+      html.push(`<li class="text-[#555] leading-relaxed">${processInline(line.replace(/^\d+\.\s/, ''))}</li>`);
     } else if (line.trim() === '') {
-      html.push('<br/>');
+      closeLists();
+      closeTable();
     } else {
+      closeLists();
+      closeTable();
       html.push(`<p class="text-[#555] leading-relaxed mb-4">${processInline(line)}</p>`);
     }
   }
+  closeLists();
+  closeTable();
   return html.join('\n');
 }
 
@@ -73,6 +140,15 @@ function processInline(text: string): string {
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/`(.+?)`/g, '<code class="bg-[#f5f0ea] px-1.5 py-0.5 rounded text-sm">$1</code>')
     .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-[#e85d26] hover:underline">$1</a>');
+}
+
+function formatPostDate(date: string): string {
+  const [year, month, day] = date.split('T')[0].split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -130,7 +206,7 @@ export default async function BlogPostPage({ params }: Props) {
       <main className="max-w-3xl mx-auto px-4 py-12">
         <Link href="/blog" className="text-sm text-[#e85d26] hover:underline mb-6 inline-block">← Back to Blog</Link>
 
-        <article>
+        <article className="bg-white border border-[#e0dcd4] rounded-2xl p-6 md:p-10 shadow-sm">
           <div className="flex flex-wrap gap-2 mb-4">
             {post.tags.map((tag) => (
               <span key={tag} className="text-xs bg-[#f5f0ea] text-[#c44a1a] px-2.5 py-1 rounded-full font-medium">{tag}</span>
@@ -142,7 +218,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="flex items-center gap-3 text-sm text-[#888] mb-10 pb-6 border-b border-[#e0dcd4]">
             <span>By {post.author}</span>
             <span>•</span>
-            <time dateTime={post.date}>{new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</time>
+            <time dateTime={post.date}>{formatPostDate(post.date)}</time>
             <span>•</span>
             <span>{post.readTime}</span>
           </div>
