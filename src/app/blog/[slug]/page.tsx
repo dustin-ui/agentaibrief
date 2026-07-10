@@ -69,9 +69,14 @@ function renderMarkdown(content: string) {
       html.push(line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n');
       continue;
     }
+    const gpt56MotionMatch = line.match(/^\{\{motion:gpt56-ai-operator\}\}$/);
     const youtubeMatch = line.match(/^\{\{youtube:([a-zA-Z0-9_-]{6,})\}\}$/);
     const imageMatch = line.match(/^\{\{image:([^|}]+)\|(.+)\}\}$/);
-    if (youtubeMatch) {
+    if (gpt56MotionMatch) {
+      closeLists();
+      closeTable();
+      html.push('<div class="my-8 overflow-hidden rounded-2xl border border-[#e0dcd4] bg-[#071014] shadow-sm"><iframe title="GPT-5.6 AI operator workflow" src="/embeds/gpt56-ai-operator/" style="width:100%;aspect-ratio:16/9;border:0;display:block;background:#071014" loading="lazy"></iframe></div>');
+    } else if (youtubeMatch) {
       closeLists();
       closeTable();
       const videoId = youtubeMatch[1];
@@ -180,6 +185,20 @@ export default async function BlogPostPage({ params }: Props) {
     },
     keywords: post.tags.join(', '),
   };
+  const faqJsonLd = post.faq
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: post.faq.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: item.answer,
+          },
+        })),
+      }
+    : null;
 
   return (
     <div className="min-h-screen bg-[#e8e6e1]">
@@ -187,6 +206,12 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <header className="border-b border-[#e0dcd4] bg-[#e8e6e1] sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/">
