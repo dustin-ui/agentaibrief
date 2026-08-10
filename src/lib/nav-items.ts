@@ -16,6 +16,7 @@ export interface NavItem {
 // Verified against src/app on 2026-05-30 — all routes exist.
 export const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'News', icon: '📰' },
+  { href: '/ai-transformation', label: 'AI Transformation', icon: '⚙️' },
   { href: '/blog', label: 'Blog', icon: '📝' },
   { href: '/tools', label: 'AI Tools', icon: '🛠️' },
   { href: '/prompts', label: 'Prompts', icon: '💬' },

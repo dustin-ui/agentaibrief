@@ -7,6 +7,7 @@ const BASE_URL = 'https://agentaibrief.com';
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     '',
+    '/ai-transformation',
     '/blog',
     '/tools',
     '/prompts',
@@ -21,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${BASE_URL}${path}`,
     lastModified: new Date(),
     changeFrequency: path === '' ? 'daily' : 'weekly',
-    priority: path === '' ? 1 : 0.7,
+    priority: path === '' ? 1 : path === '/ai-transformation' ? 0.9 : 0.7,
   }));
 
   const posts: MetadataRoute.Sitemap = getAllBlogPosts().map((p) => ({

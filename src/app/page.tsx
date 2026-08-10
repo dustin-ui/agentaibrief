@@ -5,6 +5,7 @@ import { NewsFeed } from '@/components/NewsFeed';
 import { TrendingBar } from '@/components/TrendingBar';
 import { MobileNav } from '@/components/MobileNav';
 import { StickySubscribeBar } from '@/components/StickySubscribeBar';
+import { TransformationSpotlight } from '@/components/TransformationSpotlight';
 import { useAuth } from '@/lib/auth-context';
 import { HOME_NAV_ITEMS, SUPPORT_MAILTO } from '@/lib/nav-items';
 import { FREE_ACCESS_MODE, PAID_MODE, CONTACT_SALES_HREF } from '@/lib/site-mode';
@@ -141,6 +142,9 @@ export default function Home() {
 
       {/* Trending Bar */}
       <TrendingBar />
+
+      {/* Featured offer — replaces the rotating story-of-the-week position */}
+      <TransformationSpotlight />
 
       {/* Hero Section — Modern Industrial */}
       {!isLoggedIn && (
