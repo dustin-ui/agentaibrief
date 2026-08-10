@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Adoption Systems Motion</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Archivo Black";
+        src: url("assets/archivo-black.ttf") format("truetype");
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+      }
+
+      @font-face {
+        font-family: "IBM Plex Mono";
+        src: url("assets/ibm-plex-mono-regular.ttf") format("truetype");
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+      }
+
+      @font-face {
+        font-family: "IBM Plex Mono";
+        src: url("assets/ibm-plex-mono-bold.ttf") format("truetype");
+        font-style: normal;
+        font-weight: 700;
+        font-display: block;
+      }
+
+      :root {
+        --accent: #e85d26;
+        --field: #2a2a2a;
+        --ink: #e8e6e1;
+        --muted: #9b9995;
+        --line: #55534f;
+        --deep: #181818;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--deep);
+      }
+
+      body {
+        font-family: "Archivo Black", sans-serif;
+      }
+
+      #stage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        transform-origin: 0 0;
+      }
+
+      #motion-clip {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--field);
+        color: var(--ink);
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        padding: 96px;
+        opacity: 0;
+        box-sizing: border-box;
+      }
+
+      .mono {
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      .top-rail {
+        position: absolute;
+        top: 60px;
+        left: 96px;
+        right: 96px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        opacity: 0;
+      }
+
+      .top-rail::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -18px;
+        height: 2px;
+        background: var(--line);
+        opacity: 0.55;
+      }
+
+      .rail-brand {
+        color: var(--ink);
+      }
+
+      .rail-slash {
+        color: var(--ink);
+      }
+
+      .corner-mark {
+        position: absolute;
+        right: 96px;
+        bottom: 72px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        opacity: 0;
+      }
+
+      .corner-mark::before {
+        content: "";
+        display: block;
+        width: 42px;
+        height: 6px;
+        background: var(--accent);
+      }
+
+      .hook-layout {
+        height: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 500px;
+        align-items: center;
+        gap: 72px;
+        padding-top: 46px;
+      }
+
+      .diagnostic-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 30px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: var(--muted);
+        opacity: 0;
+      }
+
+      .diagnostic-label::before {
+        content: "";
+        display: block;
+        width: 44px;
+        height: 7px;
+        background: var(--accent);
+      }
+
+      .hook-headline {
+        max-width: 1160px;
+        font-size: 154px;
+        line-height: 0.88;
+        letter-spacing: -0.055em;
+        text-transform: uppercase;
+      }
+
+      .hook-line {
+        display: flex;
+        align-items: baseline;
+        gap: 34px;
+      }
+
+      .hook-word {
+        display: inline-block;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+
+      #hook-real {
+        color: var(--accent);
+      }
+
+      .usage-module {
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        padding: 40px;
+        border: 2px solid var(--line);
+        background: var(--deep);
+      }
+
+      .module-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+
+      .module-state {
+        color: var(--accent);
+      }
+
+      .usage-bars {
+        height: 360px;
+        display: flex;
+        align-items: flex-end;
+        gap: 20px;
+        padding: 24px 12px 0;
+        border-bottom: 4px solid var(--line);
+      }
+
+      .usage-bar {
+        display: block;
+        width: 48px;
+        height: var(--bar-height);
+        background: var(--ink);
+        transform-origin: bottom center;
+        will-change: transform;
+      }
+
+      .usage-bar:last-child {
+        background: var(--accent);
+      }
+
+      .gap-layout {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 58px;
+        padding-top: 60px;
+      }
+
+      .gap-headline {
+        font-size: 112px;
+        line-height: 0.92;
+        letter-spacing: -0.048em;
+        text-transform: uppercase;
+      }
+
+      .gap-headline-line {
+        display: block;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+
+      #gap-line-2 {
+        color: var(--accent);
+        font-size: 140px;
+      }
+
+      .status-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+        padding: 34px 38px;
+        border: 2px solid var(--line);
+        background: var(--deep);
+        opacity: 0;
+      }
+
+      .status-row {
+        display: grid;
+        grid-template-columns: 350px 1fr 132px;
+        align-items: center;
+        gap: 26px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+
+      .status-track {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 10px;
+        height: 28px;
+      }
+
+      .status-segment {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: var(--ink);
+        transform-origin: left center;
+        will-change: transform;
+      }
+
+      .adoption-segment:last-child {
+        background: var(--accent);
+      }
+
+      .reliability-segment.gap {
+        background: var(--line);
+        opacity: 0.35;
+      }
+
+      .status-value {
+        justify-self: end;
+        color: var(--accent);
+      }
+
+      #scan-cursor {
+        position: absolute;
+        top: -9px;
+        left: 0;
+        width: 5px;
+        height: 46px;
+        background: var(--accent);
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+
+      .prompt-field {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding-top: 56px;
+      }
+
+      .prompt-fragment {
+        position: absolute;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 330px;
+        padding: 26px 36px 30px;
+        border: 2px solid var(--line);
+        background: var(--deep);
+        font-size: 88px;
+        line-height: 0.9;
+        letter-spacing: -0.045em;
+        text-transform: uppercase;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+
+      #fragment-prompt {
+        top: 170px;
+        left: 86px;
+      }
+
+      #fragment-retry {
+        top: 154px;
+        right: 110px;
+      }
+
+      #fragment-patch {
+        top: 448px;
+        left: 300px;
+      }
+
+      #fragment-repeat {
+        top: 428px;
+        right: 230px;
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .command-panel {
+        position: absolute;
+        left: 384px;
+        bottom: 36px;
+        width: 960px;
+        height: 92px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 0 30px;
+        border: 2px solid var(--line);
+        background: var(--deep);
+        opacity: 0;
+      }
+
+      .command-caret {
+        color: var(--accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 30px;
+        font-weight: 700;
+      }
+
+      .command-states {
+        position: relative;
+        flex: 1;
+        height: 34px;
+      }
+
+      .command-state {
+        position: absolute;
+        inset: 0;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 25px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: var(--ink);
+        opacity: 0;
+      }
+
+      #command-state-4 {
+        color: var(--accent);
+      }
+
+      .resolve-layout {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 72px;
+        padding-top: 42px;
+      }
+
+      .resolve-headline {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 126px;
+        line-height: 0.9;
+        letter-spacing: -0.052em;
+        text-transform: uppercase;
+      }
+
+      .resolve-line {
+        display: inline-block;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+
+      #resolve-build {
+        color: var(--accent);
+      }
+
+      #resolve-underline {
+        display: block;
+        width: 980px;
+        height: 14px;
+        margin-top: 18px;
+        background: var(--accent);
+        transform-origin: left center;
+        will-change: transform;
+      }
+
+      .pipeline-shell {
+        position: relative;
+        width: 1420px;
+        height: 170px;
+        align-self: center;
+      }
+
+      .pipeline {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: 260px 1fr 260px 1fr 260px 1fr 260px;
+        align-items: center;
+      }
+
+      .pipeline-node {
+        position: relative;
+        z-index: 2;
+        height: 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        border: 3px solid var(--ink);
+        background: var(--deep);
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+
+      .node-index {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+      }
+
+      .node-name {
+        font-size: 36px;
+        letter-spacing: -0.02em;
+      }
+
+      .connector {
+        position: relative;
+        z-index: 1;
+        display: block;
+        width: 100%;
+        height: 8px;
+        background: var(--ink);
+        transform-origin: left center;
+        will-change: transform;
+      }
+
+      #pipeline-pulse {
+        position: absolute;
+        z-index: 4;
+        top: 75px;
+        left: 122px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+
+      .final-lockup {
+        position: absolute;
+        right: 96px;
+        bottom: 70px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--ink);
+        opacity: 0;
+      }
+
+      .final-lockup strong {
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="stage"
+      data-composition-id="ai-adoption-systems"
+      data-start="0"
+      data-duration="8.4"
+      data-fps="30"
+      data-width="1920"
+      data-height="1080"
+    >
+      <section id="motion-clip" class="clip" data-start="0" data-duration="8.4" data-track-index="1">
+        <div id="top-rail" class="top-rail">
+          <span class="rail-brand">AgentAIBrief <span class="rail-slash">/</span> SYSTEM READINESS</span>
+          <span>DIAGNOSTIC 01</span>
+        </div>
+
+        <div id="scene-hook" class="scene">
+          <div class="hook-layout">
+            <div>
+              <div id="hook-label" class="diagnostic-label">ADOPTION SIGNAL / ACTIVE</div>
+              <div class="hook-headline">
+                <div class="hook-line">
+                  <span id="hook-ai" class="hook-word">AI</span>
+                  <span id="hook-adoption" class="hook-word">ADOPTION</span>
+                </div>
+                <div class="hook-line">
+                  <span id="hook-is" class="hook-word">IS</span>
+                  <span id="hook-real" class="hook-word">REAL.</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="usage-module" class="usage-module">
+              <div class="module-header">
+                <span>ACTIVITY</span>
+                <span class="module-state">RISING</span>
+              </div>
+              <div class="usage-bars">
+                <i class="usage-bar" style="--bar-height: 132px"></i>
+                <i class="usage-bar" style="--bar-height: 174px"></i>
+                <i class="usage-bar" style="--bar-height: 206px"></i>
+                <i class="usage-bar" style="--bar-height: 252px"></i>
+                <i class="usage-bar" style="--bar-height: 286px"></i>
+                <i class="usage-bar" style="--bar-height: 322px"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="scene-gap" class="scene">
+          <div class="gap-layout">
+            <div class="gap-headline">
+              <span id="gap-line-1" class="gap-headline-line">DEPENDABLE EXECUTION</span>
+              <span id="gap-line-2" class="gap-headline-line">STILL LAGS.</span>
+            </div>
+
+            <div id="status-panel" class="status-panel">
+              <div class="status-row">
+                <span>ADOPTION</span>
+                <span class="status-track">
+                  <i class="status-segment adoption-segment"></i>
+                  <i class="status-segment adoption-segment"></i>
+                  <i class="status-segment adoption-segment"></i>
+                  <i class="status-segment adoption-segment"></i>
+                  <i class="status-segment adoption-segment"></i>
+                  <i class="status-segment adoption-segment"></i>
+                  <i class="status-segment adoption-segment"></i>
+                  <i class="status-segment adoption-segment"></i>
+                </span>
+                <span class="status-value">RISING</span>
+              </div>
+              <div class="status-row">
+                <span>DEPENDABLE EXECUTION</span>
+                <span class="status-track">
+                  <i class="status-segment reliability-segment"></i>
+                  <i class="status-segment reliability-segment"></i>
+                  <i class="status-segment reliability-segment gap"></i>
+                  <i class="status-segment reliability-segment"></i>
+                  <i class="status-segment reliability-segment"></i>
+                  <i class="status-segment reliability-segment gap"></i>
+                  <i class="status-segment reliability-segment"></i>
+                  <i class="status-segment reliability-segment"></i>
+                  <i id="scan-cursor"></i>
+                </span>
+                <span class="status-value">UNEVEN</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="scene-loop" class="scene">
+          <div class="prompt-field">
+            <div id="fragment-prompt" class="prompt-fragment">PROMPT.</div>
+            <div id="fragment-retry" class="prompt-fragment">RETRY.</div>
+            <div id="fragment-patch" class="prompt-fragment">PATCH.</div>
+            <div id="fragment-repeat" class="prompt-fragment">REPEAT.</div>
+
+            <div id="command-panel" class="command-panel">
+              <span class="command-caret">&gt;</span>
+              <span class="command-states">
+                <span id="command-state-1" class="command-state">RUN: PROMPT</span>
+                <span id="command-state-2" class="command-state">RESULT: RETRY</span>
+                <span id="command-state-3" class="command-state">PATCH: APPLIED</span>
+                <span id="command-state-4" class="command-state">STATUS: UNSTABLE</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div id="scene-resolve" class="scene">
+          <div class="resolve-layout">
+            <div class="resolve-headline">
+              <span id="resolve-move" class="resolve-line">MOVE FROM PROMPTS.</span>
+              <span id="resolve-build" class="resolve-line">BUILD SYSTEMS.</span>
+              <i id="resolve-underline"></i>
+            </div>
+
+            <div class="pipeline-shell">
+              <div class="pipeline">
+                <div id="node-input" class="pipeline-node">
+                  <span class="node-index">01</span>
+                  <span class="node-name">INPUT</span>
+                </div>
+                <i id="connector-1" class="connector"></i>
+                <div id="node-rules" class="pipeline-node">
+                  <span class="node-index">02</span>
+                  <span class="node-name">RULES</span>
+                </div>
+                <i id="connector-2" class="connector"></i>
+                <div id="node-checks" class="pipeline-node">
+                  <span class="node-index">03</span>
+                  <span class="node-name">CHECKS</span>
+                </div>
+                <i id="connector-3" class="connector"></i>
+                <div id="node-output" class="pipeline-node">
+                  <span class="node-index">04</span>
+                  <span class="node-name">OUTPUT</span>
+                </div>
+              </div>
+              <i id="pipeline-pulse"></i>
+            </div>
+          </div>
+
+          <div id="final-lockup" class="final-lockup">
+            <strong>AgentAIBrief</strong>
+            <span>/ PRACTICAL AI SYSTEMS</span>
+          </div>
+        </div>
+
+        <div id="corner-mark" class="corner-mark">ACTIVITY TO EXECUTION</div>
+      </section>
+    </div>
+
+    <script>
+      const stage = document.querySelector("#stage");
+      const fitCanvas = () => {
+        const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
+        stage.style.transform = `scale(${scale})`;
+        stage.style.left = `${Math.max(0, (innerWidth - 1920 * scale) / 2)}px`;
+        stage.style.top = `${Math.max(0, (innerHeight - 1080 * scale) / 2)}px`;
+      };
+      fitCanvas();
+      addEventListener("resize", fitCanvas);
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo("#top-rail", { autoAlpha: 0, y: -24 }, { autoAlpha: 1, y: 0, duration: 0.34, ease: "power4.out" }, 0.06);
+      tl.fromTo("#corner-mark", { autoAlpha: 0, x: 42 }, { autoAlpha: 1, x: 0, duration: 0.34, ease: "power4.out" }, 0.12);
+
+      tl.set("#scene-hook", { autoAlpha: 1 }, 0);
+      tl.fromTo("#hook-label", { autoAlpha: 0, x: -54 }, { autoAlpha: 1, x: 0, duration: 0.34, ease: "power4.out" }, 0.2);
+      tl.fromTo("#hook-ai", { autoAlpha: 0, y: 72 }, { autoAlpha: 1, y: 0, duration: 0.38, ease: "circ.out" }, 0.26);
+      tl.fromTo("#hook-adoption", { autoAlpha: 0, x: -190 }, { autoAlpha: 1, x: 0, duration: 0.48, ease: "expo.out" }, 0.36);
+      tl.fromTo("#hook-is", { autoAlpha: 0, y: 66 }, { autoAlpha: 1, y: 0, duration: 0.38, ease: "circ.out" }, 0.56);
+      tl.fromTo("#hook-real", { autoAlpha: 0, scale: 0.64 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, 0.68);
+      tl.fromTo("#usage-module", { autoAlpha: 0, x: 86 }, { autoAlpha: 1, x: 0, duration: 0.44, ease: "power4.out" }, 0.36);
+      tl.fromTo(".usage-bar", { scaleY: 0 }, { scaleY: 1, duration: 0.58, ease: "power3.out", stagger: 0.07 }, 0.48);
+      tl.to("#scene-hook", { autoAlpha: 0, scale: 0.94, duration: 0.2, ease: "power2.in" }, 1.45);
+
+      tl.set("#scene-gap", { autoAlpha: 1 }, 1.65);
+      tl.fromTo("#gap-line-1", { autoAlpha: 0, y: 84 }, { autoAlpha: 1, y: 0, duration: 0.48, ease: "circ.out" }, 1.72);
+      tl.fromTo("#gap-line-2", { autoAlpha: 0, x: 220 }, { autoAlpha: 1, x: 0, duration: 0.46, ease: "expo.out" }, 2.0);
+      tl.fromTo("#status-panel", { autoAlpha: 0, y: 56 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power4.out" }, 2.25);
+      tl.fromTo(".adoption-segment", { scaleX: 0 }, { scaleX: 1, duration: 0.42, ease: "power3.out", stagger: 0.04 }, 2.42);
+      tl.fromTo(".reliability-segment:not(.gap)", { scaleX: 0 }, { scaleX: 1, duration: 0.42, ease: "power3.out", stagger: 0.06 }, 2.62);
+      tl.fromTo("#scan-cursor", { autoAlpha: 0, x: 0 }, { autoAlpha: 1, x: 1060, duration: 0.64, ease: "power2.inOut" }, 2.8);
+      tl.to("#scan-cursor", { autoAlpha: 0, duration: 0.12, ease: "power2.out" }, 3.44);
+      tl.to("#scene-gap", { autoAlpha: 0, scale: 0.92, duration: 0.2, ease: "power2.in" }, 3.55);
+
+      tl.set("#scene-loop", { autoAlpha: 1 }, 3.75);
+      tl.fromTo("#fragment-prompt", { autoAlpha: 0, y: -250, scale: 1.32 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.42, ease: "power4.out" }, 3.96);
+      tl.fromTo("#fragment-retry", { autoAlpha: 0, x: 310 }, { autoAlpha: 1, x: 0, duration: 0.42, ease: "expo.out" }, 4.18);
+      tl.fromTo("#fragment-patch", { autoAlpha: 0, y: 150, rotation: 7 }, { autoAlpha: 1, y: 0, rotation: 0, duration: 0.44, ease: "circ.out" }, 4.48);
+      tl.fromTo("#fragment-repeat", { autoAlpha: 0, scale: 0.62 }, { autoAlpha: 1, scale: 1, duration: 0.48, ease: "back.out(1.8)" }, 4.76);
+      tl.fromTo("#command-panel", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.32, ease: "power4.out" }, 4.04);
+      tl.set("#command-state-1", { autoAlpha: 1 }, 4.18);
+      tl.set("#command-state-1", { autoAlpha: 0 }, 4.47);
+      tl.set("#command-state-2", { autoAlpha: 1 }, 4.47);
+      tl.set("#command-state-2", { autoAlpha: 0 }, 4.76);
+      tl.set("#command-state-3", { autoAlpha: 1 }, 4.76);
+      tl.set("#command-state-3", { autoAlpha: 0 }, 5.08);
+      tl.set("#command-state-4", { autoAlpha: 1 }, 5.08);
+      tl.to("#scene-loop", { autoAlpha: 0, scale: 0.72, duration: 0.2, ease: "power2.in" }, 5.55);
+
+      tl.set("#scene-resolve", { autoAlpha: 1 }, 5.65);
+      tl.to("#corner-mark", { autoAlpha: 0, duration: 0.2, ease: "power2.out" }, 5.65);
+      tl.fromTo("#resolve-move", { autoAlpha: 0, y: 54 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "circ.out" }, 5.78);
+      tl.fromTo("#resolve-build", { autoAlpha: 0, scale: 0.72 }, { autoAlpha: 1, scale: 1, duration: 0.48, ease: "back.out(1.7)" }, 6.08);
+      tl.fromTo("#node-input", { autoAlpha: 0, x: -410, y: -210, scale: 0.68 }, { autoAlpha: 1, x: 0, y: 0, scale: 1, duration: 0.48, ease: "back.out(1.5)" }, 5.72);
+      tl.fromTo("#node-rules", { autoAlpha: 0, x: 310, y: -230, scale: 0.68 }, { autoAlpha: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.5)" }, 5.88);
+      tl.fromTo("#node-checks", { autoAlpha: 0, x: -220, y: 190, scale: 0.68 }, { autoAlpha: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.5)" }, 6.02);
+      tl.fromTo("#node-output", { autoAlpha: 0, x: 330, y: 170, scale: 0.68 }, { autoAlpha: 1, x: 0, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.5)" }, 6.16);
+      tl.fromTo("#connector-1", { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, 6.18);
+      tl.fromTo("#connector-2", { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, 6.34);
+      tl.fromTo("#connector-3", { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, 6.5);
+      tl.fromTo("#pipeline-pulse", { autoAlpha: 0, x: 0 }, { autoAlpha: 1, x: 1160, duration: 0.74, ease: "power2.inOut" }, 6.54);
+      tl.to("#pipeline-pulse", { autoAlpha: 0, duration: 0.12, ease: "power2.out" }, 7.28);
+      tl.fromTo("#resolve-underline", { scaleX: 0 }, { scaleX: 1, duration: 0.42, ease: "power4.out" }, 6.92);
+      tl.fromTo("#final-lockup", { autoAlpha: 0, x: 48 }, { autoAlpha: 1, x: 0, duration: 0.36, ease: "power4.out" }, 7.16);
+
+      window.__timelines["ai-adoption-systems"] = tl;
+      tl.seek(0);
+      if (new URLSearchParams(location.search).get("autoplay") === "1") {
+        tl.repeat(-1).repeatDelay(0.8).play(0);
+      }
+    </script>
+  </body>
+</html>

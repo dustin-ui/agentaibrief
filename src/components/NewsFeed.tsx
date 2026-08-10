@@ -53,26 +53,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
   }, []);
 
   const orderedNews = useMemo(() => {
-    if (news.length === 0) return [];
-
-    let featuredIndex = 0;
-    for (let index = 1; index < news.length; index += 1) {
-      const candidate = news[index];
-      const current = news[featuredIndex];
-      const candidateTime = new Date(candidate.publishedAt).getTime() || 0;
-      const currentTime = new Date(current.publishedAt).getTime() || 0;
-
-      if (
-        candidate.trendingScore > current.trendingScore ||
-        (candidate.trendingScore === current.trendingScore && candidateTime > currentTime)
-      ) {
-        featuredIndex = index;
-      }
-    }
-
-    const featured = news[featuredIndex];
-    const latest = news
-      .filter((_, index) => index !== featuredIndex)
+    return [...news]
       .sort((a, b) => {
         const dateDifference =
           (new Date(b.publishedAt).getTime() || 0) -
@@ -80,12 +61,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
 
         return dateDifference || a.id.localeCompare(b.id);
       });
-
-    return [featured, ...latest];
   }, [news]);
-
-  const featuredStory = orderedNews[0];
-  const latestStories = orderedNews.slice(1);
 
   if (loading) {
     return (
@@ -119,36 +95,12 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
         </p>
       )}
 
-      {featuredStory ? (
-        <>
-          <section aria-labelledby="featured-story-heading">
-            <h2
-              id="featured-story-heading"
-              className="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-[#e85d26]"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}
-            >
-              Featured Story
-            </h2>
-            <div className="overflow-hidden rounded-2xl border-2 border-[#d4d0c8] bg-[#f5f0ea] px-5 sm:px-7">
-              <NewsCard {...featuredStory} isPremium={isPremium} />
-            </div>
-          </section>
-
-          <section className="mt-12" aria-labelledby="latest-stories-heading">
-            <h2
-              id="latest-stories-heading"
-              className="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-[#555]"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}
-            >
-              Latest Stories
-            </h2>
-            <div className="divide-y divide-[#d4d0c8]">
-              {latestStories.map((item) => (
-                <NewsCard key={item.id} {...item} isPremium={isPremium} />
-              ))}
-            </div>
-          </section>
-        </>
+      {orderedNews.length > 0 ? (
+        <div className="divide-y divide-[#d4d0c8]">
+          {orderedNews.map((item) => (
+            <NewsCard key={item.id} {...item} isPremium={isPremium} />
+          ))}
+        </div>
       ) : (
         <p className="py-8 text-center text-[#888]">No stories found</p>
       )}

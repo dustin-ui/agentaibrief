@@ -25,28 +25,9 @@ function publishedTime(item: NewsItem): number {
 }
 
 function orderNewsItems(items: NewsItem[]): NewsItem[] {
-  if (items.length === 0) return [];
-
-  let featuredIndex = 0;
-  for (let index = 1; index < items.length; index += 1) {
-    const candidate = items[index];
-    const current = items[featuredIndex];
-
-    if (
-      candidate.trendingScore > current.trendingScore ||
-      (candidate.trendingScore === current.trendingScore &&
-        publishedTime(candidate) > publishedTime(current))
-    ) {
-      featuredIndex = index;
-    }
-  }
-
-  const featured = items[featuredIndex];
-  const latest = items
-    .filter((_, index) => index !== featuredIndex)
-    .sort((a, b) => publishedTime(b) - publishedTime(a) || a.id.localeCompare(b.id));
-
-  return [featured, ...latest];
+  return [...items].sort(
+    (a, b) => publishedTime(b) - publishedTime(a) || a.id.localeCompare(b.id),
+  );
 }
 
 async function computeNews(): Promise<NewsPayload> {
@@ -61,8 +42,8 @@ async function computeNews(): Promise<NewsPayload> {
           publishedAt: new Date(item.publishedAt),
         }))];
 
-    // Keep one strongest story featured, then put every other story in
-    // strict newest-to-oldest order.
+    // The authored blog owns the featured-story position. The live feed is
+    // strictly newest to oldest.
     items = orderNewsItems(items);
 
     // Auto-generate Agent Angles for top stories via Gemini

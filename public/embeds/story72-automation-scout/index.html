@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #151619; }
+      body { font-family: Arial, Helvetica, sans-serif; color: #fff; }
+      #root { position: absolute; width: 1920px; height: 1080px; overflow: hidden; transform-origin: top left; background: #151619; }
+      .scene { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(circle at 83% 14%, rgba(232,93,38,.28), transparent 30%), linear-gradient(135deg, #101114 0%, #292b30 56%, #17181b 100%); }
+      .grid { position: absolute; inset: -180px; opacity: .2; background-image: linear-gradient(rgba(245,239,227,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(245,239,227,.14) 1px, transparent 1px); background-size: 68px 68px; transform: perspective(820px) rotateX(56deg) translateY(320px); }
+      .brand { position: absolute; left: 96px; top: 68px; z-index: 8; font-size: 27px; font-weight: 900; letter-spacing: .12em; color: #f5efe3; }
+      .brand strong { color: #e85d26; }
+      .phase { position: absolute; left: 96px; top: 160px; width: 1120px; z-index: 8; }
+      .kicker { display: inline-flex; padding: 12px 18px; border: 2px solid #e85d26; background: rgba(16,17,20,.78); color: #f5efe3; font-size: 23px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+      h1 { margin: 28px 0 16px; max-width: 1120px; font-size: 108px; line-height: .9; letter-spacing: -.05em; text-transform: uppercase; text-shadow: 0 12px 38px rgba(0,0,0,.56); }
+      h1 em { color: #e85d26; font-style: normal; }
+      .sub { max-width: 890px; color: #e8e6e1; font-size: 29px; font-weight: 700; line-height: 1.25; }
+      .scanner { position: absolute; right: 92px; top: 82px; width: 500px; height: 500px; z-index: 5; border: 4px solid rgba(245,239,227,.72); border-radius: 50%; box-shadow: 0 0 0 34px rgba(232,93,38,.09), 0 0 90px rgba(232,93,38,.35); }
+      .scanner::before, .scanner::after { content: ""; position: absolute; border-radius: 50%; inset: 72px; border: 2px dashed rgba(245,239,227,.5); }
+      .scanner::after { inset: 185px; border: 0; background: #e85d26; box-shadow: 0 0 48px #e85d26; }
+      .beam { position: absolute; left: 50%; top: 50%; width: 220px; height: 8px; transform-origin: 0 50%; background: linear-gradient(90deg, #fff, #e85d26, transparent); box-shadow: 0 0 18px #e85d26; }
+      .orbit { position: absolute; width: 52px; height: 52px; border-radius: 50%; background: #f5efe3; border: 12px solid #e85d26; box-shadow: 0 0 32px rgba(232,93,38,.9); }
+      .orbit.one { left: 36px; top: 220px; }
+      .orbit.two { right: 62px; top: 94px; }
+      .orbit.three { right: 102px; bottom: 62px; }
+      .cards { position: absolute; left: 96px; right: 96px; bottom: 154px; z-index: 10; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+      .card { min-height: 176px; padding: 28px 25px; border-top: 9px solid #e85d26; background: #f5efe3; color: #202126; box-shadow: 0 24px 55px rgba(0,0,0,.42); }
+      .card b { display: block; font-size: 31px; line-height: 1; }
+      .card span { display: block; margin-top: 16px; color: #55585f; font-size: 20px; font-weight: 700; line-height: 1.25; }
+      .score { display: flex; gap: 7px; margin-top: 18px; }
+      .score i { width: 28px; height: 9px; background: #ddd5c8; }
+      .score i.on { background: #e85d26; box-shadow: 0 0 12px rgba(232,93,38,.55); }
+      .rail { position: absolute; left: 96px; right: 96px; bottom: 80px; height: 12px; z-index: 12; overflow: hidden; border-radius: 20px; background: rgba(245,239,227,.24); }
+      .progress { height: 100%; width: 100%; transform-origin: left center; background: linear-gradient(90deg, #c44a1a, #e85d26, #ffd2bd); box-shadow: 0 0 22px rgba(232,93,38,.8); }
+      .sweep { position: absolute; top: -20%; bottom: -20%; left: -420px; z-index: 18; width: 330px; transform: skewX(-18deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), rgba(232,93,38,.26), transparent); }
+      .approval { position: absolute; right: 116px; top: 435px; z-index: 20; padding: 18px 26px; border: 6px solid #f5efe3; transform: rotate(-8deg); background: #e85d26; color: #111215; font-size: 28px; font-weight: 950; letter-spacing: .04em; text-transform: uppercase; box-shadow: 0 20px 46px rgba(0,0,0,.38); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="10" data-width="1920" data-height="1080">
+      <section id="automation-scout-scene" class="scene clip" data-start="0" data-duration="10" data-track-index="1">
+        <div class="grid" data-layout-allow-overflow></div>
+        <div class="brand">Agent<strong>AI</strong>Brief</div>
+        <div class="phase">
+          <div id="kicker" class="kicker">Automation Scout</div>
+          <h1 id="headline">Find the work.<br /><em>Fix the system.</em></h1>
+          <div id="sub" class="sub">Evidence first. One scored decision. One safe workflow worth operating.</div>
+        </div>
+        <div class="scanner" data-layout-allow-overflow>
+          <div class="beam"></div>
+          <div class="orbit one"></div><div class="orbit two"></div><div class="orbit three"></div>
+        </div>
+        <div id="approval" class="approval">Human approval</div>
+        <div class="cards">
+          <div class="card"><b>REPEATED WORK</b><span>Files, follow-up, templates, handoffs</span><div class="score"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+          <div class="card"><b>THREE LEVELS</b><span>Task, missing bridge, real cost</span><div class="score"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+          <div class="card"><b>SCORE OPTIONS</b><span>Leverage, feasibility, safety, durability</span><div class="score"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+          <div class="card"><b>BUILD SMALL</b><span>Validate, dry run, log, review, stop</span><div class="score"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+        </div>
+        <div class="rail"><div class="progress"></div></div>
+        <div class="sweep" data-layout-allow-overflow></div>
+      </section>
+    </div>
+    <script>
+      const root = document.querySelector('#root');
+      const fitCanvas = () => {
+        const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
+        root.style.transform = `scale(${scale})`;
+        root.style.left = `${Math.max(0, (innerWidth - 1920 * scale) / 2)}px`;
+        root.style.top = `${Math.max(0, (innerHeight - 1080 * scale) / 2)}px`;
+      };
+      fitCanvas();
+      addEventListener('resize', fitCanvas);
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo('#kicker', { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: .55, ease: 'power3.out' }, .1);
+      tl.fromTo('#headline', { x: -90, opacity: 0 }, { x: 0, opacity: 1, duration: .85, ease: 'power3.out' }, .28);
+      tl.fromTo('#sub', { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: .65, ease: 'power2.out' }, .72);
+      tl.fromTo('.card', { y: 96, opacity: 0 }, { y: 0, opacity: 1, duration: .72, stagger: .5, ease: 'back.out(1.22)' }, 1.05);
+      tl.fromTo('.progress', { scaleX: 0 }, { scaleX: 1, duration: 7.1, ease: 'power1.inOut' }, .75);
+      tl.to('.beam', { rotate: 360, duration: 7.4, ease: 'none' }, .6);
+      tl.to('.scanner', { rotate: 360, duration: 10, ease: 'none' }, 0);
+      tl.to('.orbit', { scale: 1.35, duration: .55, stagger: .42, repeat: 4, yoyo: true, ease: 'sine.inOut' }, 1.4);
+      tl.to('.sweep', { x: 2760, duration: 4.3, ease: 'power1.inOut' }, 1.25);
+      tl.fromTo('#approval', { scale: .45, opacity: 0, rotate: -18 }, { scale: 1, opacity: 1, rotate: -8, duration: .72, ease: 'back.out(1.6)' }, 6.65);
+      tl.to('#approval', { boxShadow: '0 0 0 18px rgba(232,93,38,.12), 0 20px 46px rgba(0,0,0,.38)', duration: .55, repeat: 3, yoyo: true }, 7.25);
+      tl.to('.score i.on', { backgroundColor: '#fff', duration: .25, stagger: .08, repeat: 3, yoyo: true }, 7.1);
+      tl.fromTo('.grid', { backgroundPosition: '0px 0px' }, { backgroundPosition: '100px 100px', duration: 10, ease: 'none' }, 0);
+      window.__timelines.main = tl;
+      if (new URLSearchParams(location.search).get('autoplay') === '1') tl.repeat(-1).repeatDelay(.8).play(0);
+    </script>
+  </body>
+</html>

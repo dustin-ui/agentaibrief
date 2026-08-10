@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #101114;
+      }
+      body {
+        color: #ffffff;
+        font-family: Inter, Arial, Helvetica, sans-serif;
+      }
+      #root {
+        position: absolute;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        transform-origin: top left;
+        background:
+          radial-gradient(circle at 82% 22%, rgba(232, 93, 38, .3), transparent 30%),
+          linear-gradient(135deg, #101114 0%, #23252a 56%, #0f1012 100%);
+      }
+      .scene { position: absolute; inset: 0; overflow: hidden; }
+      .grid {
+        position: absolute;
+        inset: -120px;
+        opacity: .22;
+        background-image:
+          linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+        background-size: 68px 68px;
+        transform: perspective(900px) rotateX(58deg) translateY(320px);
+      }
+      .brand {
+        position: absolute;
+        left: 104px;
+        top: 72px;
+        z-index: 5;
+        font-size: 25px;
+        font-weight: 950;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+      }
+      .brand strong { color: #e85d26; }
+      .copy {
+        position: absolute;
+        left: 104px;
+        top: 166px;
+        z-index: 5;
+        width: 1110px;
+      }
+      .kicker {
+        display: inline-flex;
+        padding: 11px 17px;
+        border: 2px solid #e85d26;
+        background: rgba(16,17,20,.78);
+        color: #f5f0ea;
+        font-size: 23px;
+        font-weight: 900;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 28px 0 0;
+        font-size: 106px;
+        font-weight: 950;
+        line-height: .9;
+        letter-spacing: -.05em;
+        text-transform: uppercase;
+        text-shadow: 0 10px 34px rgba(0,0,0,.56);
+      }
+      h1 em {
+        display: block;
+        color: #e85d26;
+        font-style: normal;
+      }
+      .door-wrap {
+        position: absolute;
+        right: 112px;
+        top: 142px;
+        width: 420px;
+        height: 590px;
+        z-index: 3;
+        perspective: 1000px;
+      }
+      .door-glow {
+        position: absolute;
+        inset: -34px;
+        border-radius: 230px 230px 20px 20px;
+        background: radial-gradient(circle at center, rgba(232,93,38,.55), rgba(232,93,38,0) 68%);
+        filter: blur(12px);
+      }
+      .door-frame {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        border: 14px solid #f5f0ea;
+        border-bottom-width: 18px;
+        border-radius: 210px 210px 14px 14px;
+        box-shadow: 0 28px 70px rgba(0,0,0,.52);
+        background: #e85d26;
+      }
+      .door {
+        position: absolute;
+        inset: 0;
+        transform-origin: left center;
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.08), transparent 30%),
+          #23252a;
+        border-right: 8px solid #0d0e10;
+      }
+      .door::before {
+        content: "";
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        top: 125px;
+        height: 230px;
+        border: 5px solid rgba(245,240,234,.35);
+        border-radius: 130px 130px 8px 8px;
+      }
+      .knob {
+        position: absolute;
+        right: 48px;
+        top: 320px;
+        width: 28px;
+        height: 28px;
+        border: 6px solid #e85d26;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 24px rgba(232,93,38,.9);
+        animation: knob-pulse 1.8s ease-in-out infinite;
+      }
+      @keyframes knob-pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 18px rgba(232,93,38,.72); }
+        50% { transform: scale(1.32); box-shadow: 0 0 42px rgba(232,93,38,1); }
+      }
+      .decision {
+        position: absolute;
+        left: 86px;
+        right: 86px;
+        bottom: 116px;
+        z-index: 6;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 22px;
+      }
+      .card {
+        position: relative;
+        min-height: 160px;
+        padding: 28px 25px;
+        overflow: hidden;
+        border-top: 8px solid #e85d26;
+        background: #f5f0ea;
+        color: #202126;
+        box-shadow: 0 22px 48px rgba(0,0,0,.42);
+      }
+      .card b {
+        display: block;
+        font-size: 29px;
+        line-height: 1;
+      }
+      .card span {
+        display: block;
+        margin-top: 13px;
+        color: #5a5c62;
+        font-size: 19px;
+        font-weight: 750;
+        line-height: 1.25;
+      }
+      .card::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 7px;
+        background: #e85d26;
+      }
+      .runner-rail {
+        position: absolute;
+        left: 104px;
+        right: 104px;
+        bottom: 82px;
+        z-index: 7;
+        height: 7px;
+        overflow: hidden;
+        border-radius: 99px;
+        background: rgba(255,255,255,.18);
+      }
+      .runner {
+        width: 26%;
+        height: 100%;
+        background: linear-gradient(90deg, #c44a1a, #e85d26, #ffb08e);
+        box-shadow: 0 0 24px rgba(232,93,38,.85);
+      }
+      .sweep {
+        position: absolute;
+        top: -140px;
+        bottom: -140px;
+        left: -480px;
+        z-index: 8;
+        width: 340px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), rgba(232,93,38,.18), transparent);
+        transform: skewX(-17deg);
+      }
+      .footer {
+        position: absolute;
+        right: 106px;
+        bottom: 36px;
+        z-index: 8;
+        color: #f5f0ea;
+        font-size: 19px;
+        font-weight: 850;
+        letter-spacing: .04em;
+      }
+      .footer strong { color: #ff8a5b; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="9.5" data-width="1920" data-height="1080">
+      <section id="seller-decision-scene" class="scene clip" data-start="0" data-duration="9.5" data-track-index="1">
+        <div class="grid" data-layout-allow-overflow></div>
+        <div class="brand">Agent<strong>AI</strong>Brief</div>
+        <div class="copy">
+          <div id="kicker" class="kicker">The seller meeting starts sooner</div>
+          <h1 id="headline">The decision<em>starts early.</em></h1>
+        </div>
+        <div class="door-wrap" data-layout-allow-overlap>
+          <div class="door-glow" data-layout-ignore></div>
+          <div class="door-frame">
+            <div class="door"><div class="knob"></div></div>
+          </div>
+        </div>
+        <div class="decision">
+          <div id="card-brand" class="card"><b>BRAND</b><span>Your standards arrive first</span></div>
+          <div id="card-proof" class="card"><b>PROOF</b><span>Claims stay sourced</span></div>
+          <div id="card-process" class="card"><b>PROCESS</b><span>Steps feel concrete</span></div>
+          <div id="card-net" class="card"><b>NET ESTIMATE</b><span>Assumptions stay visible</span></div>
+        </div>
+        <div class="runner-rail"><div class="runner" data-layout-allow-overflow></div></div>
+        <div class="sweep" data-layout-allow-overflow></div>
+        <div class="footer">Build trust <strong>before</strong> the appointment.</div>
+      </section>
+    </div>
+    <script>
+      const root = document.querySelector("#root");
+      const fitCanvas = () => {
+        const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
+        root.style.transform = `scale(${scale})`;
+        root.style.left = `${Math.max(0, (innerWidth - 1920 * scale) / 2)}px`;
+        root.style.top = `${Math.max(0, (innerHeight - 1080 * scale) / 2)}px`;
+      };
+      fitCanvas();
+      addEventListener("resize", fitCanvas);
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#kicker", { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: .55, ease: "power3.out" }, .12);
+      tl.fromTo("#headline", { x: -82, opacity: 0 }, { x: 0, opacity: 1, duration: .85, ease: "power3.out" }, .3);
+      tl.fromTo(".door-wrap", { x: 110, opacity: 0 }, { x: 0, opacity: 1, duration: .9, ease: "power3.out" }, .42);
+      tl.fromTo(".door", { rotateY: 0 }, { rotateY: -48, duration: 2.1, ease: "power2.inOut" }, 1.05);
+      tl.fromTo(".card", { y: 90, opacity: 0 }, { y: 0, opacity: 1, duration: .7, stagger: .34, ease: "back.out(1.25)" }, 1.12);
+      tl.fromTo(".runner", { xPercent: -105 }, { xPercent: 385, duration: 7.9, ease: "power1.inOut" }, .3);
+      tl.to(".sweep", { x: 2600, duration: 4.1, ease: "power1.inOut" }, 1.1);
+      tl.fromTo(".grid", { backgroundPosition: "0px 0px" }, { backgroundPosition: "110px 110px", duration: 9.5, ease: "none" }, 0);
+      tl.to(".door-glow", { scale: 1.2, opacity: .48, duration: .8, repeat: 5, yoyo: true, ease: "sine.inOut" }, 3.2);
+      tl.to(".card", { y: -10, duration: .75, stagger: .18, repeat: 2, yoyo: true, ease: "sine.inOut" }, 5.2);
+      tl.to(".door", { rotateY: -58, duration: 1.4, ease: "sine.inOut" }, 7.3);
+      window.__timelines.main = tl;
+      tl.repeat(-1).repeatDelay(.7).play(0);
+    </script>
+  </body>
+</html>
