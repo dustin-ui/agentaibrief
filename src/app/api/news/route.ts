@@ -3,6 +3,7 @@ import { unstable_cache } from 'next/cache';
 import { fetchAllFeeds } from '@/lib/rss';
 import { SAMPLE_NEWS } from '@/lib/sample-news';
 import { batchAnalyze } from '@/lib/angle-cache';
+import type { NewsItem } from '@/lib/feeds';
 
 // Cache the computed news payload for 5 minutes so feeds + Gemini analysis
 // are not recomputed on every request. NewsFeed.tsx polls every 5 min/tab;
@@ -15,8 +16,38 @@ type NewsPayload = {
   fallback?: boolean;
   count: number;
   updatedAt: string;
-  items: unknown[];
+  items: NewsItem[];
 };
+
+function publishedTime(item: NewsItem): number {
+  const time = new Date(item.publishedAt).getTime();
+  return Number.isFinite(time) ? time : 0;
+}
+
+function orderNewsItems(items: NewsItem[]): NewsItem[] {
+  if (items.length === 0) return [];
+
+  let featuredIndex = 0;
+  for (let index = 1; index < items.length; index += 1) {
+    const candidate = items[index];
+    const current = items[featuredIndex];
+
+    if (
+      candidate.trendingScore > current.trendingScore ||
+      (candidate.trendingScore === current.trendingScore &&
+        publishedTime(candidate) > publishedTime(current))
+    ) {
+      featuredIndex = index;
+    }
+  }
+
+  const featured = items[featuredIndex];
+  const latest = items
+    .filter((_, index) => index !== featuredIndex)
+    .sort((a, b) => publishedTime(b) - publishedTime(a) || a.id.localeCompare(b.id));
+
+  return [featured, ...latest];
+}
 
 async function computeNews(): Promise<NewsPayload> {
   try {
@@ -30,8 +61,9 @@ async function computeNews(): Promise<NewsPayload> {
           publishedAt: new Date(item.publishedAt),
         }))];
 
-    // Sort by trending score
-    items.sort((a, b) => b.trendingScore - a.trendingScore);
+    // Keep one strongest story featured, then put every other story in
+    // strict newest-to-oldest order.
+    items = orderNewsItems(items);
 
     // Auto-generate Agent Angles for top stories via Gemini
     try {
@@ -74,16 +106,20 @@ async function computeNews(): Promise<NewsPayload> {
     };
   } catch (error) {
     console.error('Failed to fetch news:', error);
-    return {
-      success: false,
-      degraded: true,
-      fallback: true,
-      count: SAMPLE_NEWS.length,
-      updatedAt: new Date().toISOString(),
-      items: SAMPLE_NEWS.map(item => ({
+    const fallbackItems = orderNewsItems(
+      SAMPLE_NEWS.map(item => ({
         ...item,
         publishedAt: new Date(item.publishedAt),
       })),
+    );
+
+    return {
+      success: true,
+      degraded: true,
+      fallback: true,
+      count: fallbackItems.length,
+      updatedAt: new Date().toISOString(),
+      items: fallbackItems,
     };
   }
 }

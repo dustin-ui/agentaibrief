@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { NewsCard } from './NewsCard';
 
 interface NewsItem {
@@ -25,7 +25,6 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-  const [filter, setFilter] = useState<string>('all');
 
   useEffect(() => {
     async function fetchNews() {
@@ -34,7 +33,7 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
         const res = await fetch('/api/news');
         const data = await res.json();
         
-        if (data.success) {
+        if (data.success && Array.isArray(data.items)) {
           setNews(data.items);
           setLastUpdated(data.updatedAt);
         } else {
@@ -53,17 +52,40 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredNews = filter === 'all' 
-    ? news 
-    : news.filter(item => item.category === filter);
+  const orderedNews = useMemo(() => {
+    if (news.length === 0) return [];
 
-  const categories = [
-    { id: 'all', label: 'All Stories' },
-    { id: 'tech', label: 'Tech AI' },
-    { id: 'company', label: 'AI Companies' },
-    { id: 'research', label: 'Research' },
-    { id: 'realestate', label: 'Real Estate' },
-  ];
+    let featuredIndex = 0;
+    for (let index = 1; index < news.length; index += 1) {
+      const candidate = news[index];
+      const current = news[featuredIndex];
+      const candidateTime = new Date(candidate.publishedAt).getTime() || 0;
+      const currentTime = new Date(current.publishedAt).getTime() || 0;
+
+      if (
+        candidate.trendingScore > current.trendingScore ||
+        (candidate.trendingScore === current.trendingScore && candidateTime > currentTime)
+      ) {
+        featuredIndex = index;
+      }
+    }
+
+    const featured = news[featuredIndex];
+    const latest = news
+      .filter((_, index) => index !== featuredIndex)
+      .sort((a, b) => {
+        const dateDifference =
+          (new Date(b.publishedAt).getTime() || 0) -
+          (new Date(a.publishedAt).getTime() || 0);
+
+        return dateDifference || a.id.localeCompare(b.id);
+      });
+
+    return [featured, ...latest];
+  }, [news]);
+
+  const featuredStory = orderedNews[0];
+  const latestStories = orderedNews.slice(1);
 
   if (loading) {
     return (
@@ -90,47 +112,54 @@ export function NewsFeed({ isPremium = false }: NewsFeedProps) {
 
   return (
     <div>
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setFilter(cat.id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              filter === cat.id
-                ? 'bg-[#e85d26] text-white'
-                : 'bg-[#f5f0ea] text-[#666] hover:bg-gray-200'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
       {/* Last Updated */}
       {lastUpdated && (
-        <p className="text-xs text-[#666] mb-4">
+        <p className="mb-5 text-xs text-[#666]">
           Last updated: {new Date(lastUpdated).toLocaleTimeString()}
         </p>
       )}
 
-      {/* News Items */}
-      <div className="divide-y divide-gray-200">
-        {filteredNews.length === 0 ? (
-          <p className="text-center py-8 text-[#888]">No stories found</p>
-        ) : (
-          filteredNews.map((item) => (
-            <NewsCard key={item.id} {...item} isPremium={isPremium} />
-          ))
-        )}
-      </div>
+      {featuredStory ? (
+        <>
+          <section aria-labelledby="featured-story-heading">
+            <h2
+              id="featured-story-heading"
+              className="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-[#e85d26]"
+              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            >
+              Featured Story
+            </h2>
+            <div className="overflow-hidden rounded-2xl border-2 border-[#d4d0c8] bg-[#f5f0ea] px-5 sm:px-7">
+              <NewsCard {...featuredStory} isPremium={isPremium} />
+            </div>
+          </section>
 
-      {/* Load More / Stats */}
-      <div className="text-center py-6">
-        <p className="text-sm text-[#888]">
-          Showing {filteredNews.length} of {news.length} stories
-        </p>
-      </div>
+          <section className="mt-12" aria-labelledby="latest-stories-heading">
+            <h2
+              id="latest-stories-heading"
+              className="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-[#555]"
+              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            >
+              Latest Stories
+            </h2>
+            <div className="divide-y divide-[#d4d0c8]">
+              {latestStories.map((item) => (
+                <NewsCard key={item.id} {...item} isPremium={isPremium} />
+              ))}
+            </div>
+          </section>
+        </>
+      ) : (
+        <p className="py-8 text-center text-[#888]">No stories found</p>
+      )}
+
+      {orderedNews.length > 0 && (
+        <div className="py-6 text-center">
+          <p className="text-sm text-[#888]">
+            Showing {orderedNews.length} {orderedNews.length === 1 ? 'story' : 'stories'}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

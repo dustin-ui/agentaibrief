@@ -13,22 +13,13 @@ export interface NavItem {
   icon?: string;
 }
 
-// Verified against src/app on 2026-05-30 — all routes exist.
+// Keep the public navigation focused on the sections that are currently part
+// of AgentAIBrief. Older utility routes may remain in the codebase, but they
+// are intentionally not advertised in the primary navigation.
 export const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'News', icon: '📰' },
   { href: '/ai-transformation', label: 'AI Transformation', icon: '⚙️' },
   { href: '/blog', label: 'Blog', icon: '📝' },
-  { href: '/tools', label: 'AI Tools', icon: '🛠️' },
-  { href: '/prompts', label: 'Prompts', icon: '💬' },
-  { href: '/gpt-templates', label: 'GPT Templates', icon: '🤖' },
-  { href: '/seo-sniper', label: 'SEO Sniper', icon: '🎯' },
-  { href: '/seo-command', label: 'SEO Command', icon: '📡' },
-  { href: '/listing-generator', label: 'Listing Generator', icon: '🏠' },
-  { href: '/listing-description', label: 'Listing Description', icon: '✍️' },
-  { href: '/content-briefing', label: 'Content Briefing', icon: '📋' },
-  { href: '/contract-analyzer', label: 'Contract Analyzer', icon: '📄' },
-  { href: '/market-update', label: 'Market Update', icon: '🎤' },
-  { href: '/videos', label: 'Video Library', icon: '🎬' },
 ];
 
 /**
@@ -36,7 +27,7 @@ export const NAV_ITEMS: NavItem[] = [
  * from NAV_ITEMS (by href) so it can never point at a route that doesn't exist
  * in the canonical list.
  */
-const HOME_NAV_HREFS = ['/tools', '/prompts', '/blog', '/videos'];
+const HOME_NAV_HREFS = ['/ai-transformation', '/blog'];
 export const HOME_NAV_ITEMS: NavItem[] = HOME_NAV_HREFS.map(
   (href) => NAV_ITEMS.find((i) => i.href === href)!,
 ).filter(Boolean);
