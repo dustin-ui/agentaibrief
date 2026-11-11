@@ -408,6 +408,17 @@ export default async function BlogPostPage({ params }: Props) {
             className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
           />
+          {post.slug === 'claim-your-business-in-chatgpt' && post.faq && (
+            <section aria-labelledby="business-profile-faq" className="mt-10">
+              <h2 id="business-profile-faq" className="text-2xl font-bold text-[#2a2a2a] mb-4">Frequently asked questions</h2>
+              {post.faq.map((item) => (
+                <div key={item.question} className="mb-6">
+                  <h3 className="text-xl font-semibold text-[#2a2a2a] mb-3">{item.question}</h3>
+                  <p className="text-[#555] leading-relaxed">{item.answer}</p>
+                </div>
+              ))}
+            </section>
+          )}
         </article>
 
         {/* CTA */}

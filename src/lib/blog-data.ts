@@ -1,3 +1,7 @@
+import {
+  CHATGPT_BUSINESS_PROFILE_CONTENT,
+  CHATGPT_BUSINESS_PROFILE_FAQ,
+} from './story-chatgpt-business-profile';
 import { STORY68_CONTENT, STORY68_FAQ } from './story-68-post';
 import { STORY72_CONTENT, STORY72_FAQ } from './story-72-post';
 import { STORY76_CONTENT, STORY76_FAQ } from './story-76-post';
@@ -42,6 +46,20 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: "claim-your-business-in-chatgpt",
+    title: "How Real Estate Agents Can Claim Their Business in ChatGPT: Step-by-Step",
+    description: "A numbered walkthrough for real estate agents to find, claim, verify, and accurately manage an eligible business profile in ChatGPT Business Hub.",
+    date: "2026-11-10",
+    author: "Dustin Fox",
+    readTime: "11 min read",
+    tags: ["ChatGPT", "Business Hub", "Real Estate AI"],
+    coverImage: "/blog/claim-your-business-in-chatgpt/cover.webp",
+    coverAlt: "OpenAI demonstration of a business profile in ChatGPT",
+    content: CHATGPT_BUSINESS_PROFILE_CONTENT,
+    faq: CHATGPT_BUSINESS_PROFILE_FAQ,
+  },
+
   {
     slug: 'ai-single-property-website-builder-2026',
     title: 'AI Single Property Website Builder: Free Skill (2026)',
@@ -3948,11 +3966,11 @@ Want more real estate AI workflows like this? [Subscribe to AgentAIBrief](/subsc
     author: 'Dustin Fox',
     readTime: '8 min read',
     tags: ['AI Tools', 'Technology', 'Productivity'],
-    content: `The real estate industry has undergone a seismic shift. In 2026, agents who leverage artificial intelligence aren't just keeping up — they're pulling ahead at an unprecedented pace. The gap between AI-powered agents and those still relying on traditional methods has never been wider.
+    content: `The real estate industry has undergone a seismic shift. In 2026, agents who leverage artificial intelligence aren't just keeping up ,  they're pulling ahead at an unprecedented pace. The gap between AI-powered agents and those still relying on traditional methods has never been wider.
 
 After testing hundreds of tools and interviewing top-producing agents across the country, we've narrowed down the **10 AI tools that are genuinely transforming how real estate professionals operate** in 2026. Whether you're a solo agent or leading a team, these tools will help you work smarter, close faster, and deliver a better experience to your clients.
 
-## 1. ChatGPT — The Swiss Army Knife for Agents
+## 1. ChatGPT ,  The Swiss Army Knife for Agents
 
 No list of AI tools would be complete without ChatGPT. OpenAI's flagship model has become the single most versatile tool in a real estate agent's tech stack. From writing compelling listing descriptions in seconds to crafting personalized follow-up emails, ChatGPT handles it all.
 
@@ -3962,59 +3980,59 @@ No list of AI tools would be complete without ChatGPT. OpenAI's flagship model h
 
 **Pricing:** Free tier available; ChatGPT Plus at $20/month is worth every penny.
 
-## 2. Apply Design AI — Virtual Staging That Actually Looks Real
+## 2. Apply Design AI ,  Virtual Staging That Actually Looks Real
 
-Virtual staging has gone from "nice to have" to absolutely essential. Apply Design AI leads the pack in 2026 with photorealistic results at a fraction of the cost of traditional staging. At just $0.20 per image, you can stage every room of every listing — even vacant properties look move-in ready.
+Virtual staging has gone from "nice to have" to absolutely essential. Apply Design AI leads the pack in 2026 with photorealistic results at a fraction of the cost of traditional staging. At just $0.20 per image, you can stage every room of every listing ,  even vacant properties look move-in ready.
 
-**Why it stands out:** The AI understands room dimensions, lighting, and architectural style. It doesn't just drop furniture into a photo — it creates a cohesive design that matches the home's character.
+**Why it stands out:** The AI understands room dimensions, lighting, and architectural style. It doesn't just drop furniture into a photo ,  it creates a cohesive design that matches the home's character.
 
 **Real results:** Agents using AI virtual staging report listings receiving 40% more online views and selling 15-20% faster on average.
 
-## 3. HeyGen — AI Video Without the Camera Crew
+## 3. HeyGen ,  AI Video Without the Camera Crew
 
 Video content is king in real estate marketing, but most agents don't have time to film, edit, and produce videos consistently. HeyGen solves this by creating professional AI avatar videos from a simple script.
 
 **Game-changing use cases:** Neighborhood tour videos, market update reports, listing walkthrough narrations, multilingual property videos for international buyers, and personalized video messages for leads.
 
-**The multilingual advantage:** Generate the same video in Spanish, Mandarin, Korean, or any of 40+ languages — instantly reaching immigrant and international buyer communities.
+**The multilingual advantage:** Generate the same video in Spanish, Mandarin, Korean, or any of 40+ languages ,  instantly reaching immigrant and international buyer communities.
 
-## 4. Claude — Deep Analysis and Long-Form Content
+## 4. Claude ,  Deep Analysis and Long-Form Content
 
 While ChatGPT excels at quick tasks, Claude by Anthropic has become the preferred tool for agents who need deeper analysis. Its ability to process long documents makes it perfect for reviewing contracts, analyzing market reports, and creating comprehensive CMAs.
 
 **Where Claude shines:** Market analysis reports, neighborhood guides, detailed buyer/seller guides, processing MLS data exports, and writing 2,000+ word blog posts that actually rank on Google.
 
-## 5. Canva AI — Design Like a Pro (Without Being One)
+## 5. Canva AI ,  Design Like a Pro (Without Being One)
 
 Canva's AI features have made professional graphic design accessible to every agent. Generate social media posts, listing flyers, market report infographics, and presentation decks in minutes. The Magic Design feature creates layouts from a simple text prompt.
 
 **Must-try features:** AI image generation for social posts, Magic Resize for multi-platform content, Brand Kit for consistent branding, and AI-powered video editing for Reels and TikToks.
 
-## 6. Follow Up Boss — AI-Powered Lead Management
+## 6. Follow Up Boss ,  AI-Powered Lead Management
 
 The CRM space has been revolutionized by AI, and Follow Up Boss leads with intelligent lead routing, automated follow-up sequences, and predictive lead scoring. The AI identifies which leads are most likely to convert and prioritizes your outreach accordingly.
 
 **ROI impact:** Agents using AI-powered CRMs report a 35% increase in lead conversion rates. The system ensures no lead falls through the cracks while focusing your time on the highest-potential opportunities.
 
-## 7. HouseCanary — Predictive Analytics and Valuations
+## 7. HouseCanary ,  Predictive Analytics and Valuations
 
 HouseCanary's AI provides property valuations, market forecasts, and investment analysis that rivals what institutional investors use. Their CanaryAI feature lets you ask questions about any market in natural language and get instant, data-backed answers.
 
 **Best for:** CMAs that impress sellers, identifying investment opportunities, market trend analysis for content creation, and providing clients with data-driven pricing recommendations.
 
-## 8. Structurely — AI That Qualifies Leads While You Sleep
+## 8. Structurely ,  AI That Qualifies Leads While You Sleep
 
-Structurely's AI chatbot engages with incoming leads via text message, qualifies them through natural conversation, and schedules showings — all without human intervention. It operates 24/7, ensuring you never miss a hot lead that comes in at 11 PM.
+Structurely's AI chatbot engages with incoming leads via text message, qualifies them through natural conversation, and schedules showings ,  all without human intervention. It operates 24/7, ensuring you never miss a hot lead that comes in at 11 PM.
 
 **The numbers:** AI chatbots respond to leads within 60 seconds (compared to the industry average of 5+ hours). Speed to lead is the #1 predictor of conversion, and AI delivers instant response times.
 
-## 9. Perplexity AI — Research on Steroids
+## 9. Perplexity AI ,  Research on Steroids
 
 Perplexity has become the go-to research tool for agents who need quick, accurate, and sourced information. Whether you're researching a neighborhood's school ratings, local development projects, or crime statistics, Perplexity delivers cited answers in seconds.
 
 **Agent use case:** Before a listing appointment or buyer consultation, run a Perplexity deep dive on the neighborhood. You'll walk in with more knowledge than the homeowner, instantly establishing expertise and trust.
 
-## 10. Luma AI / RunwayML — Next-Level Property Videos
+## 10. Luma AI / RunwayML ,  Next-Level Property Videos
 
 AI video generation has matured dramatically. Tools like Luma and Runway allow agents to create cinematic property videos, neighborhood flyovers, and lifestyle content that would have required a professional production team just two years ago.
 
@@ -4029,11 +4047,11 @@ The biggest mistake agents make is trying to adopt every tool at once. Here's ou
 3. **Month 2:** Integrate one video tool (HeyGen or Canva AI video).
 4. **Month 3:** Evaluate your CRM's AI capabilities or consider switching.
 
-The agents who will thrive in 2026 and beyond aren't necessarily the most tech-savvy — they're the ones willing to experiment, iterate, and integrate AI into their daily workflow one tool at a time.
+The agents who will thrive in 2026 and beyond aren't necessarily the most tech-savvy ,  they're the ones willing to experiment, iterate, and integrate AI into their daily workflow one tool at a time.
 
 ## Ready to Stay Ahead of the Curve?
 
-AI tools are evolving faster than ever. New features, new players, and new strategies emerge every week. That's exactly why we created AgentAIBrief — to cut through the noise and tell you exactly which tools matter and how to use them.
+AI tools are evolving faster than ever. New features, new players, and new strategies emerge every week. That's exactly why we created AgentAIBrief ,  to cut through the noise and tell you exactly which tools matter and how to use them.
 
 [Subscribe to AgentAIBrief](/subscribe) for daily AI briefings built specifically for real estate professionals. We test the tools, break down the strategies, and give you the Agent Angle on every development so you can focus on what you do best: closing deals.`,
   },
@@ -4045,13 +4063,13 @@ AI tools are evolving faster than ever. New features, new players, and new strat
     author: 'Dustin Fox',
     readTime: '9 min read',
     tags: ['Marketing', 'AI', 'Strategy'],
-    content: `Real estate marketing in 2026 looks nothing like it did even two years ago. Artificial intelligence hasn't just improved existing marketing channels — it has created entirely new ones. Agents who understand and harness these changes are seeing dramatic improvements in lead generation, listing exposure, and brand authority.
+    content: `Real estate marketing in 2026 looks nothing like it did even two years ago. Artificial intelligence hasn't just improved existing marketing channels ,  it has created entirely new ones. Agents who understand and harness these changes are seeing dramatic improvements in lead generation, listing exposure, and brand authority.
 
 This isn't theoretical. These are strategies being deployed right now by top-producing agents and teams across the country. Let's break down exactly how AI is transforming real estate marketing and what you can do to capitalize on each trend.
 
 ## The Death of Generic Marketing
 
-The era of one-size-fits-all marketing is officially over. AI has made hyper-personalization not just possible, but expected. Buyers and sellers now receive marketing that feels tailored to their specific situation, timeline, and preferences — because it is.
+The era of one-size-fits-all marketing is officially over. AI has made hyper-personalization not just possible, but expected. Buyers and sellers now receive marketing that feels tailored to their specific situation, timeline, and preferences ,  because it is.
 
 **What this means for agents:** Your marketing needs to speak directly to individual segments of your audience. A first-time buyer in their 20s should receive different messaging than a downsizing empty-nester, and AI makes creating these variations effortless.
 
@@ -4061,7 +4079,7 @@ The era of one-size-fits-all marketing is officially over. AI has made hyper-per
 
 ### Virtual Staging at Scale
 
-The math is simple: staged homes sell faster and for more money. But traditional staging costs $2,000-$5,000 per property. AI virtual staging costs $5-$50 for the entire home. This means every listing — even that $200K starter home — gets professional staging.
+The math is simple: staged homes sell faster and for more money. But traditional staging costs $2,000-$5,000 per property. AI virtual staging costs $5-$50 for the entire home. This means every listing ,  even that $200K starter home ,  gets professional staging.
 
 **Advanced tactics:** Stage the same room in multiple styles (modern, farmhouse, traditional) and let the listing photos appeal to different buyer tastes. Some agents are even creating "before and after" staging comparisons as social media content that consistently goes viral.
 
@@ -4107,7 +4125,7 @@ AI analytics tools now predict which content topics will perform best based on l
 
 ### Intelligent Ad Targeting
 
-Facebook and Google ads powered by AI targeting are generating leads at 40-60% lower cost per acquisition than traditional targeting methods. AI analyzes vast datasets to identify people showing buying or selling signals — even before they start actively searching.
+Facebook and Google ads powered by AI targeting are generating leads at 40-60% lower cost per acquisition than traditional targeting methods. AI analyzes vast datasets to identify people showing buying or selling signals ,  even before they start actively searching.
 
 **Signals AI detects:** Life events (marriage, baby, job change), browsing patterns, financial behavior changes, and social media activity that indicates a move is being considered.
 
@@ -4142,21 +4160,21 @@ AI tools can be trained on your existing content to maintain a consistent brand 
 
 Here's the reality: the agents adopting AI marketing strategies today have a significant but temporary advantage. As adoption increases, the bar will rise for everyone. The time to act is now.
 
-**The agents who wait** will find themselves competing against AI-enhanced marketing with traditional methods — and the gap will only widen.
+**The agents who wait** will find themselves competing against AI-enhanced marketing with traditional methods ,  and the gap will only widen.
 
 ## Your Next Steps
 
 1. **Audit your current marketing:** Identify which tasks consume the most time
 2. **Pick one AI tool** and master it before adding more
 3. **Create an AI content workflow** that turns one piece of content into many
-4. **Track your metrics** — AI should improve your numbers, not just feel productive
+4. **Track your metrics** ,  AI should improve your numbers, not just feel productive
 
 Want to stay ahead of every AI marketing development in real estate? [Subscribe to AgentAIBrief](/subscribe) for daily updates on the tools, strategies, and trends that matter most to your business. We do the research so you can focus on execution.`,
   },
   {
     slug: 'agents-guide-chatgpt-real-estate',
     title: "The Agent's Guide to Using ChatGPT for Real Estate",
-    description: 'A comprehensive, practical guide to using ChatGPT as a real estate agent — from listing descriptions and client emails to market analysis and social media content.',
+    description: 'A comprehensive, practical guide to using ChatGPT as a real estate agent ,  from listing descriptions and client emails to market analysis and social media content.',
     date: '2026-02-05',
     author: 'Dustin Fox',
     readTime: '10 min read',
@@ -4293,24 +4311,24 @@ When you need creative copy (social media, listing descriptions), ask ChatGPT to
 AI-generated content should always be reviewed and personalized. The best workflow is:
 
 1. **AI generates 80%** of the content
-2. **You add 20%** — personal anecdotes, local knowledge, specific client details
+2. **You add 20%** ,  personal anecdotes, local knowledge, specific client details
 3. **Result:** Content that's both efficient and authentically yours
 
 ## Common Mistakes to Avoid
 
-1. **Using AI content without reviewing it** — Always fact-check, especially market data
-2. **Sounding robotic** — If it doesn't sound like you, edit until it does
-3. **Over-relying on AI for relationship-building** — Use AI for efficiency, not to replace genuine human connection
-4. **Not providing enough context** — The more specific your prompt, the better the output
-5. **Ignoring compliance** — Make sure AI-generated content meets your brokerage's advertising guidelines
+1. **Using AI content without reviewing it** ,  Always fact-check, especially market data
+2. **Sounding robotic** ,  If it doesn't sound like you, edit until it does
+3. **Over-relying on AI for relationship-building** ,  Use AI for efficiency, not to replace genuine human connection
+4. **Not providing enough context** ,  The more specific your prompt, the better the output
+5. **Ignoring compliance** ,  Make sure AI-generated content meets your brokerage's advertising guidelines
 
 ## The Bottom Line
 
-ChatGPT isn't going to replace real estate agents. But agents who use ChatGPT are going to replace agents who don't. The tool is only as powerful as the person wielding it — and now you have the playbook to wield it effectively.
+ChatGPT isn't going to replace real estate agents. But agents who use ChatGPT are going to replace agents who don't. The tool is only as powerful as the person wielding it ,  and now you have the playbook to wield it effectively.
 
 Start with one use case this week. Master it. Then add another. Within a month, you'll wonder how you ever operated without it.
 
-Want more AI strategies and prompts specifically for real estate? [Subscribe to AgentAIBrief](/subscribe) — we deliver actionable AI insights to your inbox every morning so you can stay ahead of the curve without spending hours researching.`,
+Want more AI strategies and prompts specifically for real estate? [Subscribe to AgentAIBrief](/subscribe) ,  we deliver actionable AI insights to your inbox every morning so you can stay ahead of the curve without spending hours researching.`,
   },
 ];
 
